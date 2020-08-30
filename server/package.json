@@ -1,0 +1,35 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js --ignore __tests__",
+    "knex:migrate": "knex migrate:latest",
+    "knex:rollback": "knex migrate:rollback",
+    "knex:rollback:all": "knex migrate:rollback --all",
+    "knex:seed": "knex seed:run",
+    "pretest": "NODE_ENV=test knex migrate:latest",
+    "test": "NODE_ENV=test jest",
+    "posttest": "NODE_ENV=test knex migrate:rollback --all"
+  },
+  "dependencies": {
+    "bcrypt": "^5.0.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.21.5",
+    "pg": "^8.3.2",
+    "validator": "^13.1.1",
+    "ytdl-core": "^3.2.2"
+  },
+  "devDependencies": {
+    "jest": "^26.4.2",
+    "nodemon": "^2.0.4",
+    "sqlite3": "^5.0.0",
+    "supertest": "^4.0.2"
+  }
+}

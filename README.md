@@ -2,7 +2,7 @@
   <img alt="yfmusic icon" src="./mobile/assets/splash.png"  width="280"/>
 </p>
 
-<h1 align="center"> YFMUsic </h1>
+<h1 align="center"> YFMusic </h1>
 
 <p align="center">
   <a href="https://github.com/ErickLuizA/yfmusic/graphs/commit-activity" alt="Maintenance">

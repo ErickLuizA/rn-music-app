@@ -45,25 +45,27 @@ function PlaylistScreen({ navigation }) {
   };
 
   const handleRemovePlaylist = async (id) => {
-    let response = await api.delete('/playlist', {
-      params: {
-        destroyId: id,
-      },
-    });
-    console.log('the response', response.data, response.status);
-    if (typeof response.data === 'string') {
-      api.defaults.headers.Authorization = `Bearer ${response.data}`;
-
-      await AsyncStorage.setItem('@RNtoken', response.data);
-
-      response = await api.delete('/playlist', {
+    try {
+      let response = await api.delete('/playlist', {
         params: {
           destroyId: id,
         },
       });
-    }
+      if (typeof response.data === 'string' && response.status !== 204) {
+        api.defaults.headers.Authorization = `Bearer ${response.data}`;
 
-    console.log('responseaftereverithung', response.data, response.status);
+        await AsyncStorage.setItem('@RNtoken', response.data);
+
+        response = await api.delete('/playlist', {
+          params: {
+            destroyId: id,
+          },
+        });
+      }
+
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

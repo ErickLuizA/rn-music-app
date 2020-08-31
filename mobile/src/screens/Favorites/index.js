@@ -38,7 +38,7 @@ function FavoritesScreen({ navigation }) {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Card
-            id={item.id}
+            id={item.favorite_music_id}
             title={item.title}
             img={item.img}
             navigation={navigation}

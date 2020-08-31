@@ -123,7 +123,6 @@ function PlayingScreen({ route }) {
         }
 
         const [music] = response.data;
-
         if (music) {
           const onPlaylist = music.song_id === data.id;
 

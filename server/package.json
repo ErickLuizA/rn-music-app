@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "knex migrate:rollback --all && knex migrate:latest && node src/index.js",
     "dev": "nodemon src/index.js --ignore __tests__",
     "knex:migrate": "knex migrate:latest",
     "knex:rollback": "knex migrate:rollback",

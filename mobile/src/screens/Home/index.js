@@ -29,7 +29,7 @@ function HomeScreen({ navigation }) {
             videoCategoryId: '10',
             chart: 'mostPopular',
             maxResults: 15,
-            key: 'AIzaSyA4p1RFT60alVAFZgYZOFY41SzVYLUYkoA',
+            key: process.env.API_KEY,
           },
         });
 

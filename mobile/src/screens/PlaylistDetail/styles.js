@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
   flex: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: Dimensions.get('window').width / 1.1,
     paddingHorizontal: 10,
   },
 
@@ -20,7 +21,7 @@ const styles = StyleSheet.create({
     color: '#ddd',
     fontSize: 20,
     fontFamily: 'Inter_700Bold',
-    marginLeft: 20,
+    marginLeft: 60,
     borderBottomColor: '#888',
     borderBottomWidth: 1,
     alignSelf: 'flex-start',

@@ -10,23 +10,19 @@ function PlaylistDetail({ route, navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.flex}>
+        <AntDesign
+          name="back"
+          size={24}
+          color="#ddd"
+          onPress={() => navigation.goBack()}
+        />
+        <Text style={styles.heading}> Playlist </Text>
+      </View>
       <FlatList
         data={data}
         keyExtractor={(item) => item.id.toString()}
         numColumns={2}
-        ListHeaderComponent={() => {
-          return (
-            <View style={styles.flex}>
-              <AntDesign
-                name="back"
-                size={24}
-                color="#ddd"
-                onPress={() => navigation.goBack()}
-              />
-              <Text style={styles.heading}> Playlist </Text>
-            </View>
-          );
-        }}
         renderItem={({ item }) => (
           <Card
             id={item.song_id}

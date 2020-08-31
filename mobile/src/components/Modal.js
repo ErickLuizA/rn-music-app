@@ -34,7 +34,7 @@ function Modals({ open, close, musicData }) {
 
       setPlaylists(response.data);
     })();
-  }, []);
+  }, [newModal]);
 
   const handleCheck = async (item) => {
     const exists = checked.filter((check) => check.id === item.id);
@@ -47,6 +47,10 @@ function Modals({ open, close, musicData }) {
   };
 
   const handleDone = async () => {
+    if (checked.length === 0) {
+      close();
+      return;
+    }
     let response = await api.post('/playlist_song', {
       song_id: musicData.id,
       playlist_id: checked[0].id,
@@ -54,7 +58,7 @@ function Modals({ open, close, musicData }) {
       img: musicData.img,
     });
 
-    if (typeof response.data === 'string') {
+    if (typeof response.data === 'string' && response.status !== 201) {
       api.defaults.headers.Authorization = `Bearer ${response.data}`;
 
       await AsyncStorage.setItem('@RNtoken', response.data);
@@ -66,6 +70,10 @@ function Modals({ open, close, musicData }) {
         img: musicData.img,
       });
     }
+
+    if (response.status === 201) {
+      close();
+    }
   };
 
   const openNewModal = () => {
@@ -74,20 +82,27 @@ function Modals({ open, close, musicData }) {
   };
 
   const handleCreatePlaylist = async () => {
-    let response = await api.post('/playlist', {
-      title,
-    });
-
-    if (typeof response.data === 'string') {
-      api.defaults.headers.Authorization = `Bearer ${response.data}`;
-
-      await AsyncStorage.setItem('@RNtoken', response.data);
-
-      response = await api.post('/playlist', {
+    try {
+      let response = await api.post('/playlist', {
         title,
       });
+
+      if (typeof response.data === 'string' && response.status !== 201) {
+        api.defaults.headers.Authorization = `Bearer ${response.data}`;
+
+        await AsyncStorage.setItem('@RNtoken', response.data);
+
+        response = await api.post('/playlist', {
+          title,
+        });
+      }
+
+      if (response.status === 201) {
+        setNewModal(false);
+      }
+    } catch (err) {
+      console.log(err);
     }
-    setNewModal(false);
   };
 
   return (
@@ -181,7 +196,7 @@ const styles = StyleSheet.create({
 
   modalContent: {
     backgroundColor: '#333',
-    height: Dimensions.get('window').height / 5,
+    height: Dimensions.get('window').height / 3.5,
   },
 
   flex: {

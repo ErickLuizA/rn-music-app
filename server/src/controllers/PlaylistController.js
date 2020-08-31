@@ -48,9 +48,7 @@ module.exports = {
   remove_playlist: async (req, res, next) => {
     const id = req.userId;
     const { destroyId } = req.query;
-    console.log("here?");
-    console.log(id);
-    console.log(req.query);
+
     try {
       await db("playlist").del().where({
         user_id: id,

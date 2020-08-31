@@ -6,8 +6,6 @@ module.exports = async function (req, res, next) {
 
   const { refreshToken } = req.cookies;
 
-  console.log('Auth =>', authorization)
-
   if (!authorization && !refreshToken) {
     return res.status(401);
   }

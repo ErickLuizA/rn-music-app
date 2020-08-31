@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
-
 import ytApi from '../../services/ytApi';
 
 import styles from './styles';
@@ -28,7 +27,7 @@ function SearchScreen({ route, navigation }) {
             q: search,
             part: 'snippet',
             maxResults: 10,
-            key: 'AIzaSyA4p1RFT60alVAFZgYZOFY41SzVYLUYkoA',
+            key: process.env.API_KEY,
           },
         });
 

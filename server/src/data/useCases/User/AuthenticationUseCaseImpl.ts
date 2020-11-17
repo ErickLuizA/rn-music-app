@@ -14,7 +14,7 @@ export class AuthenticationUseCaseImpl implements AuthenticationUseCase {
   ) {}
 
   async execute (authenticationParams: AuthenticationParams): Promise<AuthenticationModel> {
-    const user = await this.loadUserByEmailRepository.execute(authenticationParams.email)
+    const user = await this.loadUserByEmailRepository.load(authenticationParams.email)
 
     if (user) {
       const isValid = this.hashComparer.compare(authenticationParams.password, user.password)

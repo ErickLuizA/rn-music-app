@@ -1,5 +1,5 @@
 export interface PlaylistModel {
-  playlistId: number
-  userId: number
+  playlistId: string
+  userId: string
   title: string
 }

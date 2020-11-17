@@ -1,6 +1,6 @@
 export interface MusicModel {
-  musicId: number
+  musicId: string
   title: string
   img: string
-  playlistId?: number
+  playlistId?: string
 }

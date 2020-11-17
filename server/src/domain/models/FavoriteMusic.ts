@@ -1,7 +1,7 @@
 import { MusicModel } from './Music'
 
 export interface FavoriteMusicModel {
-  userId: number
-  favoriteId: number
+  userId: string
+  favoriteId: string
   music: MusicModel
 }

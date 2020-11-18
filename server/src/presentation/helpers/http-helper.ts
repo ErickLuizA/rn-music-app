@@ -5,6 +5,11 @@ export const badRequest = (error: Error): HttpResponse => ({
   body: { name: 'Bad Request', message: error.message }
 })
 
+export const badRequests = (error: Error[]): HttpResponse => ({
+  statusCode: 400,
+  body: { name: 'Bad Request', errors: error.map(err => err.message) }
+})
+
 export const forbidden = (error: Error): HttpResponse => ({
   statusCode: 403,
   body: { name: 'Forbidden', message: error.message }

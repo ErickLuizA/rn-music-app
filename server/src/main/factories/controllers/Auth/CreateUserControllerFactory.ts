@@ -2,6 +2,7 @@ import { CreateUserUseCaseImpl } from '../../../../data/useCases/User/CreateUser
 import { BcryptAdapter } from '../../../../infra/cryptography/BcryptAdapter'
 import { UserRepositoryImpl } from '../../../../infra/repositories/UserRepositoryImpl'
 import { CreateUserController } from '../../../../presentation/controllers/Auth/CreateUserController'
+import { Validator } from '../../../../validation/Validator'
 
 export function makeCreateUserController (): CreateUserController {
   const userRepositoryImpl = new UserRepositoryImpl()
@@ -12,7 +13,9 @@ export function makeCreateUserController (): CreateUserController {
     bcryptAdapter
   )
 
-  const createUserController = new CreateUserController(createUserUseCaseImpl)
+  const validator = new Validator()
+
+  const createUserController = new CreateUserController(createUserUseCaseImpl, validator)
 
   return createUserController
 }

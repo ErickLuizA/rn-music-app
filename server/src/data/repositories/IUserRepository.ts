@@ -5,4 +5,6 @@ export interface IUserRepository {
   create: (params: UserParams) => Promise<UserModel>
 
   load: (email: string) => Promise<UserModel>
+
+  updateToken: (userId: string, token: string) => Promise<void>
 }

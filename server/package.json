@@ -5,10 +5,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "ts-node-dev --ignore-watch node_modules --respawn src/main/server.ts ",
-    "knex:migrate": "knex migrate:latest --knexfile knexfile.ts",
-    "knex:migrate:rollback": "knex migrate:rollback --knexfile knexfile.ts",
-    "knex:migrate:rollback:all": "knex migrate:rollback --all --knexfile knexfile.ts",
-    "knex:seed": "knex seed:run --knexfile knexfile.ts"
+    "knex:migrate": "knex migrate:latest --knexfile knexfile.ts"
   },
   "dependencies": {
     "bcrypt": "^5.0.0",

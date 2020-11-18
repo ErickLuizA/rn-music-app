@@ -20,6 +20,8 @@ export class AuthenticationUseCaseImpl implements AuthenticationUseCase {
       if (isValid) {
         const accessToken = await this.encrypter.encrypt(user.id)
 
+        await this.userRepository.updateToken(user.id, accessToken)
+
         return { accessToken }
       }
     }

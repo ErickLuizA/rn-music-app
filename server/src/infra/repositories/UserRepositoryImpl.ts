@@ -25,4 +25,8 @@ export class UserRepositoryImpl implements IUserRepository {
   async updateToken (userId: string, token: string): Promise<void> {
     return await database('users').where('id', userId).update('token', token)
   }
+
+  async loadUserByToken (token: string): Promise<UserModel> {
+    return await database('users').where('token', token).first()
+  }
 }

@@ -7,4 +7,6 @@ export interface IUserRepository {
   load: (email: string) => Promise<UserModel>
 
   updateToken: (userId: string, token: string) => Promise<void>
+
+  loadUserByToken: (token: string) => Promise<UserModel>
 }

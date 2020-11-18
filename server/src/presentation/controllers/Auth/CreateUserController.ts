@@ -1,20 +1,25 @@
-import { NextFunction, Request, Response } from 'express'
 import { CreateUserUseCaseImpl } from '../../../data/useCases/User/CreateUserUseCaseImpl'
+import { badRequest, ok, serverError } from '../../helpers/http-helper'
+import { HttpRequest, HttpResponse } from '../../protocols/http'
 
 export class CreateUserController {
   constructor (
     private readonly createUserUseCase: CreateUserUseCaseImpl
   ) {}
 
-  async handle (request: Request, response: Response, next: NextFunction): Promise<Response> {
-    const { name, avatar, email, password } = request.body
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+    const { name, avatar, email, password } = httpRequest.body
 
     try {
       const user = await this.createUserUseCase.execute({ name, avatar, email, password })
 
-      return response.status(2001).json(user)
+      return ok(user)
     } catch (error) {
-      next(error)
+      if (error.message === 'User already exists') {
+        return badRequest(error)
+      }
+
+      return serverError(error)
     }
   }
 }

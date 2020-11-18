@@ -1,18 +1,16 @@
 import { UserModel } from '../../../domain/models/User'
 import { CreateUserUseCase } from '../../../domain/useCases/User/CreateUserUseCase'
 import { Hasher } from '../../criptography/hasher'
-import { CreateUserRepository } from '../../repositories/User/CreateUserRepository'
-import { LoadUserByEmailRepository } from '../../repositories/User/LoadUserByEmailRepository'
+import { IUserRepository } from '../../repositories/IUserRepository'
 
 export class CreateUserUseCaseImpl implements CreateUserUseCase {
   constructor (
-    private readonly createUserRepository: CreateUserRepository,
-    private readonly loadUserByEmailRepository: LoadUserByEmailRepository,
+    private readonly userRepository: IUserRepository,
     private readonly hasher: Hasher
   ) {}
 
   async execute (user: Pick<UserModel, 'name' | 'avatar' | 'email' | 'password'>): Promise<UserModel> {
-    const userAlreadyExists = await this.loadUserByEmailRepository.load(user.email)
+    const userAlreadyExists = await this.userRepository.load(user.email)
 
     if (userAlreadyExists) {
       throw new Error('User already exists')
@@ -20,7 +18,7 @@ export class CreateUserUseCaseImpl implements CreateUserUseCase {
 
     const hashedPassword = await this.hasher.hash(user.password)
 
-    const newUser = await this.createUserRepository.create({
+    const newUser = await this.userRepository.create({
       name: user.name,
       email: user.email,
       password: hashedPassword,

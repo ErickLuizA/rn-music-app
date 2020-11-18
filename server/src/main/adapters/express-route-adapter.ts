@@ -5,7 +5,8 @@ import { HttpRequest } from '../../presentation/protocols/http'
 export function adaptRoute (controller: Controller) {
   return async (request: Request, response: Response) => {
     const httpRequest: HttpRequest = {
-      body: request.body
+      body: request.body,
+      userId: request.userId
     }
 
     const httpResponse = await controller.handle(httpRequest)

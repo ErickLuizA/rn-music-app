@@ -21,8 +21,7 @@ export class CreateUserUseCaseImpl implements CreateUserUseCase {
     const newUser = await this.userRepository.create({
       name: user.name,
       email: user.email,
-      password: hashedPassword,
-      avatar: user.avatar
+      password: hashedPassword
     })
 
     return newUser

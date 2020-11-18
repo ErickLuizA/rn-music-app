@@ -1,3 +1,4 @@
+import { Encrypter } from '../../../data/criptography/encrypter'
 import { CreateUserUseCaseImpl } from '../../../data/useCases/User/CreateUserUseCaseImpl'
 import { badRequest, badRequests, ok, serverError } from '../../helpers/http-helper'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
@@ -6,7 +7,8 @@ import { Validation } from '../../protocols/validation'
 export class CreateUserController {
   constructor (
     private readonly createUserUseCase: CreateUserUseCaseImpl,
-    private readonly validator: Validation
+    private readonly validator: Validation,
+    private readonly encrypter: Encrypter
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -24,7 +26,9 @@ export class CreateUserController {
     try {
       const user = await this.createUserUseCase.execute({ name, avatar, email, password })
 
-      return ok(user)
+      const token = await this.encrypter.encrypt(user.id)
+
+      return ok({ user, token })
     } catch (error) {
       if (error.message === 'User already exists') {
         return badRequest(error)

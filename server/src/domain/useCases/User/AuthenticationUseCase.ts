@@ -6,5 +6,5 @@ export interface AuthenticationParams {
 }
 
 export interface AuthenticationUseCase {
-  execute: (authenticationParams: AuthenticationParams) => Promise<AuthenticationModel>
+  execute: (authenticationParams: AuthenticationParams) => Promise<AuthenticationModel | Error>
 }

@@ -2,12 +2,14 @@ import { Validation } from '../presentation/protocols/validation'
 import validator from 'validator'
 
 export class Validator implements Validation {
-  validate (input: { name: string, email: string, password: string}): Error[] {
+  validate (input: { name?: string, email: string, password: string}): Error[] {
     const errors: Error[] = []
 
-    if (validator.isEmpty(input.name)) {
-      const error = Error('Invalid name')
-      errors.push(error)
+    if (input.name !== undefined) {
+      if (validator.isEmpty(input.name)) {
+        const error = Error('Invalid name')
+        errors.push(error)
+      }
     }
 
     if (!validator.isEmail(input.email)) {

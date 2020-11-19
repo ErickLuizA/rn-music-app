@@ -1,5 +1,3 @@
-import { videoFormat } from 'ytdl-core'
-
-export interface LoadAudioUseCase {
-  execute: (id: number) => Promise<videoFormat>
+export interface LoadAudioUseCase<T> {
+  execute: (id: string) => Promise<T[]>
 }

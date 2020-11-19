@@ -11,13 +11,17 @@ export class AuthMiddleware implements Middleware {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const { authorization } = httpRequest.headers
 
+    if (!authorization) {
+      return forbidden(new Error('Authorization is required'))
+    }
+
     const token = authorization.replace('Bearer', '').trim()
 
     try {
       const user = await this.userRepository.loadUserByToken(token)
 
       if (user) {
-        return ok({ userId: user.id })
+        return ok(user.id)
       } else {
         return forbidden(new Error('Invalid token'))
       }

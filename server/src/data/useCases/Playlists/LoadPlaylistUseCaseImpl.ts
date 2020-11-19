@@ -7,7 +7,7 @@ export class LoadPlaylistUseCaseImpl implements LoadPlaylistUseCase {
     private readonly playlistRepository: IPlaylistRepository
   ) {}
 
-  async execute (userId: string, playlistId: string): Promise<MusicModel[]> {
-    return await this.playlistRepository.loadMusics(userId, playlistId)
+  async execute (playlistId: string): Promise<MusicModel[]> {
+    return await this.playlistRepository.loadMusics(playlistId)
   }
 }

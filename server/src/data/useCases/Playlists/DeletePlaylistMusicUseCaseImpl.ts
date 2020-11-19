@@ -6,7 +6,7 @@ export class DeletePlaylistMusicUseCaseImpl implements DeletePlaylistMusicUseCas
     private readonly playlistRepository: IPlaylistRepository
   ) {}
 
-  async execute (userId: string, playlistId: string, musicId: string): Promise<number> {
-    return await this.playlistRepository.deleteMusic(userId, playlistId, musicId)
+  async execute (playlistId: string, playlistMusicId: string): Promise<number> {
+    return await this.playlistRepository.deleteMusic(playlistId, playlistMusicId)
   }
 }

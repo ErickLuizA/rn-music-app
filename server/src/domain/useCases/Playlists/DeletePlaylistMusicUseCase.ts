@@ -1,3 +1,3 @@
 export interface DeletePlaylistMusicUseCase {
-  execute: (userId: string, playlistId: string, musicId: string) => Promise<number>
+  execute: (playlistId: string, playlistMusicId: string) => Promise<number>
 }

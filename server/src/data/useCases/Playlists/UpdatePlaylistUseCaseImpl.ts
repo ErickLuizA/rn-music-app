@@ -7,7 +7,7 @@ export class UpdatePlaylistUseCaseImpl implements UpdatePlaylistUseCase {
     private readonly playlistRepository: IPlaylistRepository
   ) {}
 
-  async execute (updatePlaylistParams: PlaylistModel): Promise<PlaylistModel> {
+  async execute (updatePlaylistParams: PlaylistModel): Promise<number | undefined> {
     return await this.playlistRepository.update(updatePlaylistParams.userId, updatePlaylistParams.playlistId, updatePlaylistParams.title)
   }
 }

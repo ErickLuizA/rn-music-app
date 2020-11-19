@@ -7,13 +7,13 @@ export class CreatePlaylistMusicUseCaseImpl implements CreatePlaylistMusicUseCas
     private readonly playlistRepository: IPlaylistRepository
   ) {}
 
-  async execute (userId: string, musicId: string, title: string, img: string, playlistId: string): Promise<MusicModel> {
-    const alreadyExists = await this.playlistRepository.loadMusic(userId, musicId, playlistId)
+  async execute (musicId: string, title: string, img: string, playlistId: string): Promise<MusicModel> {
+    const alreadyExists = await this.playlistRepository.loadMusic(musicId, playlistId)
 
     if (alreadyExists) {
       throw new Error('This music already belongs to the playlist.')
     }
 
-    return await this.playlistRepository.createMusic(userId, musicId, title, img, playlistId)
+    return await this.playlistRepository.createMusic(musicId, title, img, playlistId)
   }
 }

@@ -14,7 +14,7 @@ export class FavoriteRepositoryImpl implements IFavoriteRepository {
     return await database('favorites').where({ userId, musicId }).first()
   }
 
-  async loadAll (userId: string): Promise<FavoriteMusicModel> {
-    return await database('favorites').where('userId', userId).first()
+  async loadAll (userId: string): Promise<FavoriteMusicModel[]> {
+    return await database('favorites').where('userId', userId)
   }
 }

@@ -6,5 +6,5 @@ export interface IFavoriteRepository {
 
   load: (userId: string, musicId: string) => Promise<FavoriteMusicModel>
 
-  loadAll: (userId: string) => Promise<FavoriteMusicModel>
+  loadAll: (userId: string) => Promise<FavoriteMusicModel[]>
 }

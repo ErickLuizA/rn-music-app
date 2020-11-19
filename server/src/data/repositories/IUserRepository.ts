@@ -4,7 +4,9 @@ import { UserParams } from '../../domain/useCases/User/CreateUserUseCase'
 export interface IUserRepository {
   create: (params: UserParams) => Promise<UserModel>
 
-  load: (email: string) => Promise<UserModel>
+  loadByEmail: (email: string) => Promise<UserModel>
+
+  loadById: (id: string) => Promise<UserModel>
 
   updateToken: (userId: string, token: string) => Promise<void>
 

@@ -1,12 +1,20 @@
 import { UserModel } from '../../../domain/models/User'
 import { LoadUserUseCase } from '../../../domain/useCases/User/LoadUserUseCase'
-import { LoadUserByEmailRepository } from '../../repositories/User/LoadUserByEmailRepository'
+import { IUserRepository } from '../../repositories/IUserRepository'
 
 export class LoadUserUseCaseImpl implements LoadUserUseCase {
-  constructor (private readonly loadUserByEmailRepository: LoadUserByEmailRepository) {}
+  constructor (
+    private readonly userRepository: IUserRepository
+  ) {}
 
-  async execute (email: string): Promise<UserModel> {
-    const user = await this.loadUserByEmailRepository.load(email)
+  async byEmail (email: string): Promise<UserModel> {
+    const user = await this.userRepository.loadByEmail(email)
+
+    return user
+  }
+
+  async byId (id: string): Promise<UserModel> {
+    const user = await this.userRepository.loadById(id)
 
     return user
   }

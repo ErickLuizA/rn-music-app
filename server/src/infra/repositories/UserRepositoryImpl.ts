@@ -18,8 +18,12 @@ export class UserRepositoryImpl implements IUserRepository {
     return result
   }
 
-  async load (email: string): Promise<UserModel> {
+  async loadByEmail (email: string): Promise<UserModel> {
     return await database('users').where('email', email).first()
+  }
+
+  async loadById (id: string): Promise<UserModel> {
+    return await database('users').where('id', id).first()
   }
 
   async updateToken (userId: string, token: string): Promise<void> {

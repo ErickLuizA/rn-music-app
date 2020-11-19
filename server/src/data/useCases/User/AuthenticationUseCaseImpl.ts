@@ -12,7 +12,7 @@ export class AuthenticationUseCaseImpl implements AuthenticationUseCase {
   ) {}
 
   async execute (authenticationParams: AuthenticationParams): Promise<AuthenticationModel | Error> {
-    const user = await this.userRepository.load(authenticationParams.email)
+    const user = await this.userRepository.loadByEmail(authenticationParams.email)
 
     if (user) {
       const isValid = await this.hashComparer.compare(authenticationParams.password, user.password)

@@ -41,6 +41,7 @@ YFMusic is a music app built with React Native and Node.js
 
 - [Node.js](https://nodejs.org/en/)
 
+  - [Typescript](https://www.typescriptlang.org/)
   - [Express](https://expressjs.com)
   - [Knex](http://knexjs.org)
   - [Pg](https://node-postgres.com)
@@ -49,6 +50,7 @@ YFMusic is a music app built with React Native and Node.js
   - [ytdl-core](https://github.com/fent/node-ytdl-core)
 
 - [React Native](https://reactnative.dev/)
+
   - [Expo](https://expo.io)
   - [React Navigation](https://reactnavigation.org/)
   - [AsyncStorage](https://github.com/react-native-community/async-storage)
@@ -107,12 +109,10 @@ $ yarn dev
 $ yarn start
 ```
 
-> Project demo : https://expo.io/@erickluiza/mobile
-
 ## :memo: License
 
 This project is under the MIT license. See the file [LICENSE](LICENSE) for more details.
 
 ---
 
-Build with 💙 By [Erick](https://erickluiz.netlify.app/)
+Build with 💙 By [Erick](https://www.linkedin.com/in/erick-luiz-47151a1a4/)

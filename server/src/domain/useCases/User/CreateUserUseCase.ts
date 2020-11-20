@@ -1,11 +1,11 @@
 import { UserModel } from '../../models/User'
 
-export interface UserParams {
+export interface CreateUserParams {
   name: string
   email: string
   password: string
 }
 
 export interface CreateUserUseCase {
-  execute: (user: UserParams) => Promise<UserModel>
+  execute: (user: CreateUserParams) => Promise<UserModel | Error>
 }

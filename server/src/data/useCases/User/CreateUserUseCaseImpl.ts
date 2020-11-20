@@ -12,7 +12,7 @@ export class CreateUserUseCaseImpl implements CreateUserUseCase {
   async execute (user: Pick<UserModel, 'name' | 'avatar' | 'email' | 'password'>): Promise<UserModel> {
     const userAlreadyExists = await this.userRepository.loadByEmail(user.email)
 
-    if (userAlreadyExists) {
+    if (userAlreadyExists.email === user.email) {
       throw new Error('User already exists')
     }
 

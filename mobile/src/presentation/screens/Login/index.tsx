@@ -7,7 +7,7 @@ import {
   Text,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
-import { ILoadUserUseCase } from '../../../domain/useCases/ILoadUserUseCase'
+import { ILoginUserUseCase } from '../../../domain/useCases/ILoginUserUseCase'
 import { AuthContext } from '../../contexts/AuthContext'
 
 import Logo from '../../../../assets/icon.png'
@@ -15,10 +15,10 @@ import Logo from '../../../../assets/icon.png'
 import styles from './styles'
 
 interface ILogin {
-  loadUser: ILoadUserUseCase
+  loginUser: ILoginUserUseCase
 }
 
-function Login({ loadUser }: ILogin) {
+function Login({ loginUser }: ILogin) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -35,7 +35,7 @@ function Login({ loadUser }: ILogin) {
     try {
       setError(null)
 
-      const response = await loadUser.execute({
+      const response = await loginUser.execute({
         email,
         password,
       })

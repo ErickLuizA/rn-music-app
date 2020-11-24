@@ -1,7 +1,7 @@
 import React from 'react'
 import Login from '../../../presentation/screens/Login'
-import { makeLoadUser } from '../useCases/LoadUserFactory'
+import { makeLoginUser } from '../useCases/LoginUserFactory'
 
 export function makeLogin() {
-  return <Login loadUser={makeLoadUser()} />
+  return <Login loginUser={makeLoginUser()} />
 }

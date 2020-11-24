@@ -4,7 +4,7 @@ import {
   CreateUserParams,
   CreateUserResponse,
 } from '../../domain/useCases/ICreateUserUseCase'
-import { LoadUserParams } from '../../domain/useCases/ILoadUserUseCase'
+import { LoginUserParams } from '../../domain/useCases/ILoginUserUseCase'
 import { IHttpClient } from '../protocols/IHttpClient'
 
 export class UserRepositoryImpl implements IUserRepository {
@@ -14,7 +14,11 @@ export class UserRepositoryImpl implements IUserRepository {
     return await this.httpClient.post('/register', params)
   }
 
-  async load(params: LoadUserParams): Promise<User> {
+  async login(params: LoginUserParams): Promise<User> {
     return await this.httpClient.post('/login', params)
+  }
+
+  async load(): Promise<User> {
+    return await this.httpClient.get('/user')
   }
 }

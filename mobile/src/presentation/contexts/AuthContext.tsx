@@ -5,7 +5,7 @@ import api from '../../infra/services/api'
 interface IAuthContext {
   authenticated: boolean
   login: (response: any) => Promise<void>
-  logout: (response: any) => Promise<void>
+  logout: () => Promise<void>
 }
 
 export const AuthContext = createContext<IAuthContext>({} as IAuthContext)

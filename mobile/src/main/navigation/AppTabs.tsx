@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { AntDesign } from '@expo/vector-icons'
 
 import HomeStack from './HomeStack'
+import { makeUser } from '../factories/screens/UserFactory'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -74,17 +75,17 @@ function AppTabs() {
           title: '',
         }}
       />
-
+*/}
       <Screen
         name="User"
-        component={UserScreen}
+        component={makeUser}
         options={{
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="user" size={size} color={color} />
           ),
           title: '',
         }}
-      /> */}
+      />
     </Navigator>
   )
 }

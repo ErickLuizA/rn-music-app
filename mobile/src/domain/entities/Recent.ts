@@ -1,5 +1,5 @@
 export interface Recent {
-  id: number
+  id: string
   img: string
   title: string
 }

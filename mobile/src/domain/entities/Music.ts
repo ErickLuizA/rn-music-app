@@ -1,5 +1,19 @@
 export interface Music {
-  id: number
+  id: string
+  snippet: {
+    title: string
+    thumbnails: {
+      high: {
+        url: string
+      }
+    }
+  }
+}
+
+export interface SearchedMusic {
+  id: {
+    videoId: string
+  }
   snippet: {
     title: string
     thumbnails: {

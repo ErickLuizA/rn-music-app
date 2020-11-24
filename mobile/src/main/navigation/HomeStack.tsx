@@ -2,6 +2,7 @@ import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import { makeHome } from '../factories/screens/HomeFactory'
+import { makeSearch } from '../factories/screens/SearchFactory'
 
 const { Navigator, Screen } = createStackNavigator()
 
@@ -13,11 +14,11 @@ function HomeStack() {
         component={makeHome}
         options={{ headerShown: false }}
       />
-      {/* <Screen
+      <Screen
         name="Search"
-        component={SearchScreen}
+        component={makeSearch}
         options={{ headerShown: false }}
-      /> */}
+      />
     </Navigator>
   )
 }

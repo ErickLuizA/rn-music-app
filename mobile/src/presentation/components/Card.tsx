@@ -1,22 +1,18 @@
 import React from 'react'
-import {
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  Text,
-  Dimensions,
-} from 'react-native'
+import { Image, StyleSheet, Text, Dimensions } from 'react-native'
+import { RectButton } from 'react-native-gesture-handler'
 
 interface IProps {
+  id: string
   title: string
   img: string
   navigate: () => void
   fullWidth?: string
 }
 
-function Card({ title, img, navigate, fullWidth }: IProps) {
+function Card({ id, title, img, navigate, fullWidth }: IProps) {
   return (
-    <TouchableOpacity style={styles.container} onPress={() => navigate()}>
+    <RectButton key={id} style={styles.container} onPress={() => navigate()}>
       <Image
         resizeMode="contain"
         style={fullWidth ? styles.fullWidth : styles.image}
@@ -28,7 +24,7 @@ function Card({ title, img, navigate, fullWidth }: IProps) {
         {' '}
         {title}{' '}
       </Text>
-    </TouchableOpacity>
+    </RectButton>
   )
 }
 

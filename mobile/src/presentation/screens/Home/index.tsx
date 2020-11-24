@@ -99,6 +99,7 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
             horizontal={true}
             renderItem={({ item }) => (
               <Card
+                id={item.id}
                 title={item.snippet.title}
                 img={item.snippet.thumbnails.high.url}
                 navigate={() =>
@@ -116,6 +117,7 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
           <Text style={[styles.white, styles.categoryText]}>Last played</Text>
           {recent?.map((rec) => (
             <Card
+              id={rec.id}
               title={rec.title}
               img={rec.img}
               navigate={() =>

@@ -30,7 +30,11 @@ function UserScreen({ loadUser }: IUserScreen) {
   }, [loadUser])
 
   if (!userInfo) {
-    return <ActivityIndicator size="large" />
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" />
+      </View>
+    )
   }
 
   return (

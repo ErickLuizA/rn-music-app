@@ -4,7 +4,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
-    paddingTop: StatusBar.currentHeight + 10,
+    paddingTop: StatusBar.currentHeight! + 10,
     paddingHorizontal: 10,
   },
 

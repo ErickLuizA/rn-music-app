@@ -9,10 +9,12 @@ export class CreateUserUseCaseImpl implements CreateUserUseCase {
     private readonly hasher: Hasher
   ) {}
 
-  async execute (user: Pick<UserModel, 'name' | 'avatar' | 'email' | 'password'>): Promise<UserModel> {
+  async execute (
+    user: Pick<UserModel, 'name' | 'avatar' | 'email' | 'password'>
+  ): Promise<UserModel> {
     const userAlreadyExists = await this.userRepository.loadByEmail(user.email)
 
-    if (userAlreadyExists.email === user.email) {
+    if (userAlreadyExists?.email === user.email) {
       throw new Error('User already exists')
     }
 

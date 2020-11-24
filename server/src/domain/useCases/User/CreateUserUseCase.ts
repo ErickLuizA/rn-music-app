@@ -7,5 +7,5 @@ export interface CreateUserParams {
 }
 
 export interface CreateUserUseCase {
-  execute: (user: CreateUserParams) => Promise<UserModel | Error>
+  execute: (user: CreateUserParams) => Promise<UserModel>
 }

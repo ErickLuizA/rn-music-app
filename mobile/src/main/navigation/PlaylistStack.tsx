@@ -1,15 +1,12 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import PlaylistScreen from '../../presentation/screens/Playlist'
-import PlaylistDetailScreen from '../../presentation/screens/PlaylistDetail'
-
-const { Navigator, Screen } = createStackNavigator()
+const { Navigator } = createStackNavigator()
 
 function PlaylistStack() {
   return (
     <Navigator initialRouteName="Home">
-      <Screen
+      {/* <Screen
         name="Playlist"
         component={PlaylistScreen}
         options={{ headerShown: false }}
@@ -18,7 +15,7 @@ function PlaylistStack() {
         name="PlaylistDetailScreen"
         component={PlaylistDetailScreen}
         options={{ headerShown: false }}
-      />
+      /> */}
     </Navigator>
   )
 }

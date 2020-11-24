@@ -1,4 +1,4 @@
-import React, { createContext, useState, useEffect, ReactChildren } from 'react'
+import React, { createContext, useState, useEffect, ReactChild } from 'react'
 import AsyncStorage from '@react-native-community/async-storage'
 import api from '../../infra/services/api'
 
@@ -11,7 +11,7 @@ interface IAuthContext {
 export const AuthContext = createContext<IAuthContext>({} as IAuthContext)
 
 interface IAuthProvider {
-  children: ReactChildren
+  children: ReactChild
 }
 
 function AuthProvider({ children }: IAuthProvider) {

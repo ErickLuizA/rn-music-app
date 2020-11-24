@@ -11,27 +11,23 @@ import {
 } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AntDesign } from '@expo/vector-icons'
+import { Recent } from '../../../domain/entities/Recent'
 import { Music } from '../../../domain/entities/Music'
 import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause'
+import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
-import AsyncStorage from '@react-native-community/async-storage'
 import Card from '../../components/Card'
 
 import styles from './styles'
 
 interface IHomeScreen {
   loadMusics: ILoadMusicsUseCase
+  loadRecent: ILoadRecentUseCase
 }
 
-interface IRecent {
-  id: number
-  img: string
-  title: string
-}
-
-function HomeScreen({ loadMusics }: IHomeScreen) {
+function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   const [musics, setMusics] = useState<Music[]>([])
-  const [recent, setRecent] = useState<IRecent>()
+  const [recent, setRecent] = useState<Recent[]>()
 
   const navigation = useNavigation()
 
@@ -57,10 +53,12 @@ function HomeScreen({ loadMusics }: IHomeScreen) {
 
   useFocusEffect(() => {
     async function getRecentPlayed() {
-      const musicPlayed = await AsyncStorage.getItem('@RNplayed')
+      const musicPlayed = await loadRecent.execute('@RNplayed')
 
-      if (musicPlayed) {
-        const playedJson = JSON.parse(musicPlayed)
+      if (musicPlayed?.length > 0) {
+        const playedJson: Recent[] = musicPlayed.map((music: any) =>
+          JSON.parse(music),
+        )
 
         setRecent(playedJson)
       }
@@ -93,7 +91,6 @@ function HomeScreen({ loadMusics }: IHomeScreen) {
         />
       </View>
       <View style={styles.musicSection}>
-        <Text style={[styles.text, styles.white]}>Music </Text>
         <View style={styles.trending}>
           <Text style={[styles.white, styles.categoryText]}>Trending </Text>
           <FlatList
@@ -106,11 +103,9 @@ function HomeScreen({ loadMusics }: IHomeScreen) {
                 img={item.snippet.thumbnails.high.url}
                 navigate={() =>
                   navigation.navigate('Playing', {
-                    data: {
-                      title: item.snippet.title,
-                      img: item.snippet.thumbnails.high.url,
-                      id: item.id,
-                    },
+                    title: item.snippet.title,
+                    img: item.snippet.thumbnails.high.url,
+                    id: item.id,
                   })
                 }
               />
@@ -119,17 +114,19 @@ function HomeScreen({ loadMusics }: IHomeScreen) {
         </View>
         <View style={styles.recent}>
           <Text style={[styles.white, styles.categoryText]}>Last played</Text>
-          {recent && (
+          {recent?.map((rec) => (
             <Card
-              title={recent.title}
-              img={recent.img}
+              title={rec.title}
+              img={rec.img}
               navigate={() =>
                 navigation.navigate('Playing', {
-                  data: { title: recent.title, img: recent.img, id: recent.id },
+                  title: rec.title,
+                  img: rec.img,
+                  id: rec.id,
                 })
               }
             />
-          )}
+          ))}
         </View>
       </View>
     </SafeAreaView>

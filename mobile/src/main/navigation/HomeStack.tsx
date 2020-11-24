@@ -1,8 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 
-import HomeScreen from '../../presentation/screens/Home'
-import SearchScreen from '../../presentation/screens/Search'
+import { makeHome } from '../factories/screens/HomeFactory'
 
 const { Navigator, Screen } = createStackNavigator()
 
@@ -11,14 +10,14 @@ function HomeStack() {
     <Navigator initialRouteName="Home">
       <Screen
         name="Home"
-        component={HomeScreen}
+        component={makeHome}
         options={{ headerShown: false }}
       />
-      <Screen
+      {/* <Screen
         name="Search"
         component={SearchScreen}
         options={{ headerShown: false }}
-      />
+      /> */}
     </Navigator>
   )
 }

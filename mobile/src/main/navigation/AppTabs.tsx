@@ -3,10 +3,6 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { AntDesign } from '@expo/vector-icons'
 
 import HomeStack from './HomeStack'
-import PlaylistStack from './PlaylistStack'
-import FavoritesScreen from '../../presentation/screens/Favorites'
-import PlayingScreen from '../../presentation/screens/Playing'
-import UserScreen from '../../presentation/screens/User'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -41,7 +37,7 @@ function AppTabs() {
         }}
       />
 
-      <Screen
+      {/* <Screen
         name="Favorites"
         component={FavoritesScreen}
         options={{
@@ -88,7 +84,7 @@ function AppTabs() {
           ),
           title: '',
         }}
-      />
+      /> */}
     </Navigator>
   )
 }

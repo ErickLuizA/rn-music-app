@@ -9,7 +9,7 @@ import {
 } from '@expo-google-fonts/inter'
 
 import AuthProvider from '../presentation/contexts/AuthContext'
-import Routes from './routes'
+import Navigation from './navigation'
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -24,8 +24,10 @@ export default function App() {
   return (
     <NavigationContainer>
       <AuthProvider>
-        <StatusBar style="light" backgroundColor="#111" />
-        <Routes />
+        <>
+          <StatusBar style="light" backgroundColor="#111" />
+          <Navigation />
+        </>
       </AuthProvider>
     </NavigationContainer>
   )

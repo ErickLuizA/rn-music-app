@@ -3,6 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { AntDesign } from '@expo/vector-icons'
 
 import HomeStack from './HomeStack'
+import PlaylistStack from './PlaylistStack'
 import { makeUser } from '../factories/screens/UserFactory'
 import { makeFavorites } from '../factories/screens/FavoritesFactory'
 
@@ -65,6 +66,7 @@ function AppTabs() {
           title: '',
         }}
       />
+*/}
 
       <Screen
         name="Playlist"
@@ -76,7 +78,6 @@ function AppTabs() {
           title: '',
         }}
       />
-*/}
       <Screen
         name="User"
         component={makeUser}

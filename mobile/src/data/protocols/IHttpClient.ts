@@ -3,5 +3,7 @@ export interface IHttpClient {
 
   get: (url: string, data?: any, params?: any) => Promise<any>
 
+  update: (url: string, data?: any, params?: any) => Promise<any>
+
   delete: (url: string, data?: any) => Promise<any>
 }

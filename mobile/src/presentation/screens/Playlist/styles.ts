@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#111',
     marginTop: StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight + 10,
+    paddingTop: StatusBar.currentHeight! + 10,
     padding: 15,
   },
 

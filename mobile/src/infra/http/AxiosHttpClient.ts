@@ -15,6 +15,15 @@ export class AxiosHttpClient implements IHttpClient {
     ).data
   }
 
+  async update(url: string, data?: any, params?: any): Promise<any> {
+    return await (
+      await api.patch(url, {
+        params,
+        data,
+      })
+    ).data
+  }
+
   async delete(url: string, data?: any): Promise<any> {
     return await (await api.delete(url, data)).data
   }

@@ -1,6 +1,7 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
 import { makePlaylist } from '../factories/screens/PlaylistsFactory'
+import { makePlaylistDetails } from '../factories/screens/PlaylistDetailFactory'
 
 const { Navigator, Screen } = createStackNavigator()
 
@@ -12,11 +13,11 @@ function PlaylistStack() {
         component={makePlaylist}
         options={{ headerShown: false }}
       />
-      {/* <Screen
+      <Screen
         name="PlaylistDetailScreen"
-        component={PlaylistDetailScreen}
+        component={makePlaylistDetails}
         options={{ headerShown: false }}
-      /> */}
+      />
     </Navigator>
   )
 }

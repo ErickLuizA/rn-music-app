@@ -4,6 +4,7 @@ import { AntDesign } from '@expo/vector-icons'
 
 import HomeStack from './HomeStack'
 import { makeUser } from '../factories/screens/UserFactory'
+import { makeFavorites } from '../factories/screens/FavoritesFactory'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -38,9 +39,9 @@ function AppTabs() {
         }}
       />
 
-      {/* <Screen
+      <Screen
         name="Favorites"
-        component={FavoritesScreen}
+        component={makeFavorites}
         options={{
           tabBarIcon: ({ color, size }) => (
             <AntDesign name="hearto" size={size} color={color} />
@@ -48,7 +49,7 @@ function AppTabs() {
           title: '',
         }}
       />
-
+      {/*
       <Screen
         name="Ṕlaying"
         component={PlayingScreen}

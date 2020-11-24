@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#111',
     padding: 20,
     marginTop: StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight + 10,
+    paddingTop: StatusBar.currentHeight! + 10,
   },
 
   heading: {

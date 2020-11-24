@@ -7,7 +7,7 @@ interface IProps {
   title: string
   img: string
   navigate: () => void
-  fullWidth?: string
+  fullWidth?: boolean
 }
 
 function Card({ id, title, img, navigate, fullWidth }: IProps) {

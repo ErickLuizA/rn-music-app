@@ -6,6 +6,7 @@ import HomeStack from './HomeStack'
 import PlaylistStack from './PlaylistStack'
 import { makeUser } from '../factories/screens/UserFactory'
 import { makeFavorites } from '../factories/screens/FavoritesFactory'
+import { makePlaying } from '../factories/screens/PlayingFactory'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 
@@ -50,10 +51,10 @@ function AppTabs() {
           title: '',
         }}
       />
-      {/*
+
       <Screen
-        name="Ṕlaying"
-        component={PlayingScreen}
+        name="Playing"
+        component={makePlaying}
         options={{
           tabBarIcon: ({ color, size }) => (
             <AntDesign
@@ -66,7 +67,6 @@ function AppTabs() {
           title: '',
         }}
       />
-*/}
 
       <Screen
         name="Playlist"

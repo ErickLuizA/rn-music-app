@@ -1,5 +1,5 @@
 export interface DeleteFavoritesParams {
-  id: number
+  id: string
 }
 
 export interface IDeleteFavoritesUseCase {

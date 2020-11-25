@@ -13,28 +13,37 @@ import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavorit
 import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
 import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
-import Modal from '../../components/Modal'
+import Modal, { IPlaylists } from '../../components/Modal'
 
 import styles from './styles'
+import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
+import { IAddPlaylistUseCase } from '../../../domain/useCases/IAddPlaylistMusicUseCase'
+import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylistUseCase'
 
 interface IPlayingScreen {
   loadSound: ILoadSoundUseCase
   loadPlaylistMusics: ILoadPlaylistMusicUseCase
+  loadPlaylists: ILoadPlaylistsUseCase
   loadFavorites: ILoadFavoritesUseCase
   createFavorite: ICreateFavoritesUseCase
   deleteFavorite: IDeleteFavoritesUseCase
   createRecent: ICreateRecentUseCase
   loadRecent: ILoadRecentUseCase
+  addPlaylistMusic: IAddPlaylistUseCase
+  createPlaylistUseCase: ICreatePlaylistUseCase
 }
 
 function PlayingScreen({
   loadSound,
   loadPlaylistMusics,
+  loadPlaylists,
   loadFavorites,
   createFavorite,
   deleteFavorite,
   createRecent,
   loadRecent,
+  addPlaylistMusic,
+  createPlaylistUseCase,
 }: IPlayingScreen) {
   const { params } = useRoute<{
     params: { data: Music }
@@ -52,6 +61,8 @@ function PlayingScreen({
   const [isFavorite, setIsFavorite] = useState(false)
   const [inPlaylist, setInPlaylist] = useState(false)
   const [openModal, setOpenModal] = useState(false)
+
+  const [playlists, setPlaylists] = useState<IPlaylists>()
 
   useEffect(() => {
     if (!data) {
@@ -174,6 +185,14 @@ function PlayingScreen({
     setIsFavorite(false)
   }
 
+  const handleOpenModal = async () => {
+    setOpenModal(true)
+
+    const p = await loadPlaylists.execute()
+
+    setPlaylists(p)
+  }
+
   if (!data) {
     return (
       <View style={styles.container}>
@@ -219,9 +238,7 @@ function PlayingScreen({
               <MaterialIcons name="playlist-add-check" style={styles.icons} />
             </RectButton>
           ) : (
-            <RectButton
-              style={styles.button}
-              onPress={() => setOpenModal(true)}>
+            <RectButton style={styles.button} onPress={() => handleOpenModal()}>
               <MaterialIcons name="playlist-add" style={styles.icons} />
             </RectButton>
           )}
@@ -245,6 +262,9 @@ function PlayingScreen({
           open={openModal}
           close={() => setOpenModal(false)}
           musicData={data}
+          playlists={playlists!}
+          addPlaylistMusic={addPlaylistMusic}
+          createPlaylistUseCase={createPlaylistUseCase}
         />
       </View>
     )

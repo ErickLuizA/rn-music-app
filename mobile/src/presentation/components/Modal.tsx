@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Modal,
   Text,
@@ -11,37 +11,47 @@ import {
 } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'
 import CheckBox from '@react-native-community/checkbox'
-import AsyncStorage from '@react-native-community/async-storage'
+import { Playlist } from '../../domain/entities/Playlist'
+import { IAddPlaylistUseCase } from '../../domain/useCases/IAddPlaylistMusicUseCase'
+import { ICreatePlaylistUseCase } from '../../domain/useCases/ICreatePlaylistUseCase'
+import { Music } from '../../domain/entities/Music'
 
-function Modals({ open, close, musicData }) {
+export type IPlaylists = Playlist[]
+
+interface IModals {
+  close: () => void
+  open: boolean
+  musicData: Music
+  playlists: IPlaylists
+  addPlaylistMusic: IAddPlaylistUseCase
+  createPlaylistUseCase: ICreatePlaylistUseCase
+}
+
+type IChecked = Playlist
+
+function Modals({
+  close,
+  open,
+  musicData,
+  playlists,
+  addPlaylistMusic,
+  createPlaylistUseCase,
+}: IModals) {
   const [newModal, setNewModal] = useState(false)
   const [title, setTitle] = useState('')
-  const [playlists, setPlaylists] = useState([])
-  const [checked, setChecked] = useState([])
+  const [checked, setChecked] = useState<IChecked[]>([])
 
-  // useEffect(() => {
-  //   ;(async () => {
-  //     let response = await api.get('/playlists')
-
-  //     if (typeof response.data === 'string') {
-  //       api.defaults.headers.Authorization = `Bearer ${response.data}`
-
-  //       await AsyncStorage.setItem('@RNtoken', response.data)
-
-  //       response = await api.get('/playlists')
-  //     }
-
-  //     setPlaylists(response.data)
-  //   })()
-  // }, [newModal])
-
-  const handleCheck = async (item) => {
-    const exists = checked.filter((check) => check.id === item.id)
+  const handleCheck = async (item: IChecked) => {
+    const exists = checked.filter(
+      (check) => check.playlistId === item.playlistId,
+    )
 
     if (exists.length === 0) {
       setChecked((current) => [...current, item])
     } else {
-      setChecked((current) => current.filter((c) => c.id !== item.id))
+      setChecked((current) =>
+        current.filter((c) => c.playlistId !== item.playlistId),
+      )
     }
   }
 
@@ -50,29 +60,15 @@ function Modals({ open, close, musicData }) {
       close()
       return
     }
-    // let response = await api.post('/playlist_song', {
-    //   song_id: musicData.id,
-    //   playlist_id: checked[0].id,
-    //   title: musicData.title,
-    //   img: musicData.img,
-    // })
 
-    // if (typeof response.data === 'string' && response.status !== 201) {
-    //   api.defaults.headers.Authorization = `Bearer ${response.data}`
+    await addPlaylistMusic.execute({
+      musicId: musicData.id,
+      img: musicData.snippet.thumbnails.high.url,
+      title: musicData.snippet.title,
+      playlistId: checked[0].playlistId,
+    })
 
-    //   await AsyncStorage.setItem('@RNtoken', response.data)
-
-    //   response = await api.post('/playlist_song', {
-    //     song_id: musicData.id,
-    //     playlist_id: checked[0].id,
-    //     title: musicData.title,
-    //     img: musicData.img,
-    //   })
-    // }
-
-    // if (response.status === 201) {
-    //   close()
-    // }
+    close()
   }
 
   const openNewModal = () => {
@@ -81,23 +77,12 @@ function Modals({ open, close, musicData }) {
   }
 
   const handleCreatePlaylist = async () => {
-    // try {
-    //   let response = await api.post('/playlist', {
-    //     title,
-    //   })
-    //   if (typeof response.data === 'string' && response.status !== 201) {
-    //     api.defaults.headers.Authorization = `Bearer ${response.data}`
-    //     await AsyncStorage.setItem('@RNtoken', response.data)
-    //     response = await api.post('/playlist', {
-    //       title,
-    //     })
-    //   }
-    //   if (response.status === 201) {
-    //     setNewModal(false)
-    //   }
-    // } catch (err) {
-    //   console.log(err)
-    // }
+    try {
+      await createPlaylistUseCase.execute({ title })
+      setNewModal(false)
+    } catch (err) {
+      console.log(err)
+    }
   }
 
   return (
@@ -120,14 +105,16 @@ function Modals({ open, close, musicData }) {
             </View>
             <FlatList
               data={playlists}
-              keyExtractor={(item) => item.id.toString()}
+              keyExtractor={(item) => item.playlistId}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.flexBox}
                   onPress={() => handleCheck(item)}>
                   <CheckBox
                     value={Boolean(
-                      checked.find((playlist) => playlist.id === item.id),
+                      checked.find(
+                        (playlist) => playlist.playlistId === item.playlistId,
+                      ),
                     )}
                     tintColors={{ true: '#11cccc' }}
                     onValueChange={() => handleCheck(item)}

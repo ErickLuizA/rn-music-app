@@ -1,18 +1,76 @@
 import React, { useState, useContext } from 'react'
-import { TextInput, Image, SafeAreaView, Text } from 'react-native'
+import { TextInput, Image, SafeAreaView, Text, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { AuthContext } from '../../contexts/AuthContext'
 import { ICreateUserUseCase } from '../../../domain/useCases/ICreateUserUseCase'
-import Logo from '../../../../assets/icon.png'
-
-import styles from './styles'
 import { RectButton } from 'react-native-gesture-handler'
 
+import Logo from '../../../../assets/icon.png'
 interface IRegister {
   createUser: ICreateUserUseCase
 }
 
-function Register({ createUser }: IRegister) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111',
+    padding: 40,
+  },
+
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 50,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#11cccc',
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    marginVertical: 10,
+    padding: 10,
+    fontFamily: 'Inter_400Regular',
+    color: '#ddd',
+  },
+
+  error: {
+    color: '#C72914',
+    fontFamily: 'Inter_400Regular',
+    alignSelf: 'flex-start',
+  },
+
+  button: {
+    backgroundColor: '#11cccc',
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    marginVertical: 10,
+    paddingVertical: 10,
+  },
+
+  buttonText: {
+    fontFamily: 'Inter_400Regular',
+    color: '#111',
+    textAlign: 'center',
+    fontSize: 20,
+  },
+
+  registerText: {
+    color: '#ddd',
+    fontSize: 16,
+    fontFamily: 'Inter_700Bold',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+
+  blue: {
+    color: '#11cccc',
+  },
+})
+
+export default function Register({ createUser }: IRegister) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -45,14 +103,11 @@ function Register({ createUser }: IRegister) {
   return (
     <SafeAreaView style={styles.container}>
       <Image source={Logo} style={styles.logo} />
-      <Text style={styles.text}>
-        Your favorite music at the palm of your hands
-      </Text>
       <TextInput
         style={styles.input}
         value={name}
         autoCapitalize="words"
-        placeholder="Name"
+        placeholder="Nome"
         placeholderTextColor="#ddd"
         onChangeText={(value) => setName(value)}
       />
@@ -69,23 +124,21 @@ function Register({ createUser }: IRegister) {
         style={styles.input}
         value={password}
         autoCapitalize="none"
-        placeholder="Password"
+        placeholder="Senha"
         placeholderTextColor="#ddd"
         onChangeText={(value) => setPassword(value)}
       />
       {error && <Text style={styles.error}> {error} </Text>}
       <RectButton style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+        <Text style={styles.buttonText}>Registrar</Text>
       </RectButton>
       <Text style={styles.registerText}>
-        Already have a account ?
+        Já possui uma conta ?
         <Text style={styles.blue} onPress={() => navigation.navigate('Login')}>
           {' '}
-          Login{' '}
+          Entrar{' '}
         </Text>
       </Text>
     </SafeAreaView>
   )
 }
-
-export default Register

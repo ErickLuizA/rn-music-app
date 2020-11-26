@@ -6,20 +6,55 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ActivityIndicator,
+  StyleSheet,
+  StatusBar,
 } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { AntDesign } from '@expo/vector-icons'
 import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
 import { SearchedMusic } from '../../../domain/entities/Music'
 
-import styles from './styles'
 import Card from '../../components/Card'
 
 interface ISearchScreen {
   searchMusic: ISearchMusicsUseCase
 }
 
-function SearchScreen({ searchMusic }: ISearchScreen) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#111',
+    paddingTop: StatusBar.currentHeight! + 10,
+    paddingHorizontal: 10,
+  },
+
+  searchSection: {
+    flexDirection: 'row',
+  },
+
+  icon: {
+    fontSize: 32,
+    paddingRight: 20,
+  },
+
+  input: {
+    flex: 1,
+    fontFamily: 'Inter_400Regular',
+    borderBottomColor: '#999',
+    borderBottomWidth: 0.3,
+    paddingBottom: 10,
+  },
+
+  white: {
+    color: '#ddd',
+  },
+
+  list: {
+    paddingVertical: 20,
+  },
+})
+
+export default function SearchScreen({ searchMusic }: ISearchScreen) {
   const [items, setItems] = useState<SearchedMusic[]>()
 
   const navigation = useNavigation()
@@ -101,5 +136,3 @@ function SearchScreen({ searchMusic }: ISearchScreen) {
     </SafeAreaView>
   )
 }
-
-export default SearchScreen

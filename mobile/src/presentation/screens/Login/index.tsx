@@ -5,20 +5,78 @@ import {
   Image,
   SafeAreaView,
   Text,
+  StyleSheet,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { ILoginUserUseCase } from '../../../domain/useCases/ILoginUserUseCase'
 import { AuthContext } from '../../contexts/AuthContext'
 
 import Logo from '../../../../assets/icon.png'
-
-import styles from './styles'
-
 interface ILogin {
   loginUser: ILoginUserUseCase
 }
 
-function Login({ loginUser }: ILogin) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111',
+    padding: 40,
+  },
+
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 50,
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#11cccc',
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    marginVertical: 10,
+    padding: 10,
+    fontFamily: 'Inter_400Regular',
+    color: '#ddd',
+  },
+
+  error: {
+    color: '#C72914',
+    fontFamily: 'Inter_400Regular',
+    alignSelf: 'flex-start',
+  },
+
+  button: {
+    backgroundColor: '#11cccc',
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    marginVertical: 10,
+    paddingVertical: 10,
+  },
+
+  buttonText: {
+    fontFamily: 'Inter_400Regular',
+    color: '#111',
+    textAlign: 'center',
+    fontSize: 20,
+  },
+
+  registerText: {
+    color: '#ddd',
+    fontSize: 16,
+    fontFamily: 'Inter_700Bold',
+    textAlign: 'center',
+    paddingVertical: 10,
+  },
+
+  blue: {
+    color: '#11cccc',
+  },
+})
+
+export default function Login({ loginUser }: ILogin) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
@@ -28,13 +86,13 @@ function Login({ loginUser }: ILogin) {
   const { login } = useContext(AuthContext)
 
   async function handleLogin() {
+    setError(null)
+
     if (email.length < 1 || password.length < 1) {
       return setError('Preencha todos os campos')
     }
 
     try {
-      setError(null)
-
       const response = await loginUser.execute({
         email,
         password,
@@ -49,9 +107,6 @@ function Login({ loginUser }: ILogin) {
   return (
     <SafeAreaView style={styles.container}>
       <Image source={Logo} style={styles.logo} />
-      <Text style={styles.text}>
-        Your favorite music at the palm of your hands
-      </Text>
       <TextInput
         style={styles.input}
         value={email}
@@ -64,7 +119,7 @@ function Login({ loginUser }: ILogin) {
         style={styles.input}
         value={password}
         autoCapitalize="none"
-        placeholder="Password"
+        placeholder="Senha"
         placeholderTextColor="#ddd"
         onChangeText={(value) => setPassword(value)}
       />
@@ -73,16 +128,14 @@ function Login({ loginUser }: ILogin) {
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       <Text style={styles.registerText}>
-        Don't have a account ?
+        Não tem uma conta ?
         <Text
           style={styles.blue}
           onPress={() => navigation.navigate('Register')}>
           {' '}
-          Register{' '}
+          Registrar{' '}
         </Text>
       </Text>
     </SafeAreaView>
   )
 }
-
-export default Login

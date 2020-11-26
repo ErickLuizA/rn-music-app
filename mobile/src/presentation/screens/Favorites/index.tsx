@@ -1,18 +1,38 @@
 import React, { useState, useCallback } from 'react'
-import { View, FlatList } from 'react-native'
+import { View, FlatList, StatusBar, StyleSheet } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { Favorite } from '../../../domain/entities/Favorite'
 
 import Card from '../../components/Card'
 
-import styles from './styles'
-
 interface IFavoritesScreen {
   loadFavorites: ILoadFavoritesUseCase
 }
 
-function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111',
+    padding: 20,
+    marginTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight! + 10,
+  },
+
+  heading: {
+    fontFamily: 'Inter_700Bold',
+    fontSize: 22,
+    color: '#ddd',
+    paddingBottom: 10,
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+})
+
+export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
   const [favorites, setFavorites] = useState<Favorite[]>()
 
   const navigation = useNavigation()
@@ -57,5 +77,3 @@ function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
     </View>
   )
 }
-
-export default FavoritesScreen

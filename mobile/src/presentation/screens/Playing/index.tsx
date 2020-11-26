@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, Image, ActivityIndicator } from 'react-native'
+import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native'
 import { Audio } from 'expo-av'
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { useRoute } from '@react-navigation/native'
@@ -19,8 +19,6 @@ import { getFavorites, getPlaylistMusics, setRecent } from './helper-functions'
 
 import Modal, { IPlaylists } from '../../components/Modal'
 
-import styles from './styles'
-
 interface IPlayingScreen {
   loadSound: ILoadSoundUseCase
   loadPlaylistMusics: ILoadPlaylistMusicUseCase
@@ -34,7 +32,57 @@ interface IPlayingScreen {
   createPlaylistUseCase: ICreatePlaylistUseCase
 }
 
-function PlayingScreen({
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111',
+    padding: 20,
+  },
+
+  image: {
+    width: 400,
+    height: 400,
+    borderRadius: 20,
+    resizeMode: 'contain',
+  },
+
+  title: {
+    color: '#ddd',
+    fontSize: 20,
+    fontFamily: 'Inter_400Regular',
+    paddingBottom: 40,
+  },
+
+  iconContainer: {
+    flexDirection: 'row',
+  },
+
+  touchable: {
+    width: 250,
+    height: 100,
+    justifyContent: 'space-between',
+  },
+
+  button: {
+    width: 50,
+  },
+
+  icon: {
+    fontSize: 50,
+    color: '#ddd',
+    padding: 25,
+  },
+
+  icons: {
+    fontSize: 30,
+    color: '#ddd',
+    alignSelf: 'stretch',
+  },
+})
+
+export default function PlayingScreen({
   loadSound,
   loadPlaylistMusics,
   loadPlaylists,
@@ -232,5 +280,3 @@ function PlayingScreen({
     )
   }
 }
-
-export default PlayingScreen

@@ -8,6 +8,8 @@ import {
   ActivityIndicator,
   NativeSyntheticEvent,
   TextInputSubmitEditingEventData,
+  StatusBar,
+  StyleSheet,
 } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { AntDesign } from '@expo/vector-icons'
@@ -18,14 +20,73 @@ import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
 import Card from '../../components/Card'
 
-import styles from './styles'
-
 interface IHomeScreen {
   loadMusics: ILoadMusicsUseCase
   loadRecent: ILoadRecentUseCase
 }
 
-function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
+const styles = StyleSheet.create({
+  white: {
+    color: '#ddd',
+  },
+
+  loading: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#111',
+  },
+
+  container: {
+    flex: 1,
+    marginTop: StatusBar.currentHeight,
+    paddingTop: StatusBar.currentHeight! + 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#111',
+  },
+
+  searchSection: {
+    flexDirection: 'row',
+    borderBottomColor: '#999',
+    borderBottomWidth: 0.3,
+    paddingBottom: 10,
+  },
+
+  icon: {
+    fontSize: 26,
+    paddingRight: 10,
+  },
+
+  input: {
+    flex: 1,
+    fontFamily: 'Inter_400Regular',
+  },
+
+  musicSection: {
+    paddingTop: 70,
+  },
+
+  text: {
+    fontSize: 32,
+    fontFamily: 'Inter_700Bold',
+  },
+
+  trending: {
+    paddingTop: 20,
+  },
+
+  recent: {
+    paddingTop: 10,
+  },
+
+  categoryText: {
+    alignSelf: 'flex-start',
+    fontSize: 20,
+    fontFamily: 'Inter_400Regular',
+  },
+})
+
+export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   const [musics, setMusics] = useState<Music[]>([])
   const [recent, setRecent] = useState<Recent[]>()
 
@@ -76,7 +137,7 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   if (musics.length < 1) {
     return (
       <View style={styles.loading}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#fff" />
       </View>
     )
   }
@@ -92,7 +153,7 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
       </View>
       <View style={styles.musicSection}>
         <View style={styles.trending}>
-          <Text style={[styles.white, styles.categoryText]}>Trending </Text>
+          <Text style={[styles.white, styles.categoryText]}>Tendência </Text>
           <FlatList
             data={musics}
             keyExtractor={(item) => item.id.toString()}
@@ -116,7 +177,9 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
           />
         </View>
         <View style={styles.recent}>
-          <Text style={[styles.white, styles.categoryText]}>Last played</Text>
+          <Text style={[styles.white, styles.categoryText]}>
+            Recentemente tocadas
+          </Text>
           {recent?.map((rec) => (
             <Card
               id={rec.id}
@@ -138,5 +201,3 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
     </SafeAreaView>
   )
 }
-
-export default HomeScreen

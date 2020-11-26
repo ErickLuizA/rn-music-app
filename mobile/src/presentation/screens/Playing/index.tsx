@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, Image, ActivityIndicator } from 'react-native'
-import { Audio, AVPlaybackStatus } from 'expo-av'
+import { Audio } from 'expo-av'
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
 import { useRoute } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
-import { Music } from '../../../domain/entities/Music'
+import { PlayingMusic, SearchedData } from '../../../domain/entities/Music'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
 import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
@@ -12,13 +12,14 @@ import { ICreateFavoritesUseCase } from '../../../domain/useCases/ICreateFavorit
 import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
 import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
 import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
+import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
+import { IAddPlaylistUseCase } from '../../../domain/useCases/IAddPlaylistMusicUseCase'
+import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylistUseCase'
+import { getFavorites, getPlaylistMusics, setRecent } from './helper-functions'
 
 import Modal, { IPlaylists } from '../../components/Modal'
 
 import styles from './styles'
-import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
-import { IAddPlaylistUseCase } from '../../../domain/useCases/IAddPlaylistMusicUseCase'
-import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylistUseCase'
 
 interface IPlayingScreen {
   loadSound: ILoadSoundUseCase
@@ -46,132 +47,96 @@ function PlayingScreen({
   createPlaylistUseCase,
 }: IPlayingScreen) {
   const { params } = useRoute<{
-    params: { data: Music }
+    params: {
+      data: PlayingMusic | SearchedData
+    }
     name: string
     key: string
   }>()
 
-  const data = params ? params.data : null
+  const data = params?.data as PlayingMusic
+  const searchedData = params?.data as SearchedData
+
+  const playback = new Audio.Sound()
 
   const [isPlaying, setIsPlaying] = useState(false)
-  const [playback, setPlayBack] = useState<{
-    sound: Audio.Sound
-    status: AVPlaybackStatus
-  }>()
   const [isFavorite, setIsFavorite] = useState(false)
   const [inPlaylist, setInPlaylist] = useState(false)
   const [openModal, setOpenModal] = useState(false)
-
+  const [loaded, setLoaded] = useState(false)
   const [playlists, setPlaylists] = useState<IPlaylists>()
 
+  const playingMusicId = useRef<string>()
+
   useEffect(() => {
-    if (!data) {
+    if (!params?.data) {
       return
-    } else if (playback?.sound && Object.keys(playback.sound).length > 0) {
-      playback.sound.unloadAsync().then(() => setIsPlaying(false))
     }
+
+    if (playingMusicId.current === data.id || searchedData.id.videoId) {
+      return
+    }
+
+    playback.unloadAsync().then(() => setLoaded(false))
+
+    playingMusicId.current = data.id || searchedData.id.videoId
 
     async function getMusic() {
       try {
-        const response = await loadSound.execute({ id: data?.id! })
+        const response = await loadSound.execute({
+          id: searchedData.id.videoId || data?.id,
+        })
 
-        const playBackInstance = await Audio.Sound.createAsync(
-          { uri: response.url },
-          {
-            shouldPlay: true,
-          },
-        )
-
-        setIsPlaying(true)
-        setPlayBack(playBackInstance)
-
-        const playedMusic = await loadRecent.execute('@RNplayed')
-
-        if (playedMusic.length < 0) {
-          await createRecent.execute({
-            id: data?.id!,
-            img: data?.snippet.thumbnails.high.url!,
-            title: data?.snippet.title!,
-          })
-        } else if (playedMusic && playedMusic.find((m) => m.id === data?.id)) {
-          await createRecent.execute({
-            id: data?.id!,
-            img: data?.snippet.thumbnails.high.url!,
-            title: data?.snippet.title!,
-          })
-        }
+        await playback.loadAsync({ uri: response[0].url })
+        await playback.playAsync()
       } catch (error) {
-        console.log(error)
+        console.log(error.response.data)
       }
     }
 
     getMusic()
-  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    if (!data) {
-      return
-    }
-
-    async function getFavorites() {
-      const response = await loadFavorites.execute()
-
-      const isFavorited = response.filter(
-        (music) => music.musicId === data?.id!,
-      )
-
-      if (isFavorited.length > 0) {
-        setIsFavorite(true)
+    playback?.setOnPlaybackStatusUpdate(async (status) => {
+      if (status.isLoaded) {
+        setLoaded(true)
       } else {
-        setIsFavorite(false)
+        setLoaded(false)
       }
-    }
 
-    getFavorites()
-  }, [data, loadFavorites])
+      console.log('status', status)
 
-  useEffect(() => {
-    if (!data) {
-      return
-    }
-
-    async function getPlaylistMusics() {
-      const response = await loadPlaylistMusics.execute({
-        playlistId: data?.id!,
-      })
-
-      if (response.length > 0) {
-        const onPlaylist = response.find((music) => music.id === data?.id!)
-
-        setInPlaylist(Boolean(onPlaylist))
+      if (status.isPlaying) {
+        setIsPlaying(true)
+      } else {
+        setIsPlaying(false)
       }
-    }
 
-    getPlaylistMusics()
-  }, [data, loadPlaylistMusics])
+      if (status.didJustFinish) {
+        setIsPlaying(false)
+      }
+    })
 
-  const play = async () => {
-    if (!playback) {
-      return
-    }
+    getFavorites(loadFavorites, searchedData, data).then((bool) =>
+      setIsFavorite(bool),
+    )
 
-    isPlaying
-      ? await playback.sound.pauseAsync()
-      : await playback.sound.playAsync()
+    getPlaylistMusics(loadPlaylistMusics, searchedData, data).then((bool) =>
+      setInPlaylist(bool),
+    )
 
-    setIsPlaying((current) => !current)
+    setRecent(loadRecent, createRecent, searchedData, data)
 
-    if (playback.status.didJustFinish) {
-      playback.sound.unloadAsync()
-      setIsPlaying(false)
-    }
-  }
+    return () => playback._clearSubscriptions()
+  }, [params]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const play = async () =>
+    isPlaying ? await playback?.pauseAsync() : await playback?.playAsync()
 
   const handleAddFavorite = async () => {
     await createFavorite.execute({
-      musicId: data?.id!,
-      img: data?.snippet.thumbnails.high.url!,
-      title: data?.snippet.title!,
+      musicId: searchedData.id.videoId || data?.id,
+      img: data?.img,
+      title: data?.title,
     })
 
     setIsFavorite(true)
@@ -179,7 +144,7 @@ function PlayingScreen({
 
   const handleRemoveFavorite = async () => {
     await deleteFavorite.execute({
-      id: data?.id!,
+      id: searchedData.id.videoId || data?.id,
     })
 
     setIsFavorite(false)
@@ -193,16 +158,16 @@ function PlayingScreen({
     setPlaylists(p)
   }
 
-  if (!data) {
+  if (!params?.data) {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Nothing playing :(</Text>
       </View>
     )
-  } else if (data && !playback?.status.isLoaded) {
+  } else if (params?.data && !loaded) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator color="#fff" size="large" />
       </View>
     )
   } else {
@@ -215,22 +180,18 @@ function PlayingScreen({
         }>
         <Image
           style={styles.image}
-          source={{ uri: data.snippet.thumbnails.high.url }}
+          source={{ uri: data?.img }}
           resizeMode="contain"
         />
-        <Text style={styles.title}>{data.snippet.title}</Text>
+        <Text style={styles.title}>{data?.title}</Text>
         <View style={[styles.iconContainer, styles.touchable]}>
           {isFavorite ? (
             <RectButton style={styles.button} onPress={handleRemoveFavorite}>
-              <FontAwesome5
-                name="heart-broken"
-                style={styles.icons}
-                color="#f00"
-              />
+              <FontAwesome5 name="heart" style={styles.icons} color="#f00" />
             </RectButton>
           ) : (
             <RectButton style={styles.button} onPress={handleAddFavorite}>
-              <AntDesign name="heart" style={styles.icons} color="0f0" />
+              <AntDesign name="hearto" style={styles.icons} color="0f0" />
             </RectButton>
           )}
           {inPlaylist ? (
@@ -261,7 +222,8 @@ function PlayingScreen({
         <Modal
           open={openModal}
           close={() => setOpenModal(false)}
-          musicData={data}
+          data={data}
+          searchedData={searchedData}
           playlists={playlists!}
           addPlaylistMusic={addPlaylistMusic}
           createPlaylistUseCase={createPlaylistUseCase}

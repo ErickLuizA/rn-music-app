@@ -104,9 +104,11 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
                 img={item.snippet.thumbnails.high.url}
                 navigate={() =>
                   navigation.navigate('Playing', {
-                    title: item.snippet.title,
-                    img: item.snippet.thumbnails.high.url,
-                    id: item.id,
+                    data: {
+                      title: item.snippet.title,
+                      img: item.snippet.thumbnails.high.url,
+                      id: item.id,
+                    },
                   })
                 }
               />
@@ -122,9 +124,11 @@ function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
               img={rec.img}
               navigate={() =>
                 navigation.navigate('Playing', {
-                  title: rec.title,
-                  img: rec.img,
-                  id: rec.id,
+                  data: {
+                    title: rec.title,
+                    img: rec.img,
+                    id: rec.id,
+                  },
                 })
               }
             />

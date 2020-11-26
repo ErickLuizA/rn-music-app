@@ -8,7 +8,7 @@ import {
 export class LoadSoundUseCaseImpl implements ILoadSoundUseCase {
   constructor(private readonly soundRepository: ISoundRepository) {}
 
-  async execute(params: LoadSoundParams): Promise<Sound> {
+  async execute(params: LoadSoundParams): Promise<Sound[]> {
     return await this.soundRepository.load(params)
   }
 }

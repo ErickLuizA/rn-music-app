@@ -5,5 +5,5 @@ export interface LoadSoundParams {
 }
 
 export interface ILoadSoundUseCase {
-  execute: (params: LoadSoundParams) => Promise<Sound>
+  execute: (params: LoadSoundParams) => Promise<Sound[]>
 }

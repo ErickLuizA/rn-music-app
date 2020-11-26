@@ -43,9 +43,11 @@ function PlaylistDetail({}: IPlaylistDetail) {
             img={item.snippet.thumbnails.high.url}
             navigate={() =>
               navigation.navigate('Playing', {
-                title: item.snippet.title,
-                img: item.snippet.thumbnails.high.url,
-                id: item.id,
+                data: {
+                  title: item.snippet.title,
+                  img: item.snippet.thumbnails.high.url,
+                  id: item.id,
+                },
               })
             }
           />

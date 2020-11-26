@@ -21,8 +21,6 @@ function AuthProvider({ children }: IAuthProvider) {
     async function checkAuth() {
       const token = await AsyncStorage.getItem('@RNtoken')
 
-      console.log('AuthProvider - (token)', token)
-
       if (token) {
         setAuthenticated(true)
         api.defaults.headers.Authorization = `Bearer ${token}`

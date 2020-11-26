@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react'
-import { View, FlatList, Text } from 'react-native'
+import { View, FlatList } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { Favorite } from '../../../domain/entities/Favorite'
@@ -43,9 +43,11 @@ function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
             img={item.img}
             navigate={() =>
               navigation.navigate('Playing', {
-                title: item.title,
-                img: item.img,
-                id: item.favoriteId,
+                data: {
+                  title: item.title,
+                  img: item.img,
+                  id: item.favoriteId,
+                },
               })
             }
             fullWidth

@@ -23,3 +23,17 @@ export interface SearchedMusic {
     }
   }
 }
+
+export interface SearchedData {
+  id: {
+    videoId: string
+  }
+  img: string
+  title: string
+}
+
+export interface PlayingMusic {
+  id: string
+  img: string
+  title: string
+}

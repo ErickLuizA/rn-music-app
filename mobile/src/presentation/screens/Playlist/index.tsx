@@ -7,7 +7,7 @@ import {
   StatusBar,
   StyleSheet,
 } from 'react-native'
-import { FontAwesome5 } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { RectButton } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
@@ -105,7 +105,7 @@ export default function PlaylistScreen({
             onPress={() => handleShowPlaylist(item.playlistId)}>
             <Text style={styles.whiteText}> {item.title} </Text>
             <RectButton onPress={() => handleRemovePlaylist(item.playlistId)}>
-              <FontAwesome5 name="trash-alt" size={24} color="#ddd" />
+              <Icon name="restore-from-trash" size={24} color="#ddd" />
             </RectButton>
           </RectButton>
         )}

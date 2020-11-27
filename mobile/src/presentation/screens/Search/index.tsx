@@ -10,7 +10,7 @@ import {
   StatusBar,
 } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { AntDesign } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
 import { SearchedMusic } from '../../../domain/entities/Music'
 
@@ -101,7 +101,7 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
     <SafeAreaView style={styles.container}>
       <View style={styles.searchSection}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <AntDesign name="back" style={[styles.icon, styles.white]} />
+          <Icon name="navigate-before" style={[styles.icon, styles.white]} />
         </TouchableOpacity>
         <TextInput
           style={[styles.input, styles.white]}

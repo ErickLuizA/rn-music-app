@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import CheckBox from '@react-native-community/checkbox'
 import { Playlist } from '../../domain/entities/Playlist'
 import { IAddPlaylistUseCase } from '../../domain/useCases/IAddPlaylistMusicUseCase'
@@ -100,7 +100,7 @@ function Modals({
               <Text style={styles.whiteText}>Save music in...</Text>
               <TouchableOpacity onPress={openNewModal}>
                 <Text style={styles.blueText}>
-                  <AntDesign name="plus" size={18} />
+                  <Icon name="library-add" size={18} />
                   New Playlist
                 </Text>
               </TouchableOpacity>
@@ -126,7 +126,7 @@ function Modals({
               )}
             />
             <TouchableOpacity style={styles.last} onPress={handleDone}>
-              <AntDesign name="check" size={26} color="#666" />
+              <Icon name="done" size={26} color="#666" />
               <Text style={styles.smallerText}>Done</Text>
             </TouchableOpacity>
           </View>

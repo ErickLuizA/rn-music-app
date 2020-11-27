@@ -1,6 +1,6 @@
 import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { AntDesign } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import HomeStack from './HomeStack'
 import PlaylistStack from './PlaylistStack'
@@ -35,7 +35,7 @@ function AppTabs() {
         component={HomeStack}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name="home" size={size} color={color} />
+            <Icon name="home" size={size} color={color} />
           ),
           title: '',
         }}
@@ -46,7 +46,7 @@ function AppTabs() {
         component={makeFavorites}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name="hearto" size={size} color={color} />
+            <Icon name="favorite-border" size={size} color={color} />
           ),
           title: '',
         }}
@@ -57,8 +57,8 @@ function AppTabs() {
         component={makePlaying}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <AntDesign
-              name="playcircleo"
+            <Icon
+              name="music-note"
               size={size + 20}
               color={color}
               style={{ marginBottom: 20 }} // eslint-disable-line react-native/no-inline-styles
@@ -73,7 +73,7 @@ function AppTabs() {
         component={PlaylistStack}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name="folderopen" size={size} color={color} />
+            <Icon name="mail" size={size} color={color} />
           ),
           title: '',
         }}
@@ -83,7 +83,7 @@ function AppTabs() {
         component={makeUser}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <AntDesign name="user" size={size} color={color} />
+            <Icon name="person-outline" size={size} color={color} />
           ),
           title: '',
         }}

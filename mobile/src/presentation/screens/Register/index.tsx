@@ -1,5 +1,12 @@
-import React, { useState, useContext } from 'react'
-import { TextInput, Image, SafeAreaView, Text, StyleSheet } from 'react-native'
+import React, { useState, useContext, useEffect } from 'react'
+import {
+  TextInput,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Animated,
+  Keyboard,
+} from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { AuthContext } from '../../contexts/AuthContext'
 import { ICreateUserUseCase } from '../../../domain/useCases/ICreateUserUseCase'
@@ -17,12 +24,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#111',
     padding: 40,
-  },
-
-  logo: {
-    width: 200,
-    height: 200,
-    marginBottom: 50,
   },
 
   input: {
@@ -75,10 +76,38 @@ export default function Register({ createUser }: IRegister) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [keyboardOn, setKeyboardOn] = useState(false)
 
   const { login } = useContext(AuthContext)
 
   const navigation = useNavigation()
+
+  const size = new Animated.Value(0)
+
+  useEffect(() => {
+    Keyboard.addListener('keyboardDidShow', _keyboardDidShow)
+    Keyboard.addListener('keyboardDidHide', _keyboardDidHide)
+
+    // cleanup function
+    return () => {
+      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow)
+      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide)
+    }
+  }, [])
+
+  const _keyboardDidShow = () => {
+    setKeyboardOn(true)
+  }
+
+  const _keyboardDidHide = () => {
+    setKeyboardOn(false)
+  }
+
+  Animated.timing(size, {
+    toValue: keyboardOn ? 1 : 0,
+    duration: 500,
+    useNativeDriver: false,
+  }).start()
 
   async function handleRegister() {
     setError(null)
@@ -101,8 +130,27 @@ export default function Register({ createUser }: IRegister) {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image source={Logo} style={styles.logo} />
+    <KeyboardAvoidingView behavior="height" style={styles.container}>
+      <Animated.Image
+        source={Logo}
+        style={{
+          width: size.interpolate({
+            inputRange: [0, 1],
+            outputRange: [200, 150],
+            extrapolate: 'clamp',
+          }),
+          height: size.interpolate({
+            inputRange: [0, 1],
+            outputRange: [200, 150],
+            extrapolate: 'clamp',
+          }),
+          marginBottom: size.interpolate({
+            inputRange: [0, 1],
+            outputRange: [50, 25],
+            extrapolate: 'clamp',
+          }),
+        }}
+      />
       <TextInput
         style={styles.input}
         value={name}
@@ -139,6 +187,6 @@ export default function Register({ createUser }: IRegister) {
           Entrar{' '}
         </Text>
       </Text>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   )
 }

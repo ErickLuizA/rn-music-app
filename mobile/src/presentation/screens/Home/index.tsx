@@ -12,7 +12,7 @@ import {
   StyleSheet,
 } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { AntDesign } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Recent } from '../../../domain/entities/Recent'
 import { Music } from '../../../domain/entities/Music'
 import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause'
@@ -145,7 +145,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.searchSection}>
-        <AntDesign name="search1" style={[styles.icon, styles.white]} />
+        <Icon name="search" style={[styles.icon, styles.white]} />
         <TextInput
           style={[styles.input, styles.white]}
           onSubmitEditing={handleSubmit}

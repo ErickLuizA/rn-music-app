@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native'
-import { Audio } from 'expo-av'
-import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useRoute } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import { PlayingMusic, SearchedData } from '../../../domain/entities/Music'
@@ -235,36 +234,36 @@ export default function PlayingScreen({
         <View style={[styles.iconContainer, styles.touchable]}>
           {isFavorite ? (
             <RectButton style={styles.button} onPress={handleRemoveFavorite}>
-              <FontAwesome5 name="heart" style={styles.icons} color="#f00" />
+              <Icon name="favorite" style={styles.icons} color="#f00" />
             </RectButton>
           ) : (
             <RectButton style={styles.button} onPress={handleAddFavorite}>
-              <AntDesign name="hearto" style={styles.icons} color="0f0" />
+              <Icon name="favorite-outline" style={styles.icons} color="0f0" />
             </RectButton>
           )}
           {inPlaylist ? (
             <RectButton style={styles.button}>
-              <MaterialIcons name="playlist-add-check" style={styles.icons} />
+              <Icon name="playlist-add-check" style={styles.icons} />
             </RectButton>
           ) : (
             <RectButton style={styles.button} onPress={() => handleOpenModal()}>
-              <MaterialIcons name="playlist-add" style={styles.icons} />
+              <Icon name="playlist-add" style={styles.icons} />
             </RectButton>
           )}
         </View>
         <View style={styles.iconContainer}>
           <RectButton>
-            <AntDesign name="stepbackward" style={styles.icon} />
+            <Icon name="skip-previous" style={styles.icon} />
           </RectButton>
           <RectButton onPress={play}>
             {isPlaying ? (
-              <AntDesign name="pause" style={styles.icon} />
+              <Icon name="pause" style={styles.icon} />
             ) : (
-              <AntDesign name="play" style={styles.icon} />
+              <Icon name="play-arrow" style={styles.icon} />
             )}
           </RectButton>
           <RectButton>
-            <AntDesign name="stepforward" style={styles.icon} />
+            <Icon name="skip-next" style={styles.icon} />
           </RectButton>
         </View>
         <Modal

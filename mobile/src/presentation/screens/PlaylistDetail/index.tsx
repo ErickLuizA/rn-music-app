@@ -8,7 +8,7 @@ import {
   StatusBar,
   StyleSheet,
 } from 'react-native'
-import { AntDesign } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { Music } from '../../../domain/entities/Music'
 
@@ -59,8 +59,8 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.flex}>
-        <AntDesign
-          name="back"
+        <Icon
+          name="navigate-before"
           size={24}
           color="#ddd"
           onPress={() => navigation.goBack()}

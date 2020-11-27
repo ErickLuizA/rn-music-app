@@ -8,7 +8,6 @@ import {
   ActivityIndicator,
   NativeSyntheticEvent,
   TextInputSubmitEditingEventData,
-  StatusBar,
   StyleSheet,
 } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
@@ -26,8 +25,10 @@ interface IHomeScreen {
 }
 
 const styles = StyleSheet.create({
-  white: {
-    color: '#ddd',
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    backgroundColor: '#111',
   },
 
   loading: {
@@ -35,21 +36,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#111',
-  },
-
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight! + 10,
-    paddingHorizontal: 20,
-    backgroundColor: '#111',
-  },
-
-  searchSection: {
-    flexDirection: 'row',
-    borderBottomColor: '#999',
-    borderBottomWidth: 0.3,
-    paddingBottom: 10,
   },
 
   icon: {
@@ -63,7 +49,7 @@ const styles = StyleSheet.create({
   },
 
   musicSection: {
-    paddingTop: 70,
+    paddingTop: 30,
   },
 
   text: {
@@ -83,6 +69,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     fontSize: 20,
     fontFamily: 'Inter_400Regular',
+  },
+
+  white: {
+    color: '#ddd',
   },
 })
 
@@ -128,12 +118,6 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
     getRecentPlayed()
   })
 
-  const handleSubmit = (
-    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>,
-  ) => {
-    navigation.navigate('Search', { searchTerm: e.nativeEvent.text })
-  }
-
   if (musics.length < 1) {
     return (
       <View style={styles.loading}>
@@ -144,13 +128,6 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.searchSection}>
-        <Icon name="search" style={[styles.icon, styles.white]} />
-        <TextInput
-          style={[styles.input, styles.white]}
-          onSubmitEditing={handleSubmit}
-        />
-      </View>
       <View style={styles.musicSection}>
         <View style={styles.trending}>
           <Text style={[styles.white, styles.categoryText]}>Tendência </Text>

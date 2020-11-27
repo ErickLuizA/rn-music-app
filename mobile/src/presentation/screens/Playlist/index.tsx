@@ -4,7 +4,6 @@ import {
   FlatList,
   Text,
   Dimensions,
-  StatusBar,
   StyleSheet,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -27,8 +26,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#111',
-    marginTop: StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight! + 10,
     padding: 15,
   },
 

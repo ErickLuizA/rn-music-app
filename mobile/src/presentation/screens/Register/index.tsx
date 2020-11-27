@@ -3,9 +3,9 @@ import {
   TextInput,
   Text,
   StyleSheet,
-  KeyboardAvoidingView,
-  Animated,
   Keyboard,
+  Image,
+  View,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { AuthContext } from '../../contexts/AuthContext'
@@ -26,6 +26,18 @@ const styles = StyleSheet.create({
     padding: 40,
   },
 
+  smallLogo: {
+    width: 150,
+    height: 150,
+    marginBottom: 25,
+  },
+
+  logo: {
+    width: 200,
+    height: 200,
+    marginBottom: 50,
+  },
+
   input: {
     borderWidth: 1,
     borderColor: '#11cccc',
@@ -33,6 +45,18 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginVertical: 10,
     padding: 10,
+    fontFamily: 'Inter_400Regular',
+    color: '#ddd',
+  },
+
+  smallInput: {
+    borderWidth: 1,
+    borderColor: '#11cccc',
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    marginVertical: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
     fontFamily: 'Inter_400Regular',
     color: '#ddd',
   },
@@ -49,6 +73,15 @@ const styles = StyleSheet.create({
     alignSelf: 'stretch',
     marginVertical: 10,
     paddingVertical: 10,
+  },
+
+  smallButton: {
+    backgroundColor: '#11cccc',
+    borderRadius: 5,
+    alignSelf: 'stretch',
+    marginTop: 8,
+    marginBottom: 4,
+    paddingVertical: 8,
   },
 
   buttonText: {
@@ -72,42 +105,25 @@ const styles = StyleSheet.create({
 })
 
 export default function Register({ createUser }: IRegister) {
+  const { login } = useContext(AuthContext)
+  const navigation = useNavigation()
+
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+
   const [keyboardOn, setKeyboardOn] = useState(false)
 
-  const { login } = useContext(AuthContext)
-
-  const navigation = useNavigation()
-
-  const size = new Animated.Value(0)
-
   useEffect(() => {
-    Keyboard.addListener('keyboardDidShow', _keyboardDidShow)
-    Keyboard.addListener('keyboardDidHide', _keyboardDidHide)
+    Keyboard.addListener('keyboardDidShow', () => setKeyboardOn(true))
+    Keyboard.addListener('keyboardDidHide', () => setKeyboardOn(false))
 
-    // cleanup function
     return () => {
-      Keyboard.removeListener('keyboardDidShow', _keyboardDidShow)
-      Keyboard.removeListener('keyboardDidHide', _keyboardDidHide)
+      Keyboard.removeListener('keyboardDidShow', () => setKeyboardOn(true))
+      Keyboard.removeListener('keyboardDidHide', () => setKeyboardOn(false))
     }
   }, [])
-
-  const _keyboardDidShow = () => {
-    setKeyboardOn(true)
-  }
-
-  const _keyboardDidHide = () => {
-    setKeyboardOn(false)
-  }
-
-  Animated.timing(size, {
-    toValue: keyboardOn ? 1 : 0,
-    duration: 500,
-    useNativeDriver: false,
-  }).start()
 
   async function handleRegister() {
     setError(null)
@@ -130,29 +146,13 @@ export default function Register({ createUser }: IRegister) {
   }
 
   return (
-    <KeyboardAvoidingView behavior="height" style={styles.container}>
-      <Animated.Image
+    <View style={styles.container}>
+      <Image
         source={Logo}
-        style={{
-          width: size.interpolate({
-            inputRange: [0, 1],
-            outputRange: [200, 150],
-            extrapolate: 'clamp',
-          }),
-          height: size.interpolate({
-            inputRange: [0, 1],
-            outputRange: [200, 150],
-            extrapolate: 'clamp',
-          }),
-          marginBottom: size.interpolate({
-            inputRange: [0, 1],
-            outputRange: [50, 25],
-            extrapolate: 'clamp',
-          }),
-        }}
+        style={keyboardOn ? styles.smallLogo : styles.logo}
       />
       <TextInput
-        style={styles.input}
+        style={keyboardOn ? styles.smallInput : styles.input}
         value={name}
         autoCapitalize="words"
         placeholder="Nome"
@@ -160,7 +160,7 @@ export default function Register({ createUser }: IRegister) {
         onChangeText={(value) => setName(value)}
       />
       <TextInput
-        style={styles.input}
+        style={keyboardOn ? styles.smallInput : styles.input}
         value={email}
         autoCapitalize="none"
         keyboardType="email-address"
@@ -169,7 +169,7 @@ export default function Register({ createUser }: IRegister) {
         onChangeText={(value) => setEmail(value)}
       />
       <TextInput
-        style={styles.input}
+        style={keyboardOn ? styles.smallInput : styles.input}
         value={password}
         autoCapitalize="none"
         placeholder="Senha"
@@ -177,7 +177,9 @@ export default function Register({ createUser }: IRegister) {
         onChangeText={(value) => setPassword(value)}
       />
       {error && <Text style={styles.error}> {error} </Text>}
-      <RectButton style={styles.button} onPress={handleRegister}>
+      <RectButton
+        style={keyboardOn ? styles.smallButton : styles.button}
+        onPress={handleRegister}>
         <Text style={styles.buttonText}>Registrar</Text>
       </RectButton>
       <Text style={styles.registerText}>
@@ -187,6 +189,6 @@ export default function Register({ createUser }: IRegister) {
           Entrar{' '}
         </Text>
       </Text>
-    </KeyboardAvoidingView>
+    </View>
   )
 }

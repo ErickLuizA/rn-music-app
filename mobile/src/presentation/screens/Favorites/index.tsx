@@ -17,8 +17,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#111',
     padding: 20,
-    marginTop: StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight! + 10,
   },
 
   heading: {
@@ -55,6 +53,7 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
     <View style={styles.container}>
       <FlatList
         data={favorites}
+        numColumns={2}
         keyExtractor={(item) => item.favoriteId}
         renderItem={({ item }) => (
           <Card

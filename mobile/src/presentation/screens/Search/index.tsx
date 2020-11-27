@@ -5,11 +5,11 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
-  ActivityIndicator,
   StyleSheet,
   StatusBar,
+  ToastAndroid,
 } from 'react-native'
-import { useNavigation, useRoute } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
 import { SearchedMusic } from '../../../domain/entities/Music'
@@ -24,12 +24,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#111',
-    paddingTop: StatusBar.currentHeight! + 10,
+    paddingTop: StatusBar.currentHeight || 10,
     paddingHorizontal: 10,
   },
 
   searchSection: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
 
   icon: {
@@ -42,7 +43,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
     borderBottomColor: '#999',
     borderBottomWidth: 0.3,
-    paddingBottom: 10,
   },
 
   white: {
@@ -58,19 +58,14 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
   const [items, setItems] = useState<SearchedMusic[]>()
 
   const navigation = useNavigation()
-  const { params } = useRoute<{
-    key: string
-    name: string
-    params: {
-      searchTerm: string
-    }
-  }>()
 
-  const searchTerm = params ? params.searchTerm : null
-
-  const [search, setSearch] = useState(searchTerm)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
+    if (search === '') {
+      return
+    }
+
     async function getSearchMusic() {
       try {
         const response = await searchMusic.execute({
@@ -83,19 +78,12 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
         setItems(response.items)
       } catch (err) {
         console.log(err.response.data)
+        ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
       }
     }
 
     getSearchMusic()
   }, [searchMusic, search])
-
-  if (!items) {
-    return (
-      <View style={styles.container}>
-        <ActivityIndicator size="large" />
-      </View>
-    )
-  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -105,7 +93,10 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
         </TouchableOpacity>
         <TextInput
           style={[styles.input, styles.white]}
-          value={search!}
+          value={search}
+          autoFocus
+          placeholder="Search for music"
+          placeholderTextColor="#ddd"
           onChangeText={(text) => setSearch(text)}
         />
       </View>

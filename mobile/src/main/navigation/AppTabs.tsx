@@ -2,10 +2,9 @@ import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { makeHome } from '../factories/screens/HomeFactory'
-import { makeSearch } from '../factories/screens/SearchFactory'
-import { makeUser } from '../factories/screens/UserFactory'
 import UserTabs from './UserTabs'
+import { makeSearch } from '../factories/screens/SearchFactory'
+import { makeHome } from '../factories/screens/HomeFactory'
 
 const { Navigator, Screen } = createBottomTabNavigator()
 

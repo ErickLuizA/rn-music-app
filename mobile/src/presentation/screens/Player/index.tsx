@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { View, Text, Image, ActivityIndicator, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import {
+  View,
+  Text,
+  Image,
+  ActivityIndicator,
+  StyleSheet,
+  ToastAndroid,
+} from 'react-native'
+import { add, pause, play, setupPlayer } from 'react-native-track-player'
 import { useRoute } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
 import { PlayingMusic, SearchedData } from '../../../domain/entities/Music'
@@ -18,7 +26,7 @@ import { getFavorites, getPlaylistMusics, setRecent } from './helper-functions'
 
 import Modal, { IPlaylists } from '../../components/Modal'
 
-interface IPlayingScreen {
+interface IPlayerScreen {
   loadSound: ILoadSoundUseCase
   loadPlaylistMusics: ILoadPlaylistMusicUseCase
   loadPlaylists: ILoadPlaylistsUseCase
@@ -81,7 +89,7 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function PlayingScreen({
+export default function PlayerScreen({
   loadSound,
   loadPlaylistMusics,
   loadPlaylists,
@@ -92,7 +100,7 @@ export default function PlayingScreen({
   loadRecent,
   addPlaylistMusic,
   createPlaylistUseCase,
-}: IPlayingScreen) {
+}: IPlayerScreen) {
   const { params } = useRoute<{
     params: {
       data: PlayingMusic | SearchedData
@@ -104,8 +112,6 @@ export default function PlayingScreen({
   const data = params?.data as PlayingMusic
   const searchedData = params?.data as SearchedData
 
-  const playback = new Audio.Sound()
-
   const [isPlaying, setIsPlaying] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
   const [inPlaylist, setInPlaylist] = useState(false)
@@ -113,55 +119,38 @@ export default function PlayingScreen({
   const [loaded, setLoaded] = useState(false)
   const [playlists, setPlaylists] = useState<IPlaylists>()
 
-  const playingMusicId = useRef<string>()
+  useEffect(() => {
+    async function loadPlayer() {
+      await setupPlayer()
+    }
+
+    loadPlayer()
+  }, [])
 
   useEffect(() => {
-    if (!params?.data) {
-      return
-    }
-
-    if (playingMusicId.current === data.id || searchedData.id.videoId) {
-      return
-    }
-
-    playback.unloadAsync().then(() => setLoaded(false))
-
-    playingMusicId.current = data.id || searchedData.id.videoId
-
     async function getMusic() {
       try {
         const response = await loadSound.execute({
           id: searchedData.id.videoId || data?.id,
         })
 
-        await playback.loadAsync({ uri: response[0].url })
-        await playback.playAsync()
+        await add({
+          id: response[0].id,
+          url: response[0].url,
+          title: searchedData.title,
+          artist: searchedData.title,
+        })
+
+        play()
+        setLoaded(true)
+        setIsPlaying(true)
       } catch (error) {
         console.log(error.response.data)
+        ToastAndroid.show('Erro ao carregar a música', ToastAndroid.SHORT)
       }
     }
 
     getMusic()
-
-    playback?.setOnPlaybackStatusUpdate(async (status) => {
-      if (status.isLoaded) {
-        setLoaded(true)
-      } else {
-        setLoaded(false)
-      }
-
-      console.log('status', status)
-
-      if (status.isPlaying) {
-        setIsPlaying(true)
-      } else {
-        setIsPlaying(false)
-      }
-
-      if (status.didJustFinish) {
-        setIsPlaying(false)
-      }
-    })
 
     getFavorites(loadFavorites, searchedData, data).then((bool) =>
       setIsFavorite(bool),
@@ -172,12 +161,13 @@ export default function PlayingScreen({
     )
 
     setRecent(loadRecent, createRecent, searchedData, data)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-    return () => playback._clearSubscriptions()
-  }, [params]) // eslint-disable-line react-hooks/exhaustive-deps
+  const handlePlay = async () => {
+    isPlaying ? await pause() : await play()
 
-  const play = async () =>
-    isPlaying ? await playback?.pauseAsync() : await playback?.playAsync()
+    setIsPlaying((current) => !current)
+  }
 
   const handleAddFavorite = async () => {
     await createFavorite.execute({
@@ -205,13 +195,7 @@ export default function PlayingScreen({
     setPlaylists(p)
   }
 
-  if (!params?.data) {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.title}>Nothing playing :(</Text>
-      </View>
-    )
-  } else if (params?.data && !loaded) {
+  if (!loaded) {
     return (
       <View style={styles.container}>
         <ActivityIndicator color="#fff" size="large" />
@@ -255,7 +239,7 @@ export default function PlayingScreen({
           <RectButton>
             <Icon name="skip-previous" style={styles.icon} />
           </RectButton>
-          <RectButton onPress={play}>
+          <RectButton onPress={handlePlay}>
             {isPlaying ? (
               <Icon name="pause" style={styles.icon} />
             ) : (

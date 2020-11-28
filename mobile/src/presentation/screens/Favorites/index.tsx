@@ -1,10 +1,9 @@
 import React, { useState, useCallback } from 'react'
-import { View, FlatList, StatusBar, StyleSheet } from 'react-native'
+import { View, FlatList, StyleSheet, ToastAndroid } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { Favorite } from '../../../domain/entities/Favorite'
-
-import Card from '../../components/Card'
+import LongCard from '../../components/LongCard'
 
 interface IFavoritesScreen {
   loadFavorites: ILoadFavoritesUseCase
@@ -13,10 +12,8 @@ interface IFavoritesScreen {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#111',
-    padding: 20,
+    paddingVertical: 20,
   },
 
   heading: {
@@ -43,6 +40,7 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
           setFavorites(response)
         } catch (error) {
           console.log(error.response.data)
+          ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
         }
       }
       getLoadFavorites()
@@ -53,15 +51,14 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
     <View style={styles.container}>
       <FlatList
         data={favorites}
-        numColumns={2}
         keyExtractor={(item) => item.favoriteId}
         renderItem={({ item }) => (
-          <Card
+          <LongCard
             id={item.musicId}
             title={item.title}
             img={item.img}
             navigate={() =>
-              navigation.navigate('Playing', {
+              navigation.navigate('Player', {
                 data: {
                   title: item.title,
                   img: item.img,
@@ -69,7 +66,6 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
                 },
               })
             }
-            fullWidth
           />
         )}
       />

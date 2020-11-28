@@ -5,7 +5,7 @@ import { makeLogin } from '../factories/screens/LoginFactory'
 
 const { Screen, Navigator } = createStackNavigator()
 
-function AuthRoutes() {
+function AuthNavigation() {
   return (
     <Navigator>
       <Screen
@@ -22,4 +22,4 @@ function AuthRoutes() {
   )
 }
 
-export default AuthRoutes
+export default AuthNavigation

@@ -3,15 +3,11 @@ import {
   SafeAreaView,
   View,
   Text,
-  TextInput,
   FlatList,
   ActivityIndicator,
-  NativeSyntheticEvent,
-  TextInputSubmitEditingEventData,
   StyleSheet,
 } from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Recent } from '../../../domain/entities/Recent'
 import { Music } from '../../../domain/entities/Music'
 import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause'
@@ -76,9 +72,9 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
+export default function HomeScreen({ loadMusics }: IHomeScreen) {
   const [musics, setMusics] = useState<Music[]>([])
-  const [recent, setRecent] = useState<Recent[]>()
+  // const [recent, setRecent] = useState<Recent[]>()
 
   const navigation = useNavigation()
 
@@ -102,21 +98,20 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
     getMusics()
   }, [loadMusics])
 
-  useFocusEffect(() => {
-    async function getRecentPlayed() {
-      const musicPlayed = await loadRecent.execute('@RNplayed')
+  // useFocusEffect(() => {
+  //   async function getRecentPlayed() {
+  //     const musicPlayed = await loadRecent.execute('@RNplayed')
 
-      if (musicPlayed?.length > 0) {
-        const playedJson: Recent[] = musicPlayed.map((music: any) =>
-          JSON.parse(music),
-        )
+  //     // if (musicPlayed?.length > 0) {
+  //     //   const playedJson: Recent[] = musicPlayed.map((music: any) =>
+  //     //     JSON.parse(music),
+  //     //   )
 
-        setRecent(playedJson)
-      }
-    }
+  //     setRecent(musicPlayed)
+  //   }
 
-    getRecentPlayed()
-  })
+  //   getRecentPlayed()
+  // })
 
   if (musics.length < 1) {
     return (
@@ -141,7 +136,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
                 title={item.snippet.title}
                 img={item.snippet.thumbnails.high.url}
                 navigate={() =>
-                  navigation.navigate('Playing', {
+                  navigation.navigate('Player', {
                     data: {
                       title: item.snippet.title,
                       img: item.snippet.thumbnails.high.url,
@@ -157,22 +152,27 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
           <Text style={[styles.white, styles.categoryText]}>
             Recentemente tocadas
           </Text>
-          {recent?.map((rec) => (
-            <Card
-              id={rec.id}
-              title={rec.title}
-              img={rec.img}
-              navigate={() =>
-                navigation.navigate('Playing', {
-                  data: {
-                    title: rec.title,
-                    img: rec.img,
-                    id: rec.id,
-                  },
-                })
-              }
-            />
-          ))}
+          {/* <FlatList
+            data={recent}
+            keyExtractor={(item) => item.id.toString()}
+            horizontal={true}
+            renderItem={({ item }) => (
+              <Card
+                id={item.id}
+                title={item.title}
+                img={item.img}
+                navigate={() =>
+                  navigation.navigate('Playing', {
+                    data: {
+                      title: item.title,
+                      img: item.img,
+                      id: item.id,
+                    },
+                  })
+                }
+              />
+            )}
+          /> */}
         </View>
       </View>
     </SafeAreaView>

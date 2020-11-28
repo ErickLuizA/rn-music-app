@@ -1,5 +1,5 @@
 import React from 'react'
-import PlayingScreen from '../../../presentation/screens/Playing'
+import PlayerScreen from '../../../presentation/screens/Player'
 import { makeAddPlaylistMusic } from '../useCases/AddPlaylistMusicFactory'
 import { makeCreateFavorite } from '../useCases/CreateFavoriteFactory'
 import { makeCreatePlaylist } from '../useCases/CreatePlaylistFactory'
@@ -11,9 +11,9 @@ import { makeLoadPlaylists } from '../useCases/LoadPlaylistsFactory'
 import { makeLoadRecent } from '../useCases/LoadRecentFactory'
 import { makeLoadSound } from '../useCases/LoadSoundFactory'
 
-export function makePlaying() {
+export function makePlayer() {
   return (
-    <PlayingScreen
+    <PlayerScreen
       loadPlaylistMusics={makeLoadPlaylistMusics()}
       loadFavorites={makeLoadFavorites()}
       loadRecent={makeLoadRecent()}

@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 
 export class AsyncStorageClient implements ILocalClient {
   async create(data?: any): Promise<any> {
-    return await AsyncStorage.setItem('@RNplayed', data)
+    return await AsyncStorage.setItem('@RNplayed', JSON.stringify(data))
   }
 
   async load(param?: any): Promise<any> {

@@ -12,11 +12,11 @@ export async function getFavorites(
   const response = await loadFavorites.execute()
 
   if (response?.length > 0) {
-    const isFavorited = response.find(
-      (music) => music.musicId === searchedData.id.videoId || data?.id,
-    )
-
-    return Boolean(isFavorited)
+    response.forEach((item) => {
+      if (item.musicId === searchedData.id.videoId || data?.id) {
+        return true
+      }
+    })
   }
 
   return false
@@ -32,11 +32,11 @@ export async function getPlaylistMusics(
   })
 
   if (response?.length > 0) {
-    const onPlaylist = response.find(
-      (music) => music.id === searchedData.id.videoId || data?.id,
-    )
-
-    return Boolean(onPlaylist)
+    response.forEach((item) => {
+      if (item.id === searchedData.id.videoId || data?.id) {
+        return true
+      }
+    })
   }
 
   return false
@@ -48,22 +48,11 @@ export async function setRecent(
   searchedData: SearchedData,
   data: PlayingMusic,
 ) {
-  const playedMusic = await loadRecent.execute('@RNplayed')
-
-  if (playedMusic?.length < 0) {
-    await createRecent.execute({
-      id: searchedData.id.videoId || data?.id,
-      img: data?.img,
-      title: data?.title,
-    })
-  } else if (
-    playedMusic &&
-    playedMusic.find((m) => m.id === searchedData.id.videoId || data?.id)
-  ) {
-    await createRecent.execute({
-      id: searchedData.id.videoId || data?.id,
-      img: data?.img,
-      title: data?.title,
-    })
-  }
+  // const playedMusic = await loadRecent.execute('@RNplayed')
+  // console.log('playedMusic', playedMusic)
+  // await createRecent.execute({
+  //   id: searchedData.id.videoId || data?.id,
+  //   img: data?.img,
+  //   title: data?.title,
+  // })
 }

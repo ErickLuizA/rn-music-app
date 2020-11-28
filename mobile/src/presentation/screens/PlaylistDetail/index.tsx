@@ -77,7 +77,7 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
             title={item.snippet.title}
             img={item.snippet.thumbnails.high.url}
             navigate={() =>
-              navigation.navigate('Playing', {
+              navigation.navigate('Player', {
                 data: {
                   title: item.snippet.title,
                   img: item.snippet.thumbnails.high.url,

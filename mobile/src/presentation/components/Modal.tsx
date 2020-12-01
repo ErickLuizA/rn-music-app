@@ -14,14 +14,13 @@ import CheckBox from '@react-native-community/checkbox'
 import { Playlist } from '../../domain/entities/Playlist'
 import { IAddPlaylistUseCase } from '../../domain/useCases/IAddPlaylistMusicUseCase'
 import { ICreatePlaylistUseCase } from '../../domain/useCases/ICreatePlaylistUseCase'
-import { PlayingMusic, SearchedData } from '../../domain/entities/Music'
+import { PlayingMusic } from '../../domain/entities/Music'
 
 export type IPlaylists = Playlist[]
 
 interface IModals {
   close: () => void
   open: boolean
-  searchedData: SearchedData
   data: PlayingMusic
   playlists: IPlaylists
   addPlaylistMusic: IAddPlaylistUseCase
@@ -33,7 +32,6 @@ type IChecked = Playlist
 function Modals({
   close,
   open,
-  searchedData,
   data,
   playlists,
   addPlaylistMusic,
@@ -64,9 +62,9 @@ function Modals({
     }
 
     await addPlaylistMusic.execute({
-      musicId: searchedData.id.videoId || data.id,
-      img: searchedData.img || data.img,
-      title: searchedData.title || data.title,
+      musicId: data.id,
+      img: data.img,
+      title: data.title,
       playlistId: checked[0].playlistId,
     })
 

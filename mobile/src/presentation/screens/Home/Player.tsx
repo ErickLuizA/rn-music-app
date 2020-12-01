@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import {
   View,
@@ -9,9 +9,8 @@ import {
   ToastAndroid,
 } from 'react-native'
 import { add, pause, play, setupPlayer } from 'react-native-track-player'
-import { useRoute } from '@react-navigation/native'
 import { RectButton } from 'react-native-gesture-handler'
-import { PlayingMusic, SearchedData } from '../../../domain/entities/Music'
+import { PlayingMusic } from '../../../domain/entities/Music'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
 import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
@@ -26,7 +25,8 @@ import { getFavorites, getPlaylistMusics, setRecent } from './helper-functions'
 
 import Modal, { IPlaylists } from '../../components/Modal'
 
-interface IPlayerScreen {
+interface IPlayer {
+  music: PlayingMusic
   loadSound: ILoadSoundUseCase
   loadPlaylistMusics: ILoadPlaylistMusicUseCase
   loadPlaylists: ILoadPlaylistsUseCase
@@ -44,8 +44,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#111',
-    padding: 20,
   },
 
   image: {
@@ -60,6 +58,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Inter_400Regular',
     paddingBottom: 40,
+    textAlign: 'center',
   },
 
   iconContainer: {
@@ -70,6 +69,12 @@ const styles = StyleSheet.create({
     width: 250,
     height: 100,
     justifyContent: 'space-between',
+  },
+
+  topIcon: {
+    position: 'absolute',
+    top: -20,
+    left: 0,
   },
 
   button: {
@@ -89,7 +94,8 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function PlayerScreen({
+export default function Player({
+  music,
   loadSound,
   loadPlaylistMusics,
   loadPlaylists,
@@ -100,18 +106,7 @@ export default function PlayerScreen({
   loadRecent,
   addPlaylistMusic,
   createPlaylistUseCase,
-}: IPlayerScreen) {
-  const { params } = useRoute<{
-    params: {
-      data: PlayingMusic | SearchedData
-    }
-    name: string
-    key: string
-  }>()
-
-  const data = params?.data as PlayingMusic
-  const searchedData = params?.data as SearchedData
-
+}: IPlayer) {
   const [isPlaying, setIsPlaying] = useState(false)
   const [isFavorite, setIsFavorite] = useState(false)
   const [inPlaylist, setInPlaylist] = useState(false)
@@ -128,17 +123,21 @@ export default function PlayerScreen({
   }, [])
 
   useEffect(() => {
+    if (!music) {
+      return
+    }
+
     async function getMusic() {
       try {
         const response = await loadSound.execute({
-          id: searchedData.id.videoId || data?.id,
+          id: music.id,
         })
 
         await add({
           id: response[0].id,
           url: response[0].url,
-          title: searchedData.title,
-          artist: searchedData.title,
+          title: music.title,
+          artist: music.title,
         })
 
         play()
@@ -152,16 +151,14 @@ export default function PlayerScreen({
 
     getMusic()
 
-    getFavorites(loadFavorites, searchedData, data).then((bool) =>
-      setIsFavorite(bool),
-    )
+    getFavorites(loadFavorites, music).then((bool) => setIsFavorite(bool))
 
-    getPlaylistMusics(loadPlaylistMusics, searchedData, data).then((bool) =>
+    getPlaylistMusics(loadPlaylistMusics, music).then((bool) =>
       setInPlaylist(bool),
     )
 
-    setRecent(loadRecent, createRecent, searchedData, data)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    setRecent(loadRecent, createRecent, music)
+  }, [music]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePlay = async () => {
     isPlaying ? await pause() : await play()
@@ -171,9 +168,9 @@ export default function PlayerScreen({
 
   const handleAddFavorite = async () => {
     await createFavorite.execute({
-      musicId: searchedData.id.videoId || data?.id,
-      img: data?.img,
-      title: data?.title,
+      musicId: music?.id,
+      img: music?.img,
+      title: music?.title,
     })
 
     setIsFavorite(true)
@@ -181,7 +178,7 @@ export default function PlayerScreen({
 
   const handleRemoveFavorite = async () => {
     await deleteFavorite.execute({
-      id: searchedData.id.videoId || data?.id,
+      id: music?.id,
     })
 
     setIsFavorite(false)
@@ -203,18 +200,14 @@ export default function PlayerScreen({
     )
   } else {
     return (
-      <View
-        style={
-          openModal
-            ? [styles.container, { backgroundColor: 'rgba(0,0,0,0.7)' }]
-            : styles.container
-        }>
+      <View style={styles.container}>
+        <Icon name="expand-more" style={[styles.icon, styles.topIcon]} />
         <Image
           style={styles.image}
-          source={{ uri: data?.img }}
+          source={{ uri: music?.img }}
           resizeMode="contain"
         />
-        <Text style={styles.title}>{data?.title}</Text>
+        <Text style={styles.title}>{music?.title}</Text>
         <View style={[styles.iconContainer, styles.touchable]}>
           {isFavorite ? (
             <RectButton style={styles.button} onPress={handleRemoveFavorite}>
@@ -253,8 +246,7 @@ export default function PlayerScreen({
         <Modal
           open={openModal}
           close={() => setOpenModal(false)}
-          data={data}
-          searchedData={searchedData}
+          data={music}
           playlists={playlists!}
           addPlaylistMusic={addPlaylistMusic}
           createPlaylistUseCase={createPlaylistUseCase}

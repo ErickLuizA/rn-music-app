@@ -1,7 +1,5 @@
-import { Recent } from '../entities/Recent'
-
-export type LoadRecentParams = string
+import { RecentResponse } from '../entities/Recent'
 
 export interface ILoadRecentUseCase {
-  execute: (params: LoadRecentParams) => Promise<Recent[]>
+  execute: () => Promise<RecentResponse[]>
 }

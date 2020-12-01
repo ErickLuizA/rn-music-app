@@ -1,25 +1,67 @@
 import React from 'react'
-import { createStackNavigator } from '@react-navigation/stack'
-import { makePlayer } from '../factories/screens/PlayerFactory'
-import AppTabs from './AppTabs'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
-const { Navigator, Screen } = createStackNavigator()
+import UserTabs from './UserTabs'
+import { makeSearch } from '../factories/screens/SearchFactory'
+import { makeHome } from '../factories/screens/HomeFactory'
 
-function AppNavigation() {
+const { Navigator, Screen } = createBottomTabNavigator()
+
+function App() {
   return (
-    <Navigator initialRouteName="Tabs">
+    <Navigator
+      tabBarOptions={{
+        safeAreaInsets: {
+          bottom: 5,
+        },
+        style: {
+          backgroundColor: '#131418',
+          height: 64,
+          borderTopColor: 'transparent',
+        },
+        iconStyle: {
+          flex: 0,
+          width: 50,
+          height: 20,
+        },
+        activeTintColor: '#fff',
+        inactiveTintColor: '#92929c',
+      }}>
       <Screen
-        name="Tabs"
-        component={AppTabs}
-        options={{ headerShown: false }}
+        name="Home"
+        component={makeHome}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="music-note" size={size} color={color} />
+          ),
+          title: 'Música',
+        }}
       />
+
       <Screen
-        name="Player"
-        component={makePlayer}
-        options={{ headerShown: false }}
+        name="Search"
+        component={makeSearch}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="search" size={size} color={color} />
+          ),
+          title: 'Pesquisar',
+        }}
+      />
+
+      <Screen
+        name="User"
+        component={UserTabs}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="person-outline" size={size} color={color} />
+          ),
+          title: 'Usuário',
+        }}
       />
     </Navigator>
   )
 }
 
-export default AppNavigation
+export default App

@@ -1,44 +1,31 @@
 import React from 'react'
-import { Image, StyleSheet, Text, Dimensions } from 'react-native'
-import { RectButton } from 'react-native-gesture-handler'
+import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native'
 
 interface IProps {
   id: string
   title: string
   img: string
-  navigate: () => void
-  fullWidth?: boolean
+  onPress: () => void
 }
 
-function Card({ id, title, img, navigate, fullWidth }: IProps) {
+function Card({ id, title, img, onPress }: IProps) {
   return (
-    <RectButton key={id} style={styles.container} onPress={() => navigate()}>
+    <TouchableOpacity key={id} style={styles.container} {...{ onPress }}>
       <Image
         resizeMode="contain"
-        style={fullWidth ? styles.fullWidth : styles.image}
+        style={styles.image}
         source={{
           uri: img,
         }}
       />
-      <Text style={fullWidth ? styles.centerTitle : styles.title}>
-        {' '}
-        {title}{' '}
-      </Text>
-    </RectButton>
+      <Text style={styles.title}> {title} </Text>
+    </TouchableOpacity>
   )
 }
-
-const windowWidth = Dimensions.get('window').width
 
 const styles = StyleSheet.create({
   container: {
     marginRight: 10,
-  },
-
-  fullWidth: {
-    height: 200,
-    width: windowWidth / 1.2,
-    borderRadius: 20,
   },
 
   image: {
@@ -50,12 +37,6 @@ const styles = StyleSheet.create({
   title: {
     color: '#fff',
     width: 200,
-  },
-
-  centerTitle: {
-    color: '#fff',
-    width: 200,
-    alignSelf: 'center',
   },
 })
 

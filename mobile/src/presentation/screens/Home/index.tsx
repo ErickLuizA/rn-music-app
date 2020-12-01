@@ -1,29 +1,61 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
-  SafeAreaView,
   View,
   Text,
   FlatList,
   ActivityIndicator,
   StyleSheet,
+  Dimensions,
 } from 'react-native'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { Recent } from '../../../domain/entities/Recent'
-import { Music } from '../../../domain/entities/Music'
+import { Music, PlayingMusic } from '../../../domain/entities/Music'
 import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause'
 import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
+import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
+import { IAddPlaylistUseCase } from '../../../domain/useCases/IAddPlaylistMusicUseCase'
+import { ICreateFavoritesUseCase } from '../../../domain/useCases/ICreateFavoriteUseCase'
+import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylistUseCase'
+import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
+import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
+import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
+import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
+import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
+import { PanGestureHandler } from 'react-native-gesture-handler'
 
 import Card from '../../components/Card'
+import Player from './Player'
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedGestureHandler,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import MiniPlayer from './MiniPlayer'
+
+const HEIGHT = Dimensions.get('window').height
 
 interface IHomeScreen {
   loadMusics: ILoadMusicsUseCase
   loadRecent: ILoadRecentUseCase
+  loadSound: ILoadSoundUseCase
+  loadPlaylistMusics: ILoadPlaylistMusicUseCase
+  loadPlaylists: ILoadPlaylistsUseCase
+  loadFavorites: ILoadFavoritesUseCase
+  createFavorite: ICreateFavoritesUseCase
+  deleteFavorite: IDeleteFavoritesUseCase
+  createRecent: ICreateRecentUseCase
+  addPlaylistMusic: IAddPlaylistUseCase
+  createPlaylistUseCase: ICreatePlaylistUseCase
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 20,
+
     backgroundColor: '#111',
   },
 
@@ -44,7 +76,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
   },
 
-  musicSection: {
+  sections: {
     paddingTop: 30,
   },
 
@@ -72,11 +104,35 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function HomeScreen({ loadMusics }: IHomeScreen) {
+export default function HomeScreen({
+  loadMusics,
+  loadSound,
+  loadPlaylistMusics,
+  loadPlaylists,
+  loadFavorites,
+  createFavorite,
+  deleteFavorite,
+  createRecent,
+  loadRecent,
+  addPlaylistMusic,
+  createPlaylistUseCase,
+}: IHomeScreen) {
   const [musics, setMusics] = useState<Music[]>([])
-  // const [recent, setRecent] = useState<Recent[]>()
+  const [recent, setRecent] = useState<Recent[]>()
 
-  const navigation = useNavigation()
+  const [playingMusic, setPlayingMusic] = useState<PlayingMusic>()
+
+  const getRecentPlayed = useCallback(async () => {
+    let recentPlayed: Recent[] = []
+
+    const musicPlayed = await loadRecent.execute()
+
+    for (const music in musicPlayed) {
+      recentPlayed.unshift(musicPlayed[music]._raw)
+    }
+
+    setRecent(recentPlayed)
+  }, [loadRecent])
 
   useEffect(() => {
     async function getMusics() {
@@ -96,22 +152,78 @@ export default function HomeScreen({ loadMusics }: IHomeScreen) {
     }
 
     getMusics()
-  }, [loadMusics])
+    getRecentPlayed()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // useFocusEffect(() => {
-  //   async function getRecentPlayed() {
-  //     const musicPlayed = await loadRecent.execute('@RNplayed')
+  const handleChangeMusic = async (item: Music) => {
+    if (item.id === playingMusic?.id) {
+      return
+    }
 
-  //     // if (musicPlayed?.length > 0) {
-  //     //   const playedJson: Recent[] = musicPlayed.map((music: any) =>
-  //     //     JSON.parse(music),
-  //     //   )
+    setPlayingMusic({
+      id: item.id,
+      title: item.snippet.title,
+      img: item.snippet.thumbnails.high.url,
+    })
 
-  //     setRecent(musicPlayed)
-  //   }
+    getRecentPlayed()
+  }
 
-  //   getRecentPlayed()
-  // })
+  const BOTTOM = HEIGHT / 1.1
+  const TOP = -50
+
+  const posY = useSharedValue(BOTTOM)
+
+  const onGestureEvent = useAnimatedGestureHandler({
+    onStart(_, ctx: any) {
+      ctx.posY = posY.value
+    },
+    onActive(event: any, ctx: any) {
+      if (event.translationY < -50) {
+        posY.value = withTiming(TOP, { duration: 400 })
+      } else if (event.translationY > 50) {
+        posY.value = withTiming(BOTTOM, { duration: 400 })
+      } else {
+        posY.value = ctx.posY + event.translationY
+      }
+    },
+
+    onEnd() {
+      if (posY.value < TOP) {
+        posY.value = TOP
+      } else if (posY.value > BOTTOM) {
+        posY.value = BOTTOM
+      }
+    },
+  })
+
+  const positionStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ translateY: posY.value }],
+    }
+  })
+
+  const opacityStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        posY.value,
+        [BOTTOM, TOP],
+        [1, 0],
+        Extrapolate.CLAMP,
+      ),
+    }
+  })
+
+  const opacityStyle2 = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        posY.value,
+        [BOTTOM, TOP],
+        [1, 0],
+        Extrapolate.CLAMP,
+      ),
+    }
+  })
 
   if (musics.length < 1) {
     return (
@@ -123,27 +235,19 @@ export default function HomeScreen({ loadMusics }: IHomeScreen) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.musicSection}>
+      <Animated.View style={[styles.sections, opacityStyle2]}>
         <View style={styles.trending}>
-          <Text style={[styles.white, styles.categoryText]}>Tendência </Text>
+          <Text style={[styles.white, styles.categoryText]}>Tendência</Text>
           <FlatList
             data={musics}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.id + Math.random()}
             horizontal={true}
             renderItem={({ item }) => (
               <Card
                 id={item.id}
                 title={item.snippet.title}
                 img={item.snippet.thumbnails.high.url}
-                navigate={() =>
-                  navigation.navigate('Player', {
-                    data: {
-                      title: item.snippet.title,
-                      img: item.snippet.thumbnails.high.url,
-                      id: item.id,
-                    },
-                  })
-                }
+                onPress={() => handleChangeMusic(item)}
               />
             )}
           />
@@ -152,29 +256,55 @@ export default function HomeScreen({ loadMusics }: IHomeScreen) {
           <Text style={[styles.white, styles.categoryText]}>
             Recentemente tocadas
           </Text>
-          {/* <FlatList
+          <FlatList
             data={recent}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.music_id + Math.random()}
             horizontal={true}
             renderItem={({ item }) => (
               <Card
-                id={item.id}
+                id={item.music_id}
                 title={item.title}
                 img={item.img}
-                navigate={() =>
-                  navigation.navigate('Playing', {
-                    data: {
+                onPress={() =>
+                  handleChangeMusic({
+                    id: item.music_id,
+                    snippet: {
                       title: item.title,
-                      img: item.img,
-                      id: item.id,
+                      thumbnails: { high: { url: item.img } },
                     },
                   })
                 }
               />
             )}
-          /> */}
+          />
         </View>
-      </View>
+      </Animated.View>
+      {playingMusic && (
+        <PanGestureHandler {...{ onGestureEvent }}>
+          <Animated.View
+            style={[
+              {
+                ...StyleSheet.absoluteFillObject,
+              },
+              positionStyle,
+            ]}>
+            <MiniPlayer {...{ HEIGHT, playingMusic, opacityStyle }} />
+            <Player
+              music={playingMusic}
+              loadSound={loadSound}
+              loadPlaylistMusics={loadPlaylistMusics}
+              loadPlaylists={loadPlaylists}
+              loadFavorites={loadFavorites}
+              createFavorite={createFavorite}
+              deleteFavorite={deleteFavorite}
+              createRecent={createRecent}
+              loadRecent={loadRecent}
+              addPlaylistMusic={addPlaylistMusic}
+              createPlaylistUseCase={createPlaylistUseCase}
+            />
+          </Animated.View>
+        </PanGestureHandler>
+      )}
     </SafeAreaView>
   )
 }

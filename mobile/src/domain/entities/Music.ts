@@ -36,4 +36,5 @@ export interface PlayingMusic {
   id: string
   img: string
   title: string
+  url: string
 }

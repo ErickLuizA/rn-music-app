@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Dimensions,
+  ToastAndroid,
 } from 'react-native'
 import { Recent } from '../../../domain/entities/Recent'
 import { Music, PlayingMusic } from '../../../domain/entities/Music'
@@ -34,6 +35,7 @@ import Animated, {
 } from 'react-native-reanimated'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MiniPlayer from './MiniPlayer'
+import { useRoute } from '@react-navigation/native'
 
 const HEIGHT = Dimensions.get('window').height
 
@@ -122,6 +124,14 @@ export default function HomeScreen({
 
   const [playingMusic, setPlayingMusic] = useState<PlayingMusic>()
 
+  const { params } = useRoute<{
+    params: {
+      data: Music
+    }
+    name: string
+    key: string
+  }>()
+
   const getRecentPlayed = useCallback(async () => {
     let recentPlayed: Recent[] = []
 
@@ -155,16 +165,34 @@ export default function HomeScreen({
     getRecentPlayed()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (!params.data) {
+      return
+    }
+
+    handleChangeMusic(params.data)
+  }, [params]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const handleChangeMusic = async (item: Music) => {
     if (item.id === playingMusic?.id) {
       return
     }
 
-    setPlayingMusic({
-      id: item.id,
-      title: item.snippet.title,
-      img: item.snippet.thumbnails.high.url,
-    })
+    try {
+      const response = await loadSound.execute({
+        id: item.id,
+      })
+
+      setPlayingMusic({
+        id: response[0].id,
+        title: item.snippet.title,
+        img: item.snippet.thumbnails.high.url,
+        url: response[0].url,
+      })
+    } catch (error) {
+      console.log(error.response.data)
+      ToastAndroid.show('Erro ao carregar a música', ToastAndroid.SHORT)
+    }
 
     getRecentPlayed()
   }

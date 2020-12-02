@@ -96,7 +96,6 @@ const styles = StyleSheet.create({
 
 export default function Player({
   music,
-  loadSound,
   loadPlaylistMusics,
   loadPlaylists,
   loadFavorites,
@@ -127,15 +126,11 @@ export default function Player({
       return
     }
 
-    async function getMusic() {
+    async function playMusic() {
       try {
-        const response = await loadSound.execute({
-          id: music.id,
-        })
-
         await add({
-          id: response[0].id,
-          url: response[0].url,
+          id: music.id,
+          url: music.url,
           title: music.title,
           artist: music.title,
         })
@@ -144,12 +139,11 @@ export default function Player({
         setLoaded(true)
         setIsPlaying(true)
       } catch (error) {
-        console.log(error.response.data)
-        ToastAndroid.show('Erro ao carregar a música', ToastAndroid.SHORT)
+        ToastAndroid.show(error, ToastAndroid.SHORT)
       }
     }
 
-    getMusic()
+    playMusic()
 
     getFavorites(loadFavorites, music).then((bool) => setIsFavorite(bool))
 

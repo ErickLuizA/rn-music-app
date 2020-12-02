@@ -58,11 +58,17 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
             title={item.title}
             img={item.img}
             navigate={() =>
-              navigation.navigate('Player', {
+              navigation.navigate('Home', {
                 data: {
-                  title: item.title,
-                  img: item.img,
-                  id: item.favoriteId,
+                  id: item.musicId,
+                  snippet: {
+                    title: item.title,
+                    thumbnails: {
+                      high: {
+                        url: item.img,
+                      },
+                    },
+                  },
                 },
               })
             }

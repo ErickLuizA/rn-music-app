@@ -37,9 +37,9 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
       async function getLoadFavorites() {
         try {
           const response = await loadFavorites.execute()
+
           setFavorites(response)
         } catch (error) {
-          console.log(error.response.data)
           ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
         }
       }
@@ -47,16 +47,21 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
     }, [loadFavorites]),
   )
 
+  const openOptions = async (item: Favorite) => {
+    console.log('hi', item)
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
         data={favorites}
-        keyExtractor={(item) => item.favoriteId}
+        keyExtractor={(item) => item.favoriteId.toString()}
         renderItem={({ item }) => (
           <LongCard
             id={item.musicId}
             title={item.title}
             img={item.img}
+            onPress={() => openOptions(item)}
             navigate={() =>
               navigation.navigate('Home', {
                 data: {

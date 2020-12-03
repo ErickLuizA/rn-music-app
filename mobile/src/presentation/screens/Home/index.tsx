@@ -157,7 +157,7 @@ export default function HomeScreen({
 
         setMusics(response.items)
       } catch (err) {
-        console.log(err)
+        ToastAndroid.show('Erro ao buscar músicas', ToastAndroid.SHORT)
       }
     }
 
@@ -166,7 +166,7 @@ export default function HomeScreen({
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!params.data) {
+    if (!params?.data) {
       return
     }
 
@@ -184,13 +184,12 @@ export default function HomeScreen({
       })
 
       setPlayingMusic({
-        id: response[0].id,
+        id: item.id,
         title: item.snippet.title,
         img: item.snippet.thumbnails.high.url,
         url: response[0].url,
       })
     } catch (error) {
-      console.log(error.response.data)
       ToastAndroid.show('Erro ao carregar a música', ToastAndroid.SHORT)
     }
 
@@ -253,7 +252,7 @@ export default function HomeScreen({
     }
   })
 
-  if (musics.length < 1) {
+  if (musics?.length < 1) {
     return (
       <View style={styles.loading}>
         <ActivityIndicator size="large" color="#fff" />

@@ -8,7 +8,7 @@ export class RecentLocalClient implements IRecentLocalClient {
   async create(params: Recent): Promise<any> {
     await database.action(async () => {
       await this.recentCollection.create((music: any) => {
-        music.music_id = params.id
+        music.music_id = params.music_id
         music.title = params.title
         music.img = params.img
       })

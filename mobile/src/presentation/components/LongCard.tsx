@@ -8,6 +8,7 @@ interface IProps {
   title: string
   img: string
   navigate: () => void
+  onPress: () => void
 }
 
 const WIDTH = Dimensions.get('window').width
@@ -18,26 +19,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 20,
     width: WIDTH,
-    height: 200,
+    height: 100,
   },
 
   image: {
-    width: WIDTH / 4,
-    height: 200,
+    width: WIDTH / 3,
+    height: 100,
     borderRadius: 20,
   },
 
   title: {
     color: '#ddd',
     fontSize: 16,
+    width: WIDTH / 3,
+    alignSelf: 'center',
+  },
+
+  flex: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+
+  dots: {
+    alignSelf: 'center',
   },
 })
 
-function LongCard({ id, title, img, navigate }: IProps) {
+function LongCard({ id, title, img, navigate, onPress }: IProps) {
   return (
     <View style={styles.container}>
-      <View>
-        <RectButton key={id} onPress={() => navigate()}>
+      <View style={styles.flex}>
+        <RectButton key={id.toString()} onPress={() => navigate()}>
           <Image
             resizeMode="contain"
             style={styles.image}
@@ -47,9 +59,9 @@ function LongCard({ id, title, img, navigate }: IProps) {
           />
         </RectButton>
 
-        <Text style={styles.title}> {title} </Text>
+        <Text style={styles.title}>{title.slice(0, 30)} ... </Text>
       </View>
-      <RectButton>
+      <RectButton style={styles.dots} {...{ onPress }}>
         <Icon name="more-vert" color="#ddd" size={30} />
       </RectButton>
     </View>

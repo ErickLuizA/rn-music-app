@@ -9,16 +9,17 @@ export async function getFavorites(
   data: PlayingMusic,
 ): Promise<boolean> {
   const response = await loadFavorites.execute()
+  let val = false
 
   if (response?.length > 0) {
     response.forEach((item) => {
       if (item.musicId === data?.id) {
-        return true
+        val = true
       }
     })
   }
 
-  return false
+  return val
 }
 
 export async function getPlaylistMusics(
@@ -29,15 +30,17 @@ export async function getPlaylistMusics(
     playlistId: data?.id,
   })
 
+  let val = false
+
   if (response?.length > 0) {
     response.forEach((item) => {
       if (item.id === data?.id) {
-        return true
+        val = true
       }
     })
   }
 
-  return false
+  return val
 }
 
 export async function setRecent(

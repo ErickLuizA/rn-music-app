@@ -77,7 +77,6 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
 
         setItems(response.items)
       } catch (err) {
-        console.log(err.response.data)
         ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
       }
     }
@@ -111,12 +110,11 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
               id={item.id.videoId}
               title={item.snippet.title}
               img={item.snippet.thumbnails.high.url}
-              navigate={() =>
-                navigation.navigate('Player', {
+              onPress={() =>
+                navigation.navigate('Home', {
                   data: {
-                    title: item.snippet.title,
-                    img: item.snippet.thumbnails.high.url,
-                    id: item.id,
+                    id: item.id.videoId,
+                    snippet: item.snippet,
                   },
                 })
               }

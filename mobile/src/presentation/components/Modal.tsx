@@ -16,13 +16,11 @@ import { IAddPlaylistUseCase } from '../../domain/useCases/IAddPlaylistMusicUseC
 import { ICreatePlaylistUseCase } from '../../domain/useCases/ICreatePlaylistUseCase'
 import { PlayingMusic } from '../../domain/entities/Music'
 
-export type IPlaylists = Playlist[]
-
 interface IModals {
   close: () => void
   open: boolean
   data: PlayingMusic
-  playlists: IPlaylists
+  playlists: Playlist[]
   addPlaylistMusic: IAddPlaylistUseCase
   createPlaylistUseCase: ICreatePlaylistUseCase
 }
@@ -46,7 +44,7 @@ function Modals({
       (check) => check.playlistId === item.playlistId,
     )
 
-    if (exists.length === 0) {
+    if (exists?.length === 0) {
       setChecked((current) => [...current, item])
     } else {
       setChecked((current) =>
@@ -56,7 +54,7 @@ function Modals({
   }
 
   const handleDone = async () => {
-    if (checked.length === 0) {
+    if (checked?.length === 0) {
       close()
       return
     }
@@ -95,37 +93,41 @@ function Modals({
         <View style={styles.modalContentContainer}>
           <View style={styles.modalContent}>
             <View style={styles.flex}>
-              <Text style={styles.whiteText}>Save music in...</Text>
+              <Text style={styles.whiteText}>Salve a música</Text>
               <TouchableOpacity onPress={openNewModal}>
-                <Text style={styles.blueText}>
-                  <Icon name="library-add" size={18} />
-                  New Playlist
-                </Text>
+                <Icon name="library-add" size={18} color="#fff" />
               </TouchableOpacity>
             </View>
-            <FlatList
-              data={playlists}
-              keyExtractor={(item) => item.playlistId}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  style={styles.flexBox}
-                  onPress={() => handleCheck(item)}>
-                  <CheckBox
-                    value={Boolean(
-                      checked.find(
-                        (playlist) => playlist.playlistId === item.playlistId,
-                      ),
-                    )}
-                    tintColors={{ true: '#11cccc' }}
-                    onValueChange={() => handleCheck(item)}
-                  />
-                  <Text style={styles.smallerText}>{item.title}</Text>
-                </TouchableOpacity>
-              )}
-            />
+            {playlists?.length > 0 ? (
+              <FlatList
+                data={playlists}
+                keyExtractor={(item) => item.playlistId.toString()}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.flexBox}
+                    onPress={() => handleCheck(item)}>
+                    <CheckBox
+                      value={Boolean(
+                        checked.find(
+                          (playlist) => playlist.playlistId === item.playlistId,
+                        ),
+                      )}
+                      tintColors={{ true: '#11cccc' }}
+                      onValueChange={() => handleCheck(item)}
+                    />
+                    <Text style={styles.smallerText}>{item.title}</Text>
+                  </TouchableOpacity>
+                )}
+              />
+            ) : (
+              <Text style={styles.noPlaylistText}>
+                Você não tem nenhuma playlist
+              </Text>
+            )}
+
             <TouchableOpacity style={styles.last} onPress={handleDone}>
               <Icon name="done" size={26} color="#666" />
-              <Text style={styles.smallerText}>Done</Text>
+              <Text style={styles.smallerText}>Confirmar</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -140,6 +142,7 @@ function Modals({
             <Text style={styles.whiteText}>New playlist</Text>
             <TextInput
               placeholder="Title"
+              placeholderTextColor="#fff"
               value={title}
               onChangeText={(text) => setTitle(text)}
               style={styles.input}
@@ -191,10 +194,12 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_400Regular',
   },
 
-  blueText: {
-    color: '#11cccc',
-    fontSize: 18,
+  noPlaylistText: {
+    fontSize: 14,
+    color: '#fff',
     fontFamily: 'Inter_400Regular',
+    marginTop: 10,
+    marginLeft: 10,
   },
 
   smallerText: {
@@ -216,6 +221,8 @@ const styles = StyleSheet.create({
   last: {
     padding: 10,
     flexDirection: 'row',
+    position: 'absolute',
+    bottom: 0,
   },
 
   newModalContentContainer: {
@@ -236,6 +243,7 @@ const styles = StyleSheet.create({
     borderBottomColor: '#777',
     paddingTop: 30,
     paddingBottom: 5,
+    color: '#fff',
   },
 
   lastFlex: {
@@ -250,7 +258,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    color: '#11cccc',
+    color: '#fff',
     fontSize: 18,
     fontFamily: 'Inter_400Regular',
   },

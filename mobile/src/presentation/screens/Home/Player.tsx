@@ -8,7 +8,15 @@ import {
   StyleSheet,
   ToastAndroid,
 } from 'react-native'
-import { add, pause, play, setupPlayer } from 'react-native-track-player'
+import {
+  add,
+  destroy,
+  pause,
+  play,
+  setupPlayer,
+  updateOptions,
+  addEventListener,
+} from 'react-native-track-player'
 import { RectButton } from 'react-native-gesture-handler'
 import { PlayingMusic } from '../../../domain/entities/Music'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
@@ -23,7 +31,8 @@ import { IAddPlaylistUseCase } from '../../../domain/useCases/IAddPlaylistMusicU
 import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylistUseCase'
 import { getFavorites, getPlaylistMusics, setRecent } from './helper-functions'
 
-import Modal, { IPlaylists } from '../../components/Modal'
+import Modal from '../../components/Modal'
+import { Playlist } from '../../../domain/entities/Playlist'
 
 interface IPlayer {
   music: PlayingMusic
@@ -111,7 +120,7 @@ export default function Player({
   const [inPlaylist, setInPlaylist] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [loaded, setLoaded] = useState(false)
-  const [playlists, setPlaylists] = useState<IPlaylists>()
+  const [playlists, setPlaylists] = useState<Playlist[]>()
 
   useEffect(() => {
     async function loadPlayer() {
@@ -152,7 +161,19 @@ export default function Player({
     )
 
     setRecent(loadRecent, createRecent, music)
+
+    return () => {
+      destroy()
+    }
   }, [music]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  addEventListener('playback-state', (data) => {
+    console.log('data', data)
+  })
+
+  updateOptions({
+    stopWithApp: true,
+  })
 
   const handlePlay = async () => {
     isPlaying ? await pause() : await play()
@@ -161,21 +182,39 @@ export default function Player({
   }
 
   const handleAddFavorite = async () => {
-    await createFavorite.execute({
-      musicId: music?.id,
-      img: music?.img,
-      title: music?.title,
-    })
-
     setIsFavorite(true)
+
+    try {
+      await createFavorite.execute({
+        musicId: music?.id,
+        img: music?.img,
+        title: music?.title,
+      })
+    } catch (error) {
+      ToastAndroid.show(
+        'Erro ao adicionar música aos favoritos',
+        ToastAndroid.SHORT,
+      )
+
+      setIsFavorite(false)
+    }
   }
 
   const handleRemoveFavorite = async () => {
-    await deleteFavorite.execute({
-      id: music?.id,
-    })
-
     setIsFavorite(false)
+
+    try {
+      await deleteFavorite.execute({
+        id: music?.id,
+      })
+    } catch (error) {
+      ToastAndroid.show(
+        'Erro ao remover música dos favoritos',
+        ToastAndroid.SHORT,
+      )
+
+      setIsFavorite(true)
+    }
   }
 
   const handleOpenModal = async () => {

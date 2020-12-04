@@ -4,9 +4,11 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { Favorite } from '../../../domain/entities/Favorite'
 import LongCard from '../../components/LongCard'
+import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
 
 interface IFavoritesScreen {
   loadFavorites: ILoadFavoritesUseCase
+  deleteFavorite: IDeleteFavoritesUseCase
 }
 
 const styles = StyleSheet.create({
@@ -27,7 +29,10 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
+export default function FavoritesScreen({
+  loadFavorites,
+  deleteFavorite,
+}: IFavoritesScreen) {
   const [favorites, setFavorites] = useState<Favorite[]>()
 
   const navigation = useNavigation()
@@ -47,21 +52,31 @@ export default function FavoritesScreen({ loadFavorites }: IFavoritesScreen) {
     }, [loadFavorites]),
   )
 
-  const openOptions = async (item: Favorite) => {
-    console.log('hi', item)
+  const handleDeleteFavorite = async (item: Favorite) => {
+    try {
+      await deleteFavorite.execute({ id: item.favoriteId })
+
+      const newFavs = favorites?.filter(
+        (fav) => fav.favoriteId !== item.favoriteId,
+      )
+
+      setFavorites(newFavs)
+    } catch (error) {
+      ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
+    }
   }
 
   return (
     <View style={styles.container}>
       <FlatList
         data={favorites}
-        keyExtractor={(item) => item.favoriteId.toString()}
+        keyExtractor={(item) => item.musicId}
         renderItem={({ item }) => (
           <LongCard
             id={item.musicId}
             title={item.title}
             img={item.img}
-            onPress={() => openOptions(item)}
+            onPress={() => handleDeleteFavorite(item)}
             navigate={() =>
               navigation.navigate('Home', {
                 data: {

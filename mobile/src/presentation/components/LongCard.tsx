@@ -40,16 +40,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
 
-  dots: {
+  delButton: {
     alignSelf: 'center',
   },
 })
 
 function LongCard({ id, title, img, navigate, onPress }: IProps) {
   return (
-    <View style={styles.container}>
+    <View style={styles.container} key={id}>
       <View style={styles.flex}>
-        <RectButton key={id.toString()} onPress={() => navigate()}>
+        <RectButton onPress={() => navigate()}>
           <Image
             resizeMode="contain"
             style={styles.image}
@@ -61,8 +61,8 @@ function LongCard({ id, title, img, navigate, onPress }: IProps) {
 
         <Text style={styles.title}>{title.slice(0, 30)} ... </Text>
       </View>
-      <RectButton style={styles.dots} {...{ onPress }}>
-        <Icon name="more-vert" color="#ddd" size={30} />
+      <RectButton style={styles.delButton} {...{ onPress }}>
+        <Icon name="delete" color="#ddd" size={30} />
       </RectButton>
     </View>
   )

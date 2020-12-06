@@ -4,11 +4,9 @@ import { HttpRequest, HttpResponse } from '../protocols/http'
 import { Middleware } from '../protocols/middleware'
 
 export class AuthMiddleware implements Middleware {
-  constructor (
-    private readonly userRepository: IUserRepository
-  ) {}
+  constructor(private readonly userRepository: IUserRepository) {}
 
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+  async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     const { authorization } = httpRequest.headers
 
     if (!authorization) {

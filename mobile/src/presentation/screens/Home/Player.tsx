@@ -16,6 +16,9 @@ import {
   setupPlayer,
   updateOptions,
   addEventListener,
+  STATE_PAUSED,
+  STATE_PLAYING,
+  STATE_READY,
 } from 'react-native-track-player'
 import { RectButton } from 'react-native-gesture-handler'
 import { PlayingMusic } from '../../../domain/entities/Music'
@@ -145,8 +148,6 @@ export default function Player({
         })
 
         play()
-        setLoaded(true)
-        setIsPlaying(true)
       } catch (error) {
         ToastAndroid.show(error, ToastAndroid.SHORT)
       }
@@ -168,7 +169,17 @@ export default function Player({
   }, [music]) // eslint-disable-line react-hooks/exhaustive-deps
 
   addEventListener('playback-state', (data) => {
-    console.log('data', data)
+    if (data.state === STATE_PAUSED) {
+      setIsPlaying(false)
+    }
+
+    if (data.state === STATE_PLAYING) {
+      setIsPlaying(true)
+    }
+
+    if (data.state === STATE_READY) {
+      setLoaded(true)
+    }
   })
 
   updateOptions({

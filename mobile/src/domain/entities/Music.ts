@@ -38,3 +38,12 @@ export interface PlayingMusic {
   title: string
   url: string
 }
+
+export interface PlaylistMusic {
+  playlistId: string
+  musicId: string
+  playlistMusicId: string
+  img: string
+  title: string
+  url: string
+}

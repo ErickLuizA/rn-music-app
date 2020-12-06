@@ -1,4 +1,4 @@
-import { Music } from '../../domain/entities/Music'
+import { PlaylistMusic } from '../../domain/entities/Music'
 import { Playlist } from '../../domain/entities/Playlist'
 import { IPlaylistRepository } from '../../domain/repositories/IPlaylistsRepository'
 import { AddPlaylistParams } from '../../domain/useCases/IAddPlaylistMusicUseCase'
@@ -22,7 +22,7 @@ export class PlaylistRepositoryImpl implements IPlaylistRepository {
     return await this.httpClient.get('/playlists')
   }
 
-  async load(params: LoadPlaylistMusicsParams): Promise<Music[]> {
+  async load(params: LoadPlaylistMusicsParams): Promise<PlaylistMusic[]> {
     return await this.httpClient.get(`/playlist_musics/${params.playlistId}`)
   }
 

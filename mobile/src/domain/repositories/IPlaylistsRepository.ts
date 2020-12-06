@@ -1,4 +1,4 @@
-import { Music } from '../entities/Music'
+import { PlaylistMusic } from '../entities/Music'
 import { Playlist } from '../entities/Playlist'
 import { AddPlaylistParams } from '../useCases/IAddPlaylistMusicUseCase'
 import { CreatePlaylistParams } from '../useCases/ICreatePlaylistUseCase'
@@ -14,7 +14,7 @@ export interface IPlaylistRepository {
 
   loadAll: () => Promise<Playlist[]>
 
-  load: (params: LoadPlaylistMusicsParams) => Promise<Music[]>
+  load: (params: LoadPlaylistMusicsParams) => Promise<PlaylistMusic[]>
 
   update: (params: UpdatePlaylistParams) => Promise<void>
 

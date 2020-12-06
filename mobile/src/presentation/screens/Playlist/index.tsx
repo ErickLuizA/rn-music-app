@@ -167,6 +167,7 @@ export default function PlaylistScreen({
 
   const handleShowPlaylist = async (id: string) => {
     const response = await loadPlaylistMusics.execute({ playlistId: id })
+
     navigation.navigate('PlaylistDetailScreen', { data: response })
   }
 

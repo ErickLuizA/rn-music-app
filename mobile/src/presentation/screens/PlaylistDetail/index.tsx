@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { Music } from '../../../domain/entities/Music'
+import { PlaylistMusic } from '../../../domain/entities/Music'
 
 import Card from '../../components/Card'
 
@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
 
 export default function PlaylistDetail({}: IPlaylistDetail) {
   const { params } = useRoute<{
-    params: { data: Music[] }
+    params: { data: PlaylistMusic[] }
     name: string
     key: string
   }>()
@@ -69,19 +69,19 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
       </View>
       <FlatList
         data={data}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.playlistMusicId}
         numColumns={2}
         renderItem={({ item }) => (
           <Card
-            id={item.id}
-            title={item.snippet.title}
-            img={item.snippet.thumbnails.high.url}
-            navigate={() =>
-              navigation.navigate('Player', {
+            id={item.playlistMusicId}
+            title={item.title}
+            img={item.img}
+            onPress={() =>
+              navigation.navigate('Home', {
                 data: {
-                  title: item.snippet.title,
-                  img: item.snippet.thumbnails.high.url,
-                  id: item.id,
+                  title: item.title,
+                  img: item.img,
+                  id: item.musicId,
                 },
               })
             }

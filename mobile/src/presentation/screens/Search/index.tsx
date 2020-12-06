@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
   TextInput,
@@ -61,28 +61,28 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
 
   const [search, setSearch] = useState('')
 
+  const getSearchMusic = useCallback(async () => {
+    try {
+      const response = await searchMusic.execute({
+        q: search,
+        part: 'snippet',
+        maxResults: 10,
+        key: process.env.API_KEY,
+      })
+
+      setItems(response.items)
+    } catch (err) {
+      ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
+    }
+  }, [search, searchMusic])
+
   useEffect(() => {
-    if (search === '') {
+    if (!search) {
       return
+    } else {
+      getSearchMusic()
     }
-
-    async function getSearchMusic() {
-      try {
-        const response = await searchMusic.execute({
-          q: search,
-          part: 'snippet',
-          maxResults: 10,
-          key: process.env.API_KEY,
-        })
-
-        setItems(response.items)
-      } catch (err) {
-        ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
-      }
-    }
-
-    getSearchMusic()
-  }, [searchMusic, search])
+  }, [searchMusic, search, getSearchMusic])
 
   return (
     <SafeAreaView style={styles.container}>

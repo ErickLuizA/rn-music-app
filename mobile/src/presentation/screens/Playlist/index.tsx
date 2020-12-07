@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import {
   SafeAreaView,
   FlatList,
@@ -155,15 +155,19 @@ export default function PlaylistScreen({
 
   const navigation = useNavigation()
 
-  useEffect(() => {
-    async function getPlaylists() {
+  const getPlaylists = useCallback(async () => {
+    try {
       const response = await loadPlaylists.execute()
 
       setPlaylists(response)
+    } catch (error) {
+      ToastAndroid.show('Erro ao buscar suas playlists', ToastAndroid.SHORT)
     }
-
-    getPlaylists()
   }, [loadPlaylists])
+
+  useEffect(() => {
+    getPlaylists()
+  }, [getPlaylists])
 
   const handleShowPlaylist = async (id: string) => {
     const response = await loadPlaylistMusics.execute({ playlistId: id })
@@ -179,6 +183,8 @@ export default function PlaylistScreen({
   const handleDeletePlaylist = async () => {
     try {
       await deletePlaylist.execute({ playlistId: playlist?.playlistId! })
+
+      getPlaylists()
     } catch (error) {
       ToastAndroid.show('Erro ao deletar playlist', ToastAndroid.SHORT)
     }
@@ -190,6 +196,8 @@ export default function PlaylistScreen({
         playlistId: playlist?.playlistId!,
         title: newTitle,
       })
+
+      getPlaylists()
     } catch (error) {
       ToastAndroid.show('Erro ao atualizar playlist', ToastAndroid.SHORT)
     }
@@ -210,7 +218,7 @@ export default function PlaylistScreen({
     <SafeAreaView style={styles.container}>
       <FlatList
         data={playlists}
-        keyExtractor={(item) => item.playlistId}
+        keyExtractor={(item) => item.playlistId.toString()}
         renderItem={({ item }) => (
           <RectButton
             style={styles.playlist}

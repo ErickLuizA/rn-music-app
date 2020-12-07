@@ -22,26 +22,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#111',
-    marginTop: StatusBar.currentHeight,
-    paddingTop: StatusBar.currentHeight! + 10,
+    paddingTop: StatusBar.currentHeight,
   },
 
-  flex: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: Dimensions.get('window').width / 1.1,
-    paddingHorizontal: 10,
-  },
-
-  heading: {
-    color: '#ddd',
-    fontSize: 20,
-    fontFamily: 'Inter_700Bold',
-    marginLeft: 60,
-    borderBottomColor: '#888',
-    borderBottomWidth: 1,
+  goBack: {
     alignSelf: 'flex-start',
-    paddingVertical: 5,
   },
 })
 
@@ -58,18 +43,17 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.flex}>
-        <Icon
-          name="navigate-before"
-          size={24}
-          color="#ddd"
-          onPress={() => navigation.goBack()}
-        />
-        <Text style={styles.heading}> Playlist </Text>
-      </View>
+      <Icon
+        name="navigate-before"
+        size={30}
+        color="#ddd"
+        style={styles.goBack}
+        onPress={() => navigation.goBack()}
+      />
+
       <FlatList
         data={data}
-        keyExtractor={(item) => item.playlistMusicId}
+        keyExtractor={(item) => item.playlistMusicId.toString()}
         numColumns={2}
         renderItem={({ item }) => (
           <Card

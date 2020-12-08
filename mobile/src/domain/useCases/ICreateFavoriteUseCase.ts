@@ -5,5 +5,5 @@ export interface CreateFavoritesParams {
 }
 
 export interface ICreateFavoritesUseCase {
-  execute: (params: CreateFavoritesParams) => Promise<void>
+  execute: (params: CreateFavoritesParams) => Promise<string>
 }

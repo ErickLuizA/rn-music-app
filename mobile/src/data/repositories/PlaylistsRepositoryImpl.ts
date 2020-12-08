@@ -31,7 +31,7 @@ export class PlaylistRepositoryImpl implements IPlaylistRepository {
   }
 
   async delete(params: Pick<Playlist, 'playlistId'>): Promise<void> {
-    return await this.httpClient.delete(`/playlist_musics/${params.playlistId}`)
+    return await this.httpClient.delete(`/playlist/${params.playlistId}`)
   }
 
   async deleteMusic(params: DeletePlaylistMusicParams): Promise<void> {

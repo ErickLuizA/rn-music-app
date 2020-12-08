@@ -10,7 +10,6 @@ import {
 import { RectButton } from 'react-native-gesture-handler'
 import { User } from '../../../domain/entities/User'
 import { ILoadUserUseCase } from '../../../domain/useCases/ILoadUserUseCase'
-import UserTabs from '../../../main/navigation/UserTabs'
 import { AuthContext } from '../../contexts/AuthContext'
 
 interface IUserScreen {

@@ -45,5 +45,4 @@ export interface PlaylistMusic {
   playlistMusicId: string
   img: string
   title: string
-  url: string
 }

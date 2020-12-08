@@ -19,7 +19,6 @@ import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylist
 import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
 import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
-import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
 import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
 import { PanGestureHandler } from 'react-native-gesture-handler'
 
@@ -43,7 +42,6 @@ interface IHomeScreen {
   loadMusics: ILoadMusicsUseCase
   loadRecent: ILoadRecentUseCase
   loadSound: ILoadSoundUseCase
-  loadPlaylistMusics: ILoadPlaylistMusicUseCase
   loadPlaylists: ILoadPlaylistsUseCase
   loadFavorites: ILoadFavoritesUseCase
   createFavorite: ICreateFavoritesUseCase
@@ -109,7 +107,6 @@ const styles = StyleSheet.create({
 export default function HomeScreen({
   loadMusics,
   loadSound,
-  loadPlaylistMusics,
   loadPlaylists,
   loadFavorites,
   createFavorite,
@@ -319,7 +316,6 @@ export default function HomeScreen({
             <Player
               music={playingMusic}
               loadSound={loadSound}
-              loadPlaylistMusics={loadPlaylistMusics}
               loadPlaylists={loadPlaylists}
               loadFavorites={loadFavorites}
               createFavorite={createFavorite}

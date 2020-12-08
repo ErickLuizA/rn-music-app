@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  ToastAndroid,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import CheckBox from '@react-native-community/checkbox'
@@ -59,12 +60,19 @@ function Modals({
       return
     }
 
-    await addPlaylistMusic.execute({
-      musicId: data.id,
-      img: data.img,
-      title: data.title,
-      playlistId: checked[0].playlistId,
-    })
+    try {
+      await addPlaylistMusic.execute({
+        musicId: data.id,
+        img: data.img,
+        title: data.title,
+        playlistId: checked[0].playlistId,
+      })
+    } catch (error) {
+      ToastAndroid.show(
+        'Erro ao adicionar música a playlist',
+        ToastAndroid.SHORT,
+      )
+    }
 
     close()
   }
@@ -79,7 +87,7 @@ function Modals({
       await createPlaylistUseCase.execute({ title })
       setNewModal(false)
     } catch (err) {
-      console.log(err)
+      ToastAndroid.show('Erro ao criar playlist', ToastAndroid.SHORT)
     }
   }
 

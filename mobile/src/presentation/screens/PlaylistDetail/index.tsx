@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-  SafeAreaView,
-  FlatList,
-  Text,
-  View,
-  Dimensions,
-  StatusBar,
-  StyleSheet,
-} from 'react-native'
+import { SafeAreaView, FlatList, StatusBar, StyleSheet } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useNavigation, useRoute } from '@react-navigation/native'
 import { PlaylistMusic } from '../../../domain/entities/Music'
@@ -63,9 +55,15 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
             onPress={() =>
               navigation.navigate('Home', {
                 data: {
-                  title: item.title,
-                  img: item.img,
                   id: item.musicId,
+                  snippet: {
+                    title: item.title,
+                    thumbnails: {
+                      high: {
+                        url: item.img,
+                      },
+                    },
+                  },
                 },
               })
             }

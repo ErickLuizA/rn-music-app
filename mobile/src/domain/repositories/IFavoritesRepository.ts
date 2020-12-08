@@ -3,7 +3,7 @@ import { CreateFavoritesParams } from '../useCases/ICreateFavoriteUseCase'
 import { DeleteFavoritesParams } from '../useCases/IDeleteFavoriteUseCase'
 
 export interface IFavoriteRepository {
-  create: (params: CreateFavoritesParams) => Promise<void>
+  create: (params: CreateFavoritesParams) => Promise<string>
 
   load: () => Promise<Favorite[]>
 

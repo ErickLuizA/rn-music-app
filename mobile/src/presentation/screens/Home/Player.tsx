@@ -8,22 +8,10 @@ import {
   StyleSheet,
   ToastAndroid,
 } from 'react-native'
-import {
-  add,
-  destroy,
-  pause,
-  play,
-  setupPlayer,
-  updateOptions,
-  addEventListener,
-  STATE_PAUSED,
-  STATE_PLAYING,
-  STATE_READY,
-} from 'react-native-track-player'
+import TrackPlayer, { usePlaybackState } from 'react-native-track-player'
 import { RectButton } from 'react-native-gesture-handler'
 import { PlayingMusic } from '../../../domain/entities/Music'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
-import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { ICreateFavoritesUseCase } from '../../../domain/useCases/ICreateFavoriteUseCase'
 import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
@@ -32,7 +20,7 @@ import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
 import { IAddPlaylistUseCase } from '../../../domain/useCases/IAddPlaylistMusicUseCase'
 import { ICreatePlaylistUseCase } from '../../../domain/useCases/ICreatePlaylistUseCase'
-import { getFavorites, getPlaylistMusics, setRecent } from './helper-functions'
+import { getFavorites, setRecent } from './helper-functions'
 
 import Modal from '../../components/Modal'
 import { Playlist } from '../../../domain/entities/Playlist'
@@ -40,7 +28,6 @@ import { Playlist } from '../../../domain/entities/Playlist'
 interface IPlayer {
   music: PlayingMusic
   loadSound: ILoadSoundUseCase
-  loadPlaylistMusics: ILoadPlaylistMusicUseCase
   loadPlaylists: ILoadPlaylistsUseCase
   loadFavorites: ILoadFavoritesUseCase
   createFavorite: ICreateFavoritesUseCase
@@ -108,7 +95,6 @@ const styles = StyleSheet.create({
 
 export default function Player({
   music,
-  loadPlaylistMusics,
   loadPlaylists,
   loadFavorites,
   createFavorite,
@@ -118,19 +104,49 @@ export default function Player({
   addPlaylistMusic,
   createPlaylistUseCase,
 }: IPlayer) {
-  const [isPlaying, setIsPlaying] = useState(false)
+  const [favorite, setFavorite] = useState<string | null>('')
   const [isFavorite, setIsFavorite] = useState(false)
-  const [inPlaylist, setInPlaylist] = useState(false)
   const [openModal, setOpenModal] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [playlists, setPlaylists] = useState<Playlist[]>()
 
+  const playbackState = usePlaybackState()
+
+  TrackPlayer.addEventListener('remote-play', async () => {
+    await TrackPlayer.play()
+  })
+
+  TrackPlayer.addEventListener('remote-pause', async () => {
+    await TrackPlayer.pause()
+  })
+
   useEffect(() => {
-    async function loadPlayer() {
-      await setupPlayer()
+    async function setup() {
+      await TrackPlayer.setupPlayer()
+
+      await TrackPlayer.updateOptions({
+        stopWithApp: true,
+        capabilities: [
+          TrackPlayer.CAPABILITY_PLAY,
+          TrackPlayer.CAPABILITY_PAUSE,
+        ],
+        compactCapabilities: [
+          TrackPlayer.CAPABILITY_PLAY,
+          TrackPlayer.CAPABILITY_PAUSE,
+        ],
+        notificationCapabilities: [
+          TrackPlayer.CAPABILITY_PLAY,
+          TrackPlayer.CAPABILITY_PAUSE,
+        ],
+      })
     }
 
-    loadPlayer()
+    setup()
+
+    return () => {
+      TrackPlayer.reset()
+      TrackPlayer.stop()
+    }
   }, [])
 
   useEffect(() => {
@@ -140,67 +156,64 @@ export default function Player({
 
     async function playMusic() {
       try {
-        await add({
+        await TrackPlayer.add({
           id: music.id,
           url: music.url,
           title: music.title,
           artist: music.title,
         })
 
-        play()
+        TrackPlayer.play()
+        setLoaded(true)
       } catch (error) {
-        ToastAndroid.show(error, ToastAndroid.SHORT)
+        ToastAndroid.show('Erro ao tocar a música', ToastAndroid.SHORT)
       }
     }
 
     playMusic()
 
-    getFavorites(loadFavorites, music).then((bool) => setIsFavorite(bool))
-
-    getPlaylistMusics(loadPlaylistMusics, music).then((bool) =>
-      setInPlaylist(bool),
-    )
+    getFavorites(loadFavorites, music).then((fav) => {
+      setFavorite(fav)
+      if (fav) {
+        setIsFavorite(true)
+      }
+    })
 
     setRecent(loadRecent, createRecent, music)
-
-    return () => {
-      destroy()
-    }
   }, [music]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  addEventListener('playback-state', (data) => {
-    if (data.state === STATE_PAUSED) {
-      setIsPlaying(false)
-    }
-
-    if (data.state === STATE_PLAYING) {
-      setIsPlaying(true)
-    }
-
-    if (data.state === STATE_READY) {
-      setLoaded(true)
-    }
-  })
-
-  updateOptions({
-    stopWithApp: true,
-  })
-
   const handlePlay = async () => {
-    isPlaying ? await pause() : await play()
+    if (playbackState === 0) {
+      await TrackPlayer.reset()
 
-    setIsPlaying((current) => !current)
+      await TrackPlayer.add({
+        id: music.id,
+        url: music.url,
+        title: music.title,
+        artist: music.title,
+      })
+
+      await TrackPlayer.play()
+    }
+
+    if (playbackState === TrackPlayer.STATE_PAUSED) {
+      await TrackPlayer.play()
+    } else {
+      await TrackPlayer.pause()
+    }
   }
 
   const handleAddFavorite = async () => {
     setIsFavorite(true)
 
     try {
-      await createFavorite.execute({
+      const favId = await createFavorite.execute({
         musicId: music?.id,
         img: music?.img,
         title: music?.title,
       })
+
+      setFavorite(favId)
     } catch (error) {
       ToastAndroid.show(
         'Erro ao adicionar música aos favoritos',
@@ -216,7 +229,7 @@ export default function Player({
 
     try {
       await deleteFavorite.execute({
-        id: music?.id,
+        id: favorite ?? '',
       })
     } catch (error) {
       ToastAndroid.show(
@@ -262,25 +275,19 @@ export default function Player({
               <Icon name="favorite-outline" style={styles.icons} color="0f0" />
             </RectButton>
           )}
-          {inPlaylist ? (
-            <RectButton style={styles.button}>
-              <Icon name="playlist-add-check" style={styles.icons} />
-            </RectButton>
-          ) : (
-            <RectButton style={styles.button} onPress={() => handleOpenModal()}>
-              <Icon name="playlist-add" style={styles.icons} />
-            </RectButton>
-          )}
+          <RectButton style={styles.button} onPress={() => handleOpenModal()}>
+            <Icon name="playlist-add" style={styles.icons} />
+          </RectButton>
         </View>
         <View style={styles.iconContainer}>
           <RectButton>
             <Icon name="skip-previous" style={styles.icon} />
           </RectButton>
           <RectButton onPress={handlePlay}>
-            {isPlaying ? (
-              <Icon name="pause" style={styles.icon} />
-            ) : (
+            {playbackState === TrackPlayer.STATE_PAUSED ? (
               <Icon name="play-arrow" style={styles.icon} />
+            ) : (
+              <Icon name="pause" style={styles.icon} />
             )}
           </RectButton>
           <RectButton>

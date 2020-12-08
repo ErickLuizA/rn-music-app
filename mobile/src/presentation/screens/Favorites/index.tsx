@@ -1,5 +1,11 @@
 import React, { useState, useCallback } from 'react'
-import { View, FlatList, StyleSheet, ToastAndroid } from 'react-native'
+import {
+  View,
+  FlatList,
+  StyleSheet,
+  ToastAndroid,
+  ActivityIndicator,
+} from 'react-native'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { Favorite } from '../../../domain/entities/Favorite'
@@ -34,23 +40,25 @@ export default function FavoritesScreen({
   deleteFavorite,
 }: IFavoritesScreen) {
   const [favorites, setFavorites] = useState<Favorite[]>()
+  const [loaded, setLoaded] = useState(false)
 
   const navigation = useNavigation()
 
-  useFocusEffect(
-    useCallback(() => {
-      async function getLoadFavorites() {
-        try {
-          const response = await loadFavorites.execute()
+  const getLoadFavorites = useCallback(async () => {
+    try {
+      const response = await loadFavorites.execute()
 
-          setFavorites(response)
-        } catch (error) {
-          ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
-        }
-      }
-      getLoadFavorites()
-    }, [loadFavorites]),
-  )
+      setFavorites(response)
+    } catch (error) {
+      ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
+    }
+
+    setLoaded(true)
+  }, [loadFavorites])
+
+  useFocusEffect(() => {
+    getLoadFavorites()
+  })
 
   const handleDeleteFavorite = async (item: Favorite) => {
     try {
@@ -64,6 +72,14 @@ export default function FavoritesScreen({
     } catch (error) {
       ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
     }
+  }
+
+  if (!loaded) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size="large" color="#fff" />
+      </View>
+    )
   }
 
   return (

@@ -23,7 +23,7 @@ export default function UserTabs() {
       }}>
       <Screen name="Favorites" component={makeFavorites} />
       <Screen name="Playlist" component={PlaylistStack} />
-      <Screen name="Settings" component={makeUser} />
+      <Screen name="User" component={makeUser} />
     </Navigator>
   )
 }

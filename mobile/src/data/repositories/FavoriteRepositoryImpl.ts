@@ -7,7 +7,7 @@ import { IHttpClient } from '../protocols/IHttpClient'
 export class FavoriteRepositoryImpl implements IFavoriteRepository {
   constructor(private readonly httpClient: IHttpClient) {}
 
-  async create(params: CreateFavoritesParams): Promise<void> {
+  async create(params: CreateFavoritesParams): Promise<string> {
     return await this.httpClient.post('/favorite', params)
   }
 

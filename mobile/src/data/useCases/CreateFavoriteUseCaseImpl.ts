@@ -7,7 +7,7 @@ import {
 export class CreateFavoriteUseCaseImpl implements ICreateFavoritesUseCase {
   constructor(private readonly favoriteRepository: IFavoriteRepository) {}
 
-  async execute(params: CreateFavoritesParams): Promise<void> {
+  async execute(params: CreateFavoritesParams): Promise<string> {
     return this.favoriteRepository.create(params)
   }
 }

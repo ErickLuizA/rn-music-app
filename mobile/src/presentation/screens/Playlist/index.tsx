@@ -9,6 +9,7 @@ import {
   View,
   TouchableOpacity,
   ToastAndroid,
+  ActivityIndicator,
 } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { RectButton, TextInput } from 'react-native-gesture-handler'
@@ -147,6 +148,7 @@ export default function PlaylistScreen({
 }: IPlaylistScreen) {
   const [playlists, setPlaylists] = useState<Playlist[]>()
   const [playlist, setPlaylist] = useState<Playlist>()
+  const [loaded, setLoaded] = useState(false)
 
   const [openUpdateModal, setOpenUpdateModal] = useState(false)
   const [open, setOpen] = useState(false)
@@ -163,6 +165,8 @@ export default function PlaylistScreen({
     } catch (error) {
       ToastAndroid.show('Erro ao buscar suas playlists', ToastAndroid.SHORT)
     }
+
+    setLoaded(true)
   }, [loadPlaylists])
 
   useEffect(() => {
@@ -186,6 +190,7 @@ export default function PlaylistScreen({
 
       getPlaylists()
     } catch (error) {
+      console.log(error.response.data)
       ToastAndroid.show('Erro ao deletar playlist', ToastAndroid.SHORT)
     }
   }
@@ -198,6 +203,7 @@ export default function PlaylistScreen({
       })
 
       getPlaylists()
+      closeModal()
     } catch (error) {
       ToastAndroid.show('Erro ao atualizar playlist', ToastAndroid.SHORT)
     }
@@ -212,6 +218,14 @@ export default function PlaylistScreen({
 
   const closeModal = () => {
     setOpen(false)
+  }
+
+  if (!loaded) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#fff" />
+      </SafeAreaView>
+    )
   }
 
   return (

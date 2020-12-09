@@ -4,18 +4,7 @@ import { IUserRepository } from '../../data/repositories/IUserRepository'
 
 export class UserRepositoryImpl implements IUserRepository {
   async create (params: Pick<UserModel, 'name' | 'email' | 'password'>): Promise<UserModel> {
-    const result = await database('users').insert(params).returning('*') as any
-
-    if (result.id === undefined) {
-      return {
-        id: result[0],
-        name: '',
-        email: '',
-        password: ''
-      }
-    }
-
-    return result
+    return await database('users').insert(params).returning('*') as any
   }
 
   async loadByEmail (email: string): Promise<UserModel> {

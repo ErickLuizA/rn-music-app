@@ -5,9 +5,7 @@ import database from '../query-builder/knex/connection'
 
 export class FavoriteRepositoryImpl implements IFavoriteRepository {
   async create (createFavoriteParams: CreateFavoriteParams): Promise<FavoriteMusicModel> {
-    const result = await database('favorites').insert(createFavoriteParams).returning('*') as any
-
-    return result
+    return await database('favorites').insert(createFavoriteParams).returning('*') as any
   }
 
   async load (userId: string, musicId: string): Promise<FavoriteMusicModel> {

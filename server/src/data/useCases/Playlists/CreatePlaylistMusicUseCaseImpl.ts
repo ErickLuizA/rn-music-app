@@ -8,7 +8,7 @@ export class CreatePlaylistMusicUseCaseImpl implements CreatePlaylistMusicUseCas
   ) {}
 
   async execute (musicId: string, title: string, img: string, playlistId: string): Promise<MusicModel> {
-    const alreadyExists = await this.playlistRepository.loadMusic(musicId, playlistId)
+    const alreadyExists = await this.playlistRepository.loadMusic(playlistId, musicId)
 
     if (alreadyExists) {
       throw new Error('This music already belongs to the playlist.')

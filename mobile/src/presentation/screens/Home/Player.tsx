@@ -8,7 +8,10 @@ import {
   StyleSheet,
   ToastAndroid,
 } from 'react-native'
-import TrackPlayer, { usePlaybackState } from 'react-native-track-player'
+import TrackPlayer, {
+  usePlaybackState,
+  useTrackPlayerProgress,
+} from 'react-native-track-player'
 import { RectButton } from 'react-native-gesture-handler'
 import { PlayingMusic } from '../../../domain/entities/Music'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
@@ -64,6 +67,21 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
+  progress: {
+    height: 2,
+    width: '90%',
+    marginTop: 10,
+    flexDirection: 'row',
+  },
+
+  progressPos: {
+    backgroundColor: 'red',
+  },
+
+  fullBar: {
+    backgroundColor: 'grey',
+  },
+
   touchable: {
     width: 250,
     height: 100,
@@ -111,6 +129,7 @@ export default function Player({
   const [playlists, setPlaylists] = useState<Playlist[]>()
 
   const playbackState = usePlaybackState()
+  const progress = useTrackPlayerProgress()
 
   TrackPlayer.addEventListener('remote-play', async () => {
     await TrackPlayer.play()
@@ -183,7 +202,7 @@ export default function Player({
   }, [music]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handlePlay = async () => {
-    if (playbackState === 0) {
+    if (playbackState === TrackPlayer.STATE_STOPPED) {
       await TrackPlayer.reset()
 
       await TrackPlayer.add({
@@ -278,6 +297,17 @@ export default function Player({
           <RectButton style={styles.button} onPress={() => handleOpenModal()}>
             <Icon name="playlist-add" style={styles.icons} />
           </RectButton>
+        </View>
+        <View style={styles.progress}>
+          <View style={[{ flex: progress.position }, styles.progressPos]} />
+          <View
+            style={[
+              {
+                flex: progress.duration - progress.position,
+              },
+              styles.fullBar,
+            ]}
+          />
         </View>
         <View style={styles.iconContainer}>
           <RectButton>

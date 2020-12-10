@@ -133,12 +133,12 @@ export default function Login({ loginUser }: ILogin) {
     }
 
     try {
-      const response = await loginUser.execute({
+      const response = (await loginUser.execute({
         email,
         password,
-      })
+      })) as any
 
-      login(response)
+      login(response.accessToken)
     } catch (err) {
       setError(err.response.data.message)
     }

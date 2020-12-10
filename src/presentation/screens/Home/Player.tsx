@@ -131,19 +131,11 @@ export default function Player({
   const playbackState = usePlaybackState()
   const progress = useTrackPlayerProgress()
 
-  TrackPlayer.addEventListener('remote-play', async () => {
-    await TrackPlayer.play()
-  })
-
-  TrackPlayer.addEventListener('remote-pause', async () => {
-    await TrackPlayer.pause()
-  })
-
   useEffect(() => {
     async function setup() {
       await TrackPlayer.setupPlayer()
 
-      await TrackPlayer.updateOptions({
+      TrackPlayer.updateOptions({
         stopWithApp: true,
         capabilities: [
           TrackPlayer.CAPABILITY_PLAY,
@@ -158,6 +150,14 @@ export default function Player({
           TrackPlayer.CAPABILITY_PAUSE,
         ],
       })
+
+      TrackPlayer.addEventListener('remote-play', async () => {
+        await TrackPlayer.play()
+      })
+
+      TrackPlayer.addEventListener('remote-pause', async () => {
+        await TrackPlayer.pause()
+      })
     }
 
     setup()
@@ -165,6 +165,7 @@ export default function Player({
     return () => {
       TrackPlayer.reset()
       TrackPlayer.stop()
+      TrackPlayer.destroy()
     }
   }, [])
 

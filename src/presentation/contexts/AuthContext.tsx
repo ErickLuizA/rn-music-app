@@ -36,7 +36,7 @@ function AuthProvider({ children }: IAuthProvider) {
   const login = async (response: any) => {
     setAuthenticated(true)
 
-    await AsyncStorage.setItem('@RNtoken', response.accessToken)
+    await AsyncStorage.setItem('@RNtoken', response)
   }
 
   const logout = async () => {

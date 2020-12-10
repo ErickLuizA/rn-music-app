@@ -1,5 +1,5 @@
 <p align="center"> 
-  <img alt="yfmusic icon" src="./mobile/assets/splash.png"  width="280"/>
+  <img alt="yfmusic icon" src="./assets/splash.png"  width="280"/>
 </p>
 
 <h1 align="center"> YFMusic </h1>
@@ -27,36 +27,18 @@
   <a href="#clipboard-description">Description</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#building_construction-technologies">Technologies</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#rocket-getting-started">Getting Started</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="#memo-license">License</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="./.github"> Screenshots</a>
+  <a href="#memo-license">License</a>
 </p>
 
 > Under construction
 
 ## :clipboard: Description
 
-YFMusic is a music app built with React Native and Node.js
+YFMusic is a music app built with React Native
 
 ## :building_construction: Technologies
 
-- [Node.js](https://nodejs.org/en/)
-
-  - [Typescript](https://www.typescriptlang.org/)
-  - [Express](https://expressjs.com)
-  - [Knex](http://knexjs.org)
-  - [Pg](https://node-postgres.com)
-  - [Cors](https://www.npmjs.com/package/cors)
-  - [Jsonwebtoken](https://jwt.io/)
-  - [ytdl-core](https://github.com/fent/node-ytdl-core)
-
 - [React Native](https://reactnative.dev/)
-
-  - [Expo](https://expo.io)
-  - [React Navigation](https://reactnavigation.org/)
-  - [AsyncStorage](https://github.com/react-native-community/async-storage)
-  - [Checkbox](https://github.com/react-native-community/react-native-checkbox)
-  - [Expo-av](https://docs.expo.io/versions/latest/sdk/av/)
-  - [Axios](https://github.com/axios/axios)
 
 ## :rocket: Getting Started
 
@@ -69,25 +51,8 @@ YFMusic is a music app built with React Native and Node.js
 ## 2. Installation
 
 ```shell
-# Go into the repository
+# Go into the folder
 $ cd yfmusic
-```
-
-### Server
-
-```shell
-# Go to the server folder
-$ cd server
-
-# Install dependencies
-$ yarn install
-```
-
-### Mobile
-
-```shell
-# Go to the mobile folder
-$ cd mobile
 
 # Install dependencies
 $ yarn install
@@ -95,17 +60,11 @@ $ yarn install
 
 ## 3. Execution
 
-### Server
-
 ```shell
-# On the server folder
-$ yarn dev
-```
+# Install app
+$ yarn android or yarn ios
 
-### Mobile
-
-```shell
-# On the mobile folder
+# Start metro bundler
 $ yarn start
 ```
 

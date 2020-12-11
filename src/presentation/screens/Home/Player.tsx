@@ -135,7 +135,7 @@ export default function Player({
     async function setup() {
       await TrackPlayer.setupPlayer()
 
-      TrackPlayer.updateOptions({
+      await TrackPlayer.updateOptions({
         stopWithApp: true,
         capabilities: [
           TrackPlayer.CAPABILITY_PLAY,

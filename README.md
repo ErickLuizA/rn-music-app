@@ -1,5 +1,5 @@
 <p align="center"> 
-  <img alt="yfmusic icon" src="./assets/splash.png"  width="280"/>
+  <img alt="yfmusic icon" src="./assets/icon.png"  width="280"/>
 </p>
 
 <h1 align="center"> YFMusic </h1>
@@ -29,8 +29,6 @@
   <a href="#rocket-getting-started">Getting Started</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#memo-license">License</a>
 </p>
-
-> Under construction
 
 ## :clipboard: Description
 
@@ -67,6 +65,13 @@ $ yarn android or yarn ios
 # Start metro bundler
 $ yarn start
 ```
+
+
+[API](https://github.com/ErickLuizA/yfmusic-api)
+
+## :information_source: TODO
+  - Implement tests
+  - Play playlist
 
 ## :memo: License
 

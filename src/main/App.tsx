@@ -1,25 +1,14 @@
-import React, { useEffect } from 'react'
-import { StatusBar } from 'react-native'
+import 'react-native-gesture-handler'
 import { NavigationContainer } from '@react-navigation/native'
-import SplashScreen from 'react-native-splash-screen'
 
 import AuthProvider from '../presentation/contexts/AuthContext'
 import Navigation from './navigation'
 
 export default function App() {
-  useEffect(() => {
-    setTimeout(() => {
-      SplashScreen.hide()
-    }, 1000)
-  }, [])
-
   return (
     <NavigationContainer>
       <AuthProvider>
-        <>
-          <StatusBar barStyle="light-content" backgroundColor="#111" />
-          <Navigation />
-        </>
+        <Navigation />
       </AuthProvider>
     </NavigationContainer>
   )

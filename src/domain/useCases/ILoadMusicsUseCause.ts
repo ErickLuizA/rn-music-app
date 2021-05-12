@@ -8,10 +8,6 @@ export interface LoadMusicsParams {
   key: string
 }
 
-export interface MusicResponse {
-  items: Music[]
-}
-
 export interface ILoadMusicsUseCase {
-  execute: (params: LoadMusicsParams) => Promise<MusicResponse>
+  execute: (params: LoadMusicsParams) => Promise<Music[]>
 }

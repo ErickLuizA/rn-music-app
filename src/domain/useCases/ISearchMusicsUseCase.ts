@@ -1,9 +1,5 @@
-import { SearchedMusic } from '../entities/Music'
-
-export interface SearchedMusicResponse {
-  items: SearchedMusic[]
-}
+import { Music } from '../entities/Music'
 
 export interface ISearchMusicsUseCase {
-  execute: (query: any) => Promise<SearchedMusicResponse>
+  execute: (query: any) => Promise<Music[]>
 }

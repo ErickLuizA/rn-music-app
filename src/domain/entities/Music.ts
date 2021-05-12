@@ -1,48 +1,19 @@
-export interface Music {
+export class Music {
   id: string
-  snippet: {
-    title: string
-    thumbnails: {
-      high: {
-        url: string
-      }
+  title: string
+  image: string
+
+  constructor(id: string, title: string, image: string) {
+    this.id = id
+    this.title = title
+    this.image = image
+  }
+
+  static fromJson(json: any): Music {
+    return {
+      id: json.id,
+      title: json.snippet.title,
+      image: json.snippet.thumbnails.default.url,
     }
   }
-}
-
-export interface SearchedMusic {
-  id: {
-    videoId: string
-  }
-  snippet: {
-    title: string
-    thumbnails: {
-      high: {
-        url: string
-      }
-    }
-  }
-}
-
-export interface SearchedData {
-  id: {
-    videoId: string
-  }
-  img: string
-  title: string
-}
-
-export interface PlayingMusic {
-  id: string
-  img: string
-  title: string
-  url: string
-}
-
-export interface PlaylistMusic {
-  playlistId: string
-  musicId: string
-  playlistMusicId: string
-  img: string
-  title: string
 }

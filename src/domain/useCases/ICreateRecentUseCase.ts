@@ -1,6 +1,6 @@
-import { Recent } from '../entities/Recent'
+import { Music } from '../entities/Music'
 
-export type CreateRecentParams = Recent
+export type CreateRecentParams = Music
 
 export interface ICreateRecentUseCase {
   execute: (params: CreateRecentParams) => Promise<void>

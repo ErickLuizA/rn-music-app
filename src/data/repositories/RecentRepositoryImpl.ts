@@ -1,4 +1,4 @@
-import { Recent } from '../../domain/entities/Recent'
+import { Music } from '../../domain/entities/Music'
 import { IRecentRepository } from '../../domain/repositories/IRecentRepository'
 import { CreateRecentParams } from '../../domain/useCases/ICreateRecentUseCase'
 import { IRecentLocalClient } from '../protocols/IRecentLocalClient'
@@ -10,7 +10,7 @@ export class RecentRepositoryImpl implements IRecentRepository {
     return await this.localClient.create(params)
   }
 
-  async load(): Promise<Recent[]> {
+  async load(): Promise<Music[]> {
     return await this.localClient.get()
   }
 }

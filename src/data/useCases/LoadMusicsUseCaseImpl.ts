@@ -9,10 +9,6 @@ export class LoadMusicsUseCaseImpl implements ILoadMusicsUseCase {
   constructor(private readonly MusicsRepository: IMusicRepository) {}
 
   async execute(params: LoadMusicsParams): Promise<MusicResponse> {
-    try {
-      return await this.MusicsRepository.load(params)
-    } catch (error) {
-      return error
-    }
+    return await this.MusicsRepository.load(params)
   }
 }

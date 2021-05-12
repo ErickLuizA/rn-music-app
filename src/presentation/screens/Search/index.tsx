@@ -5,63 +5,29 @@ import {
   FlatList,
   SafeAreaView,
   TouchableOpacity,
-  StyleSheet,
-  StatusBar,
   ToastAndroid,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
+
 import { SearchedMusic } from '../../../domain/entities/Music'
+import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
 
 import Card from '../../components/Card'
+
+import styles from './styles'
 
 interface ISearchScreen {
   searchMusic: ISearchMusicsUseCase
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111',
-    paddingTop: StatusBar.currentHeight || 10,
-    paddingHorizontal: 10,
-  },
-
-  searchSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  icon: {
-    fontSize: 32,
-    paddingRight: 20,
-  },
-
-  input: {
-    flex: 1,
-    fontFamily: 'Inter_400Regular',
-    borderBottomColor: '#999',
-    borderBottomWidth: 0.3,
-  },
-
-  white: {
-    color: '#ddd',
-  },
-
-  list: {
-    paddingVertical: 20,
-  },
-})
-
 export default function SearchScreen({ searchMusic }: ISearchScreen) {
   const [items, setItems] = useState<SearchedMusic[]>()
+  const [search, setSearch] = useState('')
 
   const navigation = useNavigation()
 
-  const [search, setSearch] = useState('')
-
-  const getSearchMusic = useCallback(async () => {
+  const handleSearchMusic = useCallback(async () => {
     try {
       const response = await searchMusic.execute({
         q: search,
@@ -71,18 +37,22 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
       })
 
       setItems(response.items)
-    } catch (err) {
+    } catch (error) {
+      console.log(`SEARCH ${error}`)
+
       ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
     }
   }, [search, searchMusic])
+
+  const handleNavigateToPlayer = () => {}
 
   useEffect(() => {
     if (!search) {
       return
     } else {
-      getSearchMusic()
+      handleSearchMusic()
     }
-  }, [searchMusic, search, getSearchMusic])
+  }, [search, handleSearchMusic])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -96,13 +66,13 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
           autoFocus
           placeholder="Search for music"
           placeholderTextColor="#ddd"
-          onChangeText={(text) => setSearch(text)}
+          onChangeText={text => setSearch(text)}
         />
       </View>
       <View>
         <FlatList
           data={items}
-          keyExtractor={(item) => item.id.videoId}
+          keyExtractor={item => item.id.videoId}
           style={styles.list}
           numColumns={2}
           renderItem={({ item }) => (
@@ -110,14 +80,7 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
               id={item.id.videoId}
               title={item.snippet.title}
               img={item.snippet.thumbnails.high.url}
-              onPress={() =>
-                navigation.navigate('Home', {
-                  data: {
-                    id: item.id.videoId,
-                    snippet: item.snippet,
-                  },
-                })
-              }
+              onPress={() => handleNavigateToPlayer()}
             />
           )}
         />

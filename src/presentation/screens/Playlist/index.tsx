@@ -3,146 +3,31 @@ import {
   SafeAreaView,
   FlatList,
   Text,
-  Dimensions,
-  StyleSheet,
   Modal,
   View,
   TouchableOpacity,
   ToastAndroid,
   ActivityIndicator,
 } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 import { RectButton, TextInput } from 'react-native-gesture-handler'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { useNavigation } from '@react-navigation/native'
-import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
-import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
+
 import { Playlist } from '../../../domain/entities/Playlist'
+import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
 import { IDeletePlaylistUseCase } from '../../../domain/useCases/IDeletePlaylistUseCase'
 import { IUpdatePlaylistUseCase } from '../../../domain/useCases/IUpdatePlaylistUseCase'
 
+import styles from './styles'
+
 interface IPlaylistScreen {
   loadPlaylists: ILoadPlaylistsUseCase
-  loadPlaylistMusics: ILoadPlaylistMusicUseCase
   deletePlaylist: IDeletePlaylistUseCase
   updatePlaylist: IUpdatePlaylistUseCase
 }
 
-const HEIGHT = Dimensions.get('window').height
-const WIDTH = Dimensions.get('window').width
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#111',
-    padding: 15,
-  },
-
-  heading: {
-    color: '#ddd',
-    fontSize: 20,
-    fontFamily: 'Inter_700Bold',
-    alignSelf: 'flex-start',
-    paddingVertical: 10,
-    marginBottom: 50,
-    borderBottomColor: '#888',
-    borderBottomWidth: 1,
-  },
-
-  playlist: {
-    borderColor: '#888',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    paddingRight: 30,
-    marginBottom: 20,
-    width: Dimensions.get('window').width / 1.09,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  whiteText: {
-    color: '#ddd',
-    fontFamily: 'Inter_400Regular',
-    fontSize: 18,
-  },
-
-  marginLeft: {
-    marginLeft: 10,
-  },
-
-  modal: {
-    position: 'absolute',
-    bottom: 0,
-    right: 0,
-    left: 0,
-    backgroundColor: '#ddd',
-    height: HEIGHT / 4.5,
-    padding: 10,
-    borderRadius: 10,
-  },
-
-  updateModal: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-
-  updateModalContainer: {
-    height: HEIGHT / 3,
-    width: WIDTH / 1.2,
-    backgroundColor: '#111',
-    justifyContent: 'space-between',
-  },
-
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    padding: 20,
-  },
-
-  input: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#fff',
-    paddingTop: 30,
-    paddingBottom: 5,
-    color: '#fff',
-  },
-
-  deleteButton: {
-    backgroundColor: '#FF6666',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    marginBottom: 5,
-    width: '100%',
-  },
-
-  editButton: {
-    backgroundColor: 'grey',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    flexDirection: 'row',
-    marginBottom: 5,
-    width: '100%',
-  },
-
-  cancelButton: {
-    backgroundColor: '#34b68a',
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 10,
-    marginBottom: 5,
-    marginTop: 10,
-  },
-})
-
 export default function PlaylistScreen({
   loadPlaylists,
-  loadPlaylistMusics,
   deletePlaylist,
   updatePlaylist,
 }: IPlaylistScreen) {
@@ -157,26 +42,22 @@ export default function PlaylistScreen({
 
   const navigation = useNavigation()
 
-  const getPlaylists = useCallback(async () => {
+  const handleGetPlaylists = useCallback(async () => {
     try {
       const response = await loadPlaylists.execute()
 
       setPlaylists(response)
     } catch (error) {
+      console.log(`PLAYLIST ${error}`)
+
       ToastAndroid.show('Erro ao buscar suas playlists', ToastAndroid.SHORT)
     }
 
     setLoaded(true)
   }, [loadPlaylists])
 
-  useEffect(() => {
-    getPlaylists()
-  }, [getPlaylists])
-
-  const handleShowPlaylist = async (id: string) => {
-    const response = await loadPlaylistMusics.execute({ playlistId: id })
-
-    navigation.navigate('PlaylistDetailScreen', { data: response })
+  const handleNavigateToPlaylistDetail = async (id: string) => {
+    navigation.navigate('PlaylistDetailScreen', { playlistId: id })
   }
 
   const handleOpenUpdateModal = () => {
@@ -188,9 +69,9 @@ export default function PlaylistScreen({
     try {
       await deletePlaylist.execute({ playlistId: playlist?.playlistId! })
 
-      getPlaylists()
+      handleGetPlaylists()
     } catch (error) {
-      console.log(error.response.data)
+      console.log(error)
       ToastAndroid.show('Erro ao deletar playlist', ToastAndroid.SHORT)
     }
   }
@@ -202,7 +83,7 @@ export default function PlaylistScreen({
         title: newTitle,
       })
 
-      getPlaylists()
+      handleGetPlaylists()
       closeModal()
     } catch (error) {
       ToastAndroid.show('Erro ao atualizar playlist', ToastAndroid.SHORT)
@@ -220,6 +101,10 @@ export default function PlaylistScreen({
     setOpen(false)
   }
 
+  useEffect(() => {
+    handleGetPlaylists()
+  }, [handleGetPlaylists])
+
   if (!loaded) {
     return (
       <SafeAreaView style={styles.container}>
@@ -232,11 +117,11 @@ export default function PlaylistScreen({
     <SafeAreaView style={styles.container}>
       <FlatList
         data={playlists}
-        keyExtractor={(item) => item.playlistId.toString()}
+        keyExtractor={item => item.playlistId.toString()}
         renderItem={({ item }) => (
           <RectButton
             style={styles.playlist}
-            onPress={() => handleShowPlaylist(item.playlistId)}>
+            onPress={() => handleNavigateToPlaylistDetail(item.playlistId)}>
             <Text style={styles.whiteText}> {item.title} </Text>
             <RectButton onPress={() => openModal(item)}>
               <Icon name="more-vert" size={24} color="#ddd" />
@@ -280,7 +165,7 @@ export default function PlaylistScreen({
             <TextInput
               style={styles.input}
               value={newTitle}
-              onChangeText={(text) => setNewTitle(text)}
+              onChangeText={text => setNewTitle(text)}
               placeholderTextColor="#fff"
               placeholder={playlist?.title}
             />

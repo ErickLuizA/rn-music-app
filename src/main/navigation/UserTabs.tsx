@@ -1,7 +1,9 @@
 import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
-import { makeFavorites } from '../factories/screens/FavoritesFactory'
+
 import PlaylistStack from './PlaylistStack'
+
+import { makeFavorites } from '../factories/screens/FavoritesFactory'
 import { makeUser } from '../factories/screens/UserFactory'
 
 const { Navigator, Screen } = createMaterialTopTabNavigator()
@@ -20,6 +22,7 @@ export default function UserTabs() {
         labelStyle: {
           color: '#ddd',
         },
+        showLabel: true,
       }}>
       <Screen name="Favorites" component={makeFavorites} />
       <Screen name="Playlist" component={PlaylistStack} />

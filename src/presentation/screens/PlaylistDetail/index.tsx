@@ -1,37 +1,33 @@
-import React from 'react'
-import { SafeAreaView, FlatList, StatusBar, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import React, { useEffect, useState } from 'react'
+import { SafeAreaView, FlatList } from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { PlaylistMusic } from '../../../domain/entities/Music'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import Card from '../../components/Card'
 
+import styles from './styles'
+import { Music } from '../../../domain/entities/Music'
+
 interface IPlaylistDetail {}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#111',
-    paddingTop: StatusBar.currentHeight,
-  },
-
-  goBack: {
-    alignSelf: 'flex-start',
-  },
-})
 
 export default function PlaylistDetail({}: IPlaylistDetail) {
   const { params } = useRoute<{
-    params: { data: PlaylistMusic[] }
+    params: { playlistId: string }
     name: string
     key: string
   }>()
 
   const navigation = useNavigation()
 
-  const data = params.data
+  const [data, setData] = useState<Music[]>([])
+
+  useEffect(() => {}, [])
+
+  const handleNavigateToPlayer = (item: Music) => {
+    navigation.navigate('Player', {
+      item,
+    })
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,28 +41,14 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
 
       <FlatList
         data={data}
-        keyExtractor={(item) => item.playlistMusicId.toString()}
+        keyExtractor={item => item.id}
         numColumns={2}
         renderItem={({ item }) => (
           <Card
-            id={item.playlistMusicId}
+            id={item.id}
             title={item.title}
-            img={item.img}
-            onPress={() =>
-              navigation.navigate('Home', {
-                data: {
-                  id: item.musicId,
-                  snippet: {
-                    title: item.title,
-                    thumbnails: {
-                      high: {
-                        url: item.img,
-                      },
-                    },
-                  },
-                },
-              })
-            }
+            img={item.image}
+            onPress={() => handleNavigateToPlayer(item)}
           />
         )}
       />

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/core'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   View,
@@ -27,6 +28,8 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
 
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+
+  const navigation = useNavigation()
 
   const handleGetMusics = useCallback(async () => {
     try {
@@ -67,7 +70,11 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
     setRefreshing(false)
   }
 
-  const handleNavigateToPlayer = async () => {}
+  const handleNavigateToPlayer = (item: Music) => {
+    navigation.navigate('Player', {
+      item,
+    })
+  }
 
   useEffect(() => {
     handleGetMusics()
@@ -98,7 +105,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
                 id={item.id}
                 title={item.title}
                 img={item.image}
-                onPress={() => handleNavigateToPlayer()}
+                onPress={() => handleNavigateToPlayer(item)}
               />
             )}
           />
@@ -117,7 +124,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
                   id={item.id}
                   title={item.title}
                   img={item.image}
-                  onPress={() => handleNavigateToPlayer()}
+                  onPress={() => handleNavigateToPlayer(item)}
                 />
               )}
             />

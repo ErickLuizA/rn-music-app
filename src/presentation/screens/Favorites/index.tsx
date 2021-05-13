@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react'
 import { View, FlatList, ToastAndroid, ActivityIndicator } from 'react-native'
+import { useNavigation } from '@react-navigation/core'
 
-import { Favorite } from '../../../domain/entities/Favorite'
+import { Music } from '../../../domain/entities/Music'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
 
@@ -18,9 +19,11 @@ export default function FavoritesScreen({
   loadFavorites,
   deleteFavorite,
 }: IFavoritesScreen) {
-  const [favorites, setFavorites] = useState<Favorite[]>()
+  const [favorites, setFavorites] = useState<Music[]>()
   const [loaded, setLoaded] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+
+  const navigation = useNavigation()
 
   const handleLoadFavorites = useCallback(async () => {
     try {
@@ -28,21 +31,17 @@ export default function FavoritesScreen({
 
       setFavorites(response)
     } catch (error) {
-      console.log(`FAVORITES ${error}`)
-
       ToastAndroid.show('Erro ao buscar favoritos', ToastAndroid.SHORT)
     }
 
     setLoaded(true)
   }, [loadFavorites])
 
-  const handleDeleteFavorite = async (item: Favorite) => {
+  const handleDeleteFavorite = async (item: Music) => {
     try {
-      await deleteFavorite.execute({ id: item.favoriteId })
+      await deleteFavorite.execute({ id: item.id })
 
-      const newFavs = favorites?.filter(
-        fav => fav.favoriteId !== item.favoriteId,
-      )
+      const newFavs = favorites?.filter(fav => fav.id !== item.id)
 
       setFavorites(newFavs)
     } catch (error) {
@@ -56,7 +55,11 @@ export default function FavoritesScreen({
     handleLoadFavorites().then(() => setRefreshing(false))
   }
 
-  const handleNavigateToPlayer = () => {}
+  const handleNavigateToPlayer = (item: Music) => {
+    navigation.navigate('Player', {
+      item,
+    })
+  }
 
   useEffect(() => {
     handleLoadFavorites()
@@ -76,14 +79,14 @@ export default function FavoritesScreen({
         refreshing={refreshing}
         onRefresh={handleOnRefresh}
         data={favorites}
-        keyExtractor={item => item.musicId}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <LongCard
-            id={item.musicId}
+            id={item.id}
             title={item.title}
-            img={item.img}
+            img={item.image}
             onPress={() => handleDeleteFavorite(item)}
-            navigate={() => handleNavigateToPlayer()}
+            navigate={() => handleNavigateToPlayer(item)}
           />
         )}
       />

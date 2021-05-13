@@ -43,7 +43,11 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
     }
   }, [search, searchMusic])
 
-  const handleNavigateToPlayer = () => {}
+  const handleNavigateToPlayer = (item: Music) => {
+    navigation.navigate('Player', {
+      item,
+    })
+  }
 
   useEffect(() => {
     if (!search) {
@@ -85,7 +89,7 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
                 id={item.id}
                 title={item.title}
                 img={item.image}
-                onPress={() => handleNavigateToPlayer()}
+                onPress={() => handleNavigateToPlayer(item)}
               />
             )}
           />

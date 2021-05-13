@@ -1,5 +1,5 @@
-import { Favorite } from '../entities/Favorite'
+import { Music } from '../entities/Music'
 
 export interface ILoadFavoritesUseCase {
-  execute: () => Promise<Favorite[]>
+  execute: () => Promise<Music[]>
 }

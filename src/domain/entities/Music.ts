@@ -11,7 +11,7 @@ export class Music {
 
   static fromJson(json: any): Music {
     return {
-      id: json.id,
+      id: json.id.videoId ?? json.id,
       title: json.snippet.title,
       image: json.snippet.thumbnails.default.url,
     }

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
   TextInput,
+  Text,
   FlatList,
   SafeAreaView,
   TouchableOpacity,
@@ -10,19 +11,19 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { SearchedMusic } from '../../../domain/entities/Music'
 import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
 
 import Card from '../../components/Card'
 
 import styles from './styles'
+import { Music } from '../../../domain/entities/Music'
 
 interface ISearchScreen {
   searchMusic: ISearchMusicsUseCase
 }
 
 export default function SearchScreen({ searchMusic }: ISearchScreen) {
-  const [items, setItems] = useState<SearchedMusic[]>()
+  const [items, setItems] = useState<Music[]>([])
   const [search, setSearch] = useState('')
 
   const navigation = useNavigation()
@@ -36,11 +37,9 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
         key: process.env.API_KEY,
       })
 
-      setItems(response.items)
+      setItems(response)
     } catch (error) {
-      console.log(`SEARCH ${error}`)
-
-      ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
+      ToastAndroid.show('Erro ao pesquisar músicas', ToastAndroid.SHORT)
     }
   }, [search, searchMusic])
 
@@ -50,7 +49,7 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
     if (!search) {
       return
     } else {
-      handleSearchMusic()
+      setTimeout(() => handleSearchMusic(), 1000)
     }
   }, [search, handleSearchMusic])
 
@@ -64,27 +63,34 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
           style={[styles.input, styles.white]}
           value={search}
           autoFocus
-          placeholder="Search for music"
+          placeholder="Pesquise uma música"
           placeholderTextColor="#ddd"
           onChangeText={text => setSearch(text)}
         />
       </View>
-      <View>
-        <FlatList
-          data={items}
-          keyExtractor={item => item.id.videoId}
-          style={styles.list}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <Card
-              id={item.id.videoId}
-              title={item.snippet.title}
-              img={item.snippet.thumbnails.high.url}
-              onPress={() => handleNavigateToPlayer()}
-            />
-          )}
-        />
-      </View>
+      {items.length === 0 ? (
+        <SafeAreaView style={styles.centerContainer}>
+          <Text style={styles.white}>Pesquise uma música</Text>
+          <Icon name="search" size={30} color="#fff" />
+        </SafeAreaView>
+      ) : (
+        <View>
+          <FlatList
+            data={items}
+            keyExtractor={item => item.id}
+            style={styles.list}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <Card
+                id={item.id}
+                title={item.title}
+                img={item.image}
+                onPress={() => handleNavigateToPlayer()}
+              />
+            )}
+          />
+        </View>
+      )}
     </SafeAreaView>
   )
 }

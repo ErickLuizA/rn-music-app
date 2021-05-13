@@ -28,6 +28,12 @@ export class MusicRepositoryImpl implements IMusicRepository {
   }
 
   async search(query: searchQuery): Promise<Music[]> {
-    return await this.httpClient.get('/search', null, query)
+    const response: YoutubeResponse = await this.httpClient.get(
+      '/search',
+      null,
+      query,
+    )
+
+    return response.items.map(item => Music.fromJson(item))
   }
 }

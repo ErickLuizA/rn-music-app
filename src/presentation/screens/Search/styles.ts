@@ -8,6 +8,13 @@ export default StyleSheet.create({
     paddingHorizontal: 10,
   },
 
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#111',
+  },
+
   searchSection: {
     flexDirection: 'row',
     alignItems: 'center',

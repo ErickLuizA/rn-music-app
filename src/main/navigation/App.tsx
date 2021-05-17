@@ -42,7 +42,6 @@ function BottomTabs() {
         },
         style: {
           backgroundColor: '#131418',
-          height: 64,
           borderTopColor: 'transparent',
         },
         iconStyle: {

@@ -49,7 +49,7 @@ export default StyleSheet.create({
 
   topIcon: {
     position: 'absolute',
-    top: -20,
+    top: 0,
     left: 0,
   },
 
@@ -60,7 +60,6 @@ export default StyleSheet.create({
   icon: {
     fontSize: 50,
     color: '#ddd',
-    padding: 25,
   },
 
   icons: {

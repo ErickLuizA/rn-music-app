@@ -5,15 +5,18 @@ import { NavigationContainer } from '@react-navigation/native'
 
 import AuthProvider from '../presentation/contexts/AuthContext'
 import Navigation from './navigation'
+import { PlayingProvider } from '../presentation/contexts/PlayingContext'
 
 export default function App() {
   return (
     <NavigationContainer>
       <AuthProvider>
-        <>
-          <StatusBar backgroundColor="#111" barStyle="light-content" />
-          <Navigation />
-        </>
+        <PlayingProvider>
+          <>
+            <StatusBar backgroundColor="#111" barStyle="light-content" />
+            <Navigation />
+          </>
+        </PlayingProvider>
       </AuthProvider>
     </NavigationContainer>
   )

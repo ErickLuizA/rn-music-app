@@ -1,10 +1,18 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { ActivityIndicator, ToastAndroid, View } from 'react-native'
-import { useRoute } from '@react-navigation/native'
+import React, { useCallback, useContext, useEffect } from 'react'
+import {
+  ActivityIndicator,
+  ToastAndroid,
+  View,
+  Image,
+  Text,
+} from 'react-native'
+import { useNavigation, useRoute } from '@react-navigation/native'
+import { RectButton } from 'react-native-gesture-handler'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { Music } from '../../../domain/entities/Music'
-import { Sound } from '../../../domain/entities/Sound'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
+import { PlayingContext } from '../../contexts/PlayingContext'
 
 import styles from './styles'
 
@@ -19,20 +27,32 @@ export default function Player({ loadSound }: IPlayer) {
     key: string
   }>()
 
-  const [sound, setSound] = useState<Sound>()
-  const [loading, setLoading] = useState(true)
+  const navigation = useNavigation()
+
+  const { play, pause, loading, isPlaying, addSound } = useContext(
+    PlayingContext,
+  )
 
   const handleGetSound = useCallback(async () => {
     try {
       const response = await loadSound.execute({ id: params.item.id })
 
-      setSound(response)
+      await addSound({
+        id: params.item.id,
+        url: response.url,
+      })
+
+      await play()
     } catch (error) {
       ToastAndroid.show('Erro ao carregar som', ToastAndroid.SHORT)
     }
+  }, [loadSound, params]) // eslint-disable-line react-hooks/exhaustive-deps
 
-    setLoading(false)
-  }, [loadSound, params])
+  function handleGoback() {
+    if (navigation.canGoBack()) {
+      navigation.goBack()
+    }
+  }
 
   useEffect(() => {
     handleGetSound()
@@ -46,5 +66,32 @@ export default function Player({ loadSound }: IPlayer) {
     )
   }
 
-  return <View style={styles.container} />
+  return (
+    <View style={styles.container}>
+      <RectButton onPress={handleGoback} style={styles.topIcon}>
+        <Icon name="expand-more" style={styles.icon} />
+      </RectButton>
+      <Image
+        style={styles.image}
+        source={{ uri: params.item.image }}
+        resizeMode="contain"
+      />
+      <Text style={styles.title}>{params.item.title}</Text>
+      <View style={styles.iconContainer}>
+        <RectButton>
+          <Icon name="skip-previous" style={styles.icon} />
+        </RectButton>
+        <RectButton onPress={() => (isPlaying ? pause() : play())}>
+          {isPlaying ? (
+            <Icon name="pause" style={styles.icon} />
+          ) : (
+            <Icon name="play-arrow" style={styles.icon} />
+          )}
+        </RectButton>
+        <RectButton>
+          <Icon name="skip-next" style={styles.icon} />
+        </RectButton>
+      </View>
+    </View>
+  )
 }

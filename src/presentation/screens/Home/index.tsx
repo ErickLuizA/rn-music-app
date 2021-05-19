@@ -14,6 +14,7 @@ import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause
 import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
 import Card from '../../components/Card'
+import MiniPlayer from '../../components/MiniPlayer'
 
 import styles from './styles'
 
@@ -131,6 +132,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
           </View>
         ) : null}
       </View>
+      <MiniPlayer />
     </SafeAreaView>
   )
 }

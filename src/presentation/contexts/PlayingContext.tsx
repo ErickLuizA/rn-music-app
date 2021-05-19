@@ -1,6 +1,13 @@
-import React, { createContext, ReactChild, useEffect, useState } from 'react'
+import React, {
+  createContext,
+  ReactChild,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import { Audio } from 'expo-av'
 import { Sound } from '../../domain/entities/Sound'
+import { Music } from '../../domain/entities/Music'
 
 interface IPlayingContext {
   isPlaying: boolean
@@ -8,6 +15,7 @@ interface IPlayingContext {
   play: () => Promise<void>
   pause: () => Promise<void>
   addSound: (newSound: Sound) => Promise<void>
+  music: Music | undefined
 }
 
 export const PlayingContext = createContext({} as IPlayingContext)
@@ -24,6 +32,8 @@ export function PlayingProvider({ children }: IPlayingProvider) {
   const [current, setCurrent] = useState(0)
 
   const [playingSound, setPlayingSound] = useState<Audio.Sound>()
+
+  const firstRender = useRef(true)
 
   useEffect(() => {
     if (playingSound) {
@@ -59,6 +69,16 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     setCurrent(newList.length - 1)
   }
 
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false
+
+      return
+    } else {
+      play()
+    }
+  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
+
   async function play() {
     if (playingSound?._loaded) {
       await playingSound.playAsync()
@@ -68,7 +88,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
       if (permission.granted) {
         const { sound } = await Audio.Sound.createAsync(
           {
-            uri: sounds[current].url,
+            uri: sounds[current]?.url,
           },
           {
             shouldPlay: true,
@@ -96,6 +116,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
         loading,
         play,
         addSound,
+        music: sounds[current]?.music,
       }}>
       {children}
     </PlayingContext.Provider>

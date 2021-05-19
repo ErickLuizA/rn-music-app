@@ -22,14 +22,14 @@ interface IPlayer {
 
 export default function Player({ loadSound }: IPlayer) {
   const { params } = useRoute<{
-    params: { item: Music }
+    params: { item: Music; comeback: boolean }
     name: string
     key: string
   }>()
 
   const navigation = useNavigation()
 
-  const { play, pause, loading, isPlaying, addSound } = useContext(
+  const { play, pause, loading, isPlaying, addSound, music } = useContext(
     PlayingContext,
   )
 
@@ -40,10 +40,11 @@ export default function Player({ loadSound }: IPlayer) {
       await addSound({
         id: params.item.id,
         url: response.url,
+        music: params.item,
       })
-
-      await play()
     } catch (error) {
+      console.log(error)
+
       ToastAndroid.show('Erro ao carregar som', ToastAndroid.SHORT)
     }
   }, [loadSound, params]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -55,8 +56,12 @@ export default function Player({ loadSound }: IPlayer) {
   }
 
   useEffect(() => {
-    handleGetSound()
-  }, [handleGetSound])
+    if (params.comeback) {
+      return
+    } else {
+      handleGetSound()
+    }
+  }, [handleGetSound, params.comeback])
 
   if (loading) {
     return (
@@ -73,10 +78,10 @@ export default function Player({ loadSound }: IPlayer) {
       </RectButton>
       <Image
         style={styles.image}
-        source={{ uri: params.item.image }}
+        source={{ uri: music?.image }}
         resizeMode="contain"
       />
-      <Text style={styles.title}>{params.item.title}</Text>
+      <Text style={styles.title}>{music?.title}</Text>
       <View style={styles.iconContainer}>
         <RectButton>
           <Icon name="skip-previous" style={styles.icon} />

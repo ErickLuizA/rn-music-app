@@ -29,7 +29,9 @@ export function PlayingProvider({ children }: IPlayingProvider) {
   const [loading, setLoading] = useState(true)
 
   const [sounds, setSounds] = useState<Sound[]>([])
-  const [current, setCurrent] = useState(0)
+  const [current, setCurrent] = useState<number | null>(null)
+
+  const [music, setMusic] = useState<Music>()
 
   const [playingSound, setPlayingSound] = useState<Audio.Sound>()
 
@@ -40,6 +42,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
       playingSound.setOnPlaybackStatusUpdate(status => {
         if (status.isLoaded) {
           setLoading(false)
+          setMusic(sounds[current ?? 0].music)
 
           if (status.isPlaying) {
             setIsPlaying(true)
@@ -53,7 +56,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     }
 
     return () => playingSound?._clearSubscriptions()
-  }, [playingSound])
+  }, [playingSound]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function addSound(newSound: Sound) {
     await playingSound?.stopAsync()
@@ -88,7 +91,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
       if (permission.granted) {
         const { sound } = await Audio.Sound.createAsync(
           {
-            uri: sounds[current]?.url,
+            uri: sounds[current ?? 0]?.url,
           },
           {
             shouldPlay: true,
@@ -116,7 +119,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
         loading,
         play,
         addSound,
-        music: sounds[current]?.music,
+        music,
       }}>
       {children}
     </PlayingContext.Provider>

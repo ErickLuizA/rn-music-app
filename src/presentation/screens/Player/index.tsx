@@ -15,12 +15,14 @@ import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
 import { PlayingContext } from '../../contexts/PlayingContext'
 
 import styles from './styles'
+import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
 
 interface IPlayer {
   loadSound: ILoadSoundUseCase
+  createRecent: ICreateRecentUseCase
 }
 
-export default function Player({ loadSound }: IPlayer) {
+export default function Player({ loadSound, createRecent }: IPlayer) {
   const { params } = useRoute<{
     params: { item: Music; comeback: boolean }
     name: string
@@ -42,6 +44,8 @@ export default function Player({ loadSound }: IPlayer) {
         url: response.url,
         music: params.item,
       })
+
+      await createRecent.execute(params.item)
     } catch (error) {
       console.log(error)
 

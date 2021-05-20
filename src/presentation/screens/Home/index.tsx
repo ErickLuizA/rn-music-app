@@ -1,11 +1,12 @@
 import { useNavigation } from '@react-navigation/core'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
   View,
   Text,
   FlatList,
   ActivityIndicator,
   ToastAndroid,
+  ScrollView,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -15,6 +16,7 @@ import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
 import Card from '../../components/Card'
 import MiniPlayer from '../../components/MiniPlayer'
+import { PlayingContext } from '../../contexts/PlayingContext'
 
 import styles from './styles'
 
@@ -31,6 +33,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   const [refreshing, setRefreshing] = useState(false)
 
   const navigation = useNavigation()
+  const { music } = useContext(PlayingContext)
 
   const handleGetMusics = useCallback(async () => {
     try {
@@ -51,6 +54,8 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   }, [loadMusics])
 
   const handleGetRecentPlayed = useCallback(async () => {
+    console.log('handleGetRecentPlayed')
+
     try {
       const musicPlayed = await loadRecent.execute()
 
@@ -61,7 +66,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
         ToastAndroid.SHORT,
       )
     }
-  }, [loadRecent])
+  }, [loadRecent, music]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRefresh = async () => {
     setRefreshing(true)
@@ -92,7 +97,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.sections}>
+      <ScrollView style={styles.sections}>
         <View style={styles.trending}>
           <Text style={[styles.white, styles.categoryText]}>Tendência</Text>
           <FlatList
@@ -131,7 +136,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
             />
           </View>
         ) : null}
-      </View>
+      </ScrollView>
       <MiniPlayer />
     </SafeAreaView>
   )

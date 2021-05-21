@@ -1,5 +1,5 @@
 export interface CreateFavoritesParams {
-  musicId: string
+  favoriteId: string
   title: string
   img: string
 }

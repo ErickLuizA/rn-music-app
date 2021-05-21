@@ -96,7 +96,7 @@ export default function Player({
   const handleFavorite = async (item: Music) => {
     try {
       await createFavorite.execute({
-        musicId: item.id,
+        favoriteId: item.id,
         img: item.image,
         title: item.title,
       })

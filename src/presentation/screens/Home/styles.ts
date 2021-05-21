@@ -24,10 +24,6 @@ export default StyleSheet.create({
     flex: 1,
   },
 
-  sections: {
-    paddingTop: 30,
-  },
-
   text: {
     fontSize: 32,
   },

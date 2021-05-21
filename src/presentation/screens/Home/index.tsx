@@ -54,8 +54,6 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   }, [loadMusics])
 
   const handleGetRecentPlayed = useCallback(async () => {
-    console.log('handleGetRecentPlayed')
-
     try {
       const musicPlayed = await loadRecent.execute()
 
@@ -97,7 +95,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.sections}>
+      <ScrollView>
         <View style={styles.trending}>
           <Text style={[styles.white, styles.categoryText]}>Tendência</Text>
           <FlatList

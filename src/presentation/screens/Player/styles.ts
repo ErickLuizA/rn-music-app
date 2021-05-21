@@ -1,4 +1,6 @@
-import { StyleSheet } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
+
+const WIDTH = Dimensions.get('screen').width
 
 export default StyleSheet.create({
   container: {
@@ -6,12 +8,13 @@ export default StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#111',
+    padding: 10,
   },
 
   image: {
-    width: 400,
-    height: 400,
-    borderRadius: 20,
+    width: WIDTH / 1.1,
+    height: WIDTH / 1.1,
+    borderRadius: 4,
     resizeMode: 'contain',
   },
 

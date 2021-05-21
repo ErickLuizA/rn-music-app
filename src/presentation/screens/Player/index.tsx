@@ -31,25 +31,35 @@ export default function Player({ loadSound, createRecent }: IPlayer) {
 
   const navigation = useNavigation()
 
-  const { play, pause, loading, isPlaying, addSound, music } = useContext(
-    PlayingContext,
-  )
+  const {
+    play,
+    pause,
+    loading,
+    isPlaying,
+    addSound,
+    stopPlaying,
+    music,
+  } = useContext(PlayingContext)
 
   const handleGetSound = useCallback(async () => {
-    try {
-      const response = await loadSound.execute({ id: params.item.id })
+    if (params.item.id === music?.id) {
+      return
+    } else {
+      try {
+        await stopPlaying()
 
-      await addSound({
-        id: params.item.id,
-        url: response.url,
-        music: params.item,
-      })
+        const response = await loadSound.execute({ id: params.item.id })
 
-      await createRecent.execute(params.item)
-    } catch (error) {
-      console.log(error)
+        await addSound({
+          id: params.item.id,
+          url: response.url,
+          music: params.item,
+        })
 
-      ToastAndroid.show('Erro ao carregar som', ToastAndroid.SHORT)
+        await createRecent.execute(params.item)
+      } catch (error) {
+        ToastAndroid.show('Erro ao carregar som', ToastAndroid.SHORT)
+      }
     }
   }, [loadSound, params]) // eslint-disable-line react-hooks/exhaustive-deps
 

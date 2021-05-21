@@ -14,6 +14,7 @@ interface IPlayingContext {
   loading: boolean
   play: () => Promise<void>
   pause: () => Promise<void>
+  stopPlaying: () => Promise<void>
   addSound: (newSound: Sound) => Promise<void>
   music: Music | undefined
 }
@@ -52,6 +53,10 @@ export function PlayingProvider({ children }: IPlayingProvider) {
             setIsPlaying(false)
           }
         }
+
+        if (!status.isLoaded) {
+          setLoading(true)
+        }
       })
     }
 
@@ -59,10 +64,6 @@ export function PlayingProvider({ children }: IPlayingProvider) {
   }, [playingSound]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function addSound(newSound: Sound) {
-    await playingSound?.stopAsync()
-
-    await playingSound?.unloadAsync()
-
     const newList = sounds?.filter(sound => sound.id !== newSound.id)
 
     newList.push(newSound)
@@ -70,6 +71,14 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     setSounds(newList)
 
     setCurrent(newList.length - 1)
+  }
+
+  async function stopPlaying() {
+    if (playingSound) {
+      await playingSound?.stopAsync()
+
+      await playingSound?.unloadAsync()
+    }
   }
 
   useEffect(() => {
@@ -115,6 +124,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     <PlayingContext.Provider
       value={{
         isPlaying,
+        stopPlaying,
         pause,
         loading,
         play,

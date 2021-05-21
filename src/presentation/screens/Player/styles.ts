@@ -46,7 +46,7 @@ export default StyleSheet.create({
 
   touchable: {
     width: 250,
-    height: 100,
+    height: 50,
     justifyContent: 'space-between',
   },
 

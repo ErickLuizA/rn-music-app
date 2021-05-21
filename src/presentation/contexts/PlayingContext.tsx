@@ -17,6 +17,7 @@ interface IPlayingContext {
   stopPlaying: () => Promise<void>
   addSound: (newSound: Sound) => Promise<void>
   music: Music | undefined
+  setMusic: (item: Music) => void
 }
 
 export const PlayingContext = createContext({} as IPlayingContext)
@@ -130,6 +131,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
         play,
         addSound,
         music,
+        setMusic,
       }}>
       {children}
     </PlayingContext.Provider>

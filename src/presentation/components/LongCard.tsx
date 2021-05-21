@@ -54,12 +54,13 @@ function LongCard({ id, title, img, navigate, onPress }: IProps) {
             resizeMode="contain"
             style={styles.image}
             source={{
-              uri: img || undefined,
+              uri: img,
             }}
           />
         </RectButton>
-
-        <Text style={styles.title}>{title.slice(0, 30)} ... </Text>
+        <Text style={styles.title}>
+          {title?.length > 25 ? title?.slice(0, 25).concat('...') : title}
+        </Text>
       </View>
       <RectButton style={styles.delButton} {...{ onPress }}>
         <Icon name="delete" color="#ddd" size={30} />

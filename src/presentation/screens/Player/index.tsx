@@ -12,17 +12,30 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { Music } from '../../../domain/entities/Music'
 import { ILoadSoundUseCase } from '../../../domain/useCases/ILoadSoundUseCase'
+import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
+import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
+import { ICreateFavoritesUseCase } from '../../../domain/useCases/ICreateFavoriteUseCase'
+import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
+
 import { PlayingContext } from '../../contexts/PlayingContext'
 
 import styles from './styles'
-import { ICreateRecentUseCase } from '../../../domain/useCases/ICreateRecentUseCase'
 
 interface IPlayer {
   loadSound: ILoadSoundUseCase
   createRecent: ICreateRecentUseCase
+  loadFavorites: ILoadFavoritesUseCase
+  createFavorite: ICreateFavoritesUseCase
+  deleteFavorite: IDeleteFavoritesUseCase
 }
 
-export default function Player({ loadSound, createRecent }: IPlayer) {
+export default function Player({
+  loadSound,
+  createRecent,
+  loadFavorites,
+  createFavorite,
+  deleteFavorite,
+}: IPlayer) {
   const { params } = useRoute<{
     params: { item: Music; comeback: boolean }
     name: string
@@ -39,6 +52,7 @@ export default function Player({ loadSound, createRecent }: IPlayer) {
     addSound,
     stopPlaying,
     music,
+    setMusic,
   } = useContext(PlayingContext)
 
   const handleGetSound = useCallback(async () => {
@@ -50,13 +64,23 @@ export default function Player({ loadSound, createRecent }: IPlayer) {
 
         const response = await loadSound.execute({ id: params.item.id })
 
+        const favorites = await loadFavorites.execute()
+
+        let paramMusic = params.item
+
+        const isFavorite = favorites.find(fav => fav.id === paramMusic.id)
+
+        if (isFavorite) {
+          paramMusic = paramMusic.favorite()
+        }
+
         await addSound({
           id: params.item.id,
           url: response.url,
-          music: params.item,
+          music: paramMusic,
         })
 
-        await createRecent.execute(params.item)
+        await createRecent.execute(paramMusic)
       } catch (error) {
         ToastAndroid.show('Erro ao carregar som', ToastAndroid.SHORT)
       }
@@ -68,6 +92,34 @@ export default function Player({ loadSound, createRecent }: IPlayer) {
       navigation.goBack()
     }
   }
+
+  const handleFavorite = async (item: Music) => {
+    try {
+      await createFavorite.execute({
+        musicId: item.id,
+        img: item.image,
+        title: item.title,
+      })
+
+      setMusic(item.favorite())
+    } catch (error) {
+      ToastAndroid.show('Erro ao favoritar música', ToastAndroid.SHORT)
+    }
+  }
+
+  const handleDeleteFavorite = async (item: Music) => {
+    try {
+      await deleteFavorite.execute({
+        id: item.id,
+      })
+
+      setMusic(item.unFavorite())
+    } catch (error) {
+      ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
+    }
+  }
+
+  const handleOpenModal = () => {}
 
   useEffect(() => {
     if (params.comeback) {
@@ -96,6 +148,24 @@ export default function Player({ loadSound, createRecent }: IPlayer) {
         resizeMode="contain"
       />
       <Text style={styles.title}>{music?.title}</Text>
+      <View style={[styles.iconContainer, styles.touchable]}>
+        {music?.isFavorite ? (
+          <RectButton
+            style={styles.button}
+            onPress={() => handleDeleteFavorite(music)}>
+            <Icon name="favorite" style={styles.icons} color="#f00" />
+          </RectButton>
+        ) : (
+          <RectButton
+            style={styles.button}
+            onPress={() => handleFavorite(music!)}>
+            <Icon name="favorite-border" style={styles.icons} color="0f0" />
+          </RectButton>
+        )}
+        <RectButton style={styles.button} onPress={handleOpenModal}>
+          <Icon name="playlist-add" style={styles.icons} />
+        </RectButton>
+      </View>
       <View style={styles.iconContainer}>
         <RectButton>
           <Icon name="skip-previous" style={styles.icon} />

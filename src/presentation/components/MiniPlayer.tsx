@@ -3,6 +3,7 @@ import React, { useContext } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
 import { RectButton } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { Music } from '../../domain/entities/Music'
 
 import { PlayingContext } from '../contexts/PlayingContext'
 
@@ -23,7 +24,15 @@ const styles = StyleSheet.create({
   },
 })
 
-export default function MiniPlayer() {
+interface IMiniPlayer {
+  handleFavorite: (item: Music) => Promise<void>
+  handleDeleteFavorite: (item: Music) => Promise<void>
+}
+
+export default function MiniPlayer({
+  handleFavorite,
+  handleDeleteFavorite,
+}: IMiniPlayer) {
   const { loading, music, isPlaying, pause, play } = useContext(PlayingContext)
 
   const navigation = useNavigation()
@@ -40,8 +49,17 @@ export default function MiniPlayer() {
 
   return (
     <View style={styles.container}>
-      <RectButton>
-        <Icon name="favorite-border" style={styles.icon} />
+      <RectButton
+        onPress={() =>
+          music?.isFavorite
+            ? handleDeleteFavorite(music!)
+            : handleFavorite(music!)
+        }>
+        {music?.isFavorite ? (
+          <Icon name="favorite" style={styles.icon} />
+        ) : (
+          <Icon name="favorite-border" style={styles.icon} />
+        )}
       </RectButton>
       <RectButton onPress={navigateToPlayer}>
         <Text style={styles.text}>

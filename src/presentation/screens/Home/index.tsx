@@ -11,6 +11,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Music } from '../../../domain/entities/Music'
+import { ICreateFavoritesUseCase } from '../../../domain/useCases/ICreateFavoriteUseCase'
+import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
 import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause'
 import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
@@ -23,9 +25,16 @@ import styles from './styles'
 interface IHomeScreen {
   loadMusics: ILoadMusicsUseCase
   loadRecent: ILoadRecentUseCase
+  createFavorite: ICreateFavoritesUseCase
+  deleteFavorite: IDeleteFavoritesUseCase
 }
 
-export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
+export default function HomeScreen({
+  loadMusics,
+  loadRecent,
+  createFavorite,
+  deleteFavorite,
+}: IHomeScreen) {
   const [musics, setMusics] = useState<Music[]>([])
   const [recent, setRecent] = useState<Music[]>([])
 
@@ -33,7 +42,7 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
   const [refreshing, setRefreshing] = useState(false)
 
   const navigation = useNavigation()
-  const { music } = useContext(PlayingContext)
+  const { music, setMusic } = useContext(PlayingContext)
 
   const handleGetMusics = useCallback(async () => {
     try {
@@ -78,6 +87,32 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
     navigation.navigate('Player', {
       item,
     })
+  }
+
+  const handleFavorite = async (item: Music) => {
+    try {
+      await createFavorite.execute({
+        musicId: item.id,
+        img: item.image,
+        title: item.title,
+      })
+
+      setMusic(item.favorite())
+    } catch (error) {
+      ToastAndroid.show('Erro ao favoritar música', ToastAndroid.SHORT)
+    }
+  }
+
+  const handleDeleteFavorite = async (item: Music) => {
+    try {
+      await deleteFavorite.execute({
+        id: item.id,
+      })
+
+      setMusic(item.unFavorite())
+    } catch (error) {
+      ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
+    }
   }
 
   useEffect(() => {
@@ -135,7 +170,10 @@ export default function HomeScreen({ loadMusics, loadRecent }: IHomeScreen) {
           </View>
         ) : null}
       </ScrollView>
-      <MiniPlayer />
+      <MiniPlayer
+        handleFavorite={handleFavorite}
+        handleDeleteFavorite={handleDeleteFavorite}
+      />
     </SafeAreaView>
   )
 }

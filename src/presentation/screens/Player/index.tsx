@@ -102,6 +102,8 @@ export default function Player({
       })
 
       setMusic(item.favorite())
+
+      ToastAndroid.show('Música adicionada aos favoritos', ToastAndroid.SHORT)
     } catch (error) {
       ToastAndroid.show('Erro ao favoritar música', ToastAndroid.SHORT)
     }
@@ -114,6 +116,8 @@ export default function Player({
       })
 
       setMusic(item.unFavorite())
+
+      ToastAndroid.show('Música retirada dos favoritos', ToastAndroid.SHORT)
     } catch (error) {
       ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
     }

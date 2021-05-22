@@ -44,6 +44,8 @@ export default function FavoritesScreen({
       const newFavs = favorites?.filter(fav => fav.id !== item.id)
 
       setFavorites(newFavs)
+
+      ToastAndroid.show('Favorito removido com sucesso', ToastAndroid.SHORT)
     } catch (error) {
       ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
     }

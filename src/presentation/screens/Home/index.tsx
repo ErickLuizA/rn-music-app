@@ -42,7 +42,8 @@ export default function HomeScreen({
   const [refreshing, setRefreshing] = useState(false)
 
   const navigation = useNavigation()
-  const { music, setMusic } = useContext(PlayingContext)
+
+  const { currentMusicInfo, updateFavorite } = useContext(PlayingContext)
 
   const handleGetMusics = useCallback(async () => {
     try {
@@ -73,7 +74,7 @@ export default function HomeScreen({
         ToastAndroid.SHORT,
       )
     }
-  }, [loadRecent, music]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [loadRecent, currentMusicInfo]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleRefresh = async () => {
     setRefreshing(true)
@@ -97,7 +98,9 @@ export default function HomeScreen({
         title: item.title,
       })
 
-      setMusic(item.favorite())
+      item.favorite()
+
+      updateFavorite(item)
 
       ToastAndroid.show('Música adicionada aos favoritos', ToastAndroid.SHORT)
     } catch (error) {
@@ -111,7 +114,9 @@ export default function HomeScreen({
         id: item.id,
       })
 
-      setMusic(item.unFavorite())
+      item.unFavorite()
+
+      updateFavorite(item)
 
       ToastAndroid.show('Música retirada dos favoritos', ToastAndroid.SHORT)
     } catch (error) {

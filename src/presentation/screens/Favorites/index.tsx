@@ -6,7 +6,7 @@ import { Music } from '../../../domain/entities/Music'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
 
-import LongCard from '../../components/LongCard'
+import LongCard from './components/LongCard'
 
 import styles from './styles'
 
@@ -86,8 +86,8 @@ export default function FavoritesScreen({
           <LongCard
             id={item.id}
             title={item.title}
-            img={item.image}
-            onPress={() => handleDeleteFavorite(item)}
+            image={item.image}
+            onSwipe={() => handleDeleteFavorite(item)}
             navigate={() => handleNavigateToPlayer(item)}
           />
         )}

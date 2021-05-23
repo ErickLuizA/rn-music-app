@@ -50,28 +50,28 @@ export default function Player({
     loading,
     isPlaying,
     addSound,
-    stopPlaying,
-    music,
-    setMusic,
+    unload,
+    updateFavorite,
+    currentMusicInfo,
   } = useContext(PlayingContext)
 
   const handleGetSound = useCallback(async () => {
-    if (params.item.id === music?.id) {
+    if (params.item.id === currentMusicInfo?.id) {
       return
     } else {
       try {
-        await stopPlaying()
+        await unload()
 
         const response = await loadSound.execute({ id: params.item.id })
 
         const favorites = await loadFavorites.execute()
 
-        let paramMusic = params.item
+        const paramMusic = params.item
 
         const isFavorite = favorites.find(fav => fav.id === paramMusic.id)
 
         if (isFavorite) {
-          paramMusic = paramMusic.favorite()
+          paramMusic.favorite()
         }
 
         await addSound({
@@ -80,7 +80,9 @@ export default function Player({
           music: paramMusic,
         })
 
-        await createRecent.execute(paramMusic)
+        await createRecent.execute(
+          new Music(paramMusic.id, paramMusic.title, paramMusic.image, false),
+        )
       } catch (error) {
         ToastAndroid.show('Erro ao carregar som', ToastAndroid.SHORT)
       }
@@ -101,7 +103,9 @@ export default function Player({
         title: item.title,
       })
 
-      setMusic(item.favorite())
+      item.favorite()
+
+      updateFavorite(item)
 
       ToastAndroid.show('Música adicionada aos favoritos', ToastAndroid.SHORT)
     } catch (error) {
@@ -115,7 +119,9 @@ export default function Player({
         id: item.id,
       })
 
-      setMusic(item.unFavorite())
+      item.unFavorite()
+
+      updateFavorite(item)
 
       ToastAndroid.show('Música retirada dos favoritos', ToastAndroid.SHORT)
     } catch (error) {
@@ -148,21 +154,21 @@ export default function Player({
       </RectButton>
       <Image
         style={styles.image}
-        source={{ uri: music?.image }}
+        source={{ uri: currentMusicInfo?.image }}
         resizeMode="contain"
       />
-      <Text style={styles.title}>{music?.title}</Text>
+      <Text style={styles.title}>{currentMusicInfo?.title}</Text>
       <View style={[styles.iconContainer, styles.touchable]}>
-        {music?.isFavorite ? (
+        {currentMusicInfo?.isFavorite ? (
           <RectButton
             style={styles.button}
-            onPress={() => handleDeleteFavorite(music)}>
+            onPress={() => handleDeleteFavorite(currentMusicInfo)}>
             <Icon name="favorite" style={styles.icons} color="#f00" />
           </RectButton>
         ) : (
           <RectButton
             style={styles.button}
-            onPress={() => handleFavorite(music!)}>
+            onPress={() => handleFavorite(currentMusicInfo!)}>
             <Icon name="favorite-border" style={styles.icons} color="0f0" />
           </RectButton>
         )}

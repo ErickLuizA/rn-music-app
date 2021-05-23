@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/core'
 import React, { useContext } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
-import { RectButton } from 'react-native-gesture-handler'
+import { RectButton, Swipeable } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Music } from '../../domain/entities/Music'
 
@@ -22,6 +22,12 @@ const styles = StyleSheet.create({
   text: {
     color: '#ddd',
   },
+
+  swipeContainer: {
+    backgroundColor: '#111',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 })
 
 interface IMiniPlayer {
@@ -29,11 +35,26 @@ interface IMiniPlayer {
   handleDeleteFavorite: (item: Music) => Promise<void>
 }
 
+const RightSwipeActions = () => {
+  return (
+    <View style={styles.swipeContainer}>
+      <Text style={styles.text}>Stop</Text>
+    </View>
+  )
+}
+
 export default function MiniPlayer({
   handleFavorite,
   handleDeleteFavorite,
 }: IMiniPlayer) {
-  const { loading, music, isPlaying, pause, play } = useContext(PlayingContext)
+  const {
+    loading,
+    currentMusicInfo,
+    isPlaying,
+    pause,
+    play,
+    clear,
+  } = useContext(PlayingContext)
 
   const navigation = useNavigation()
 
@@ -43,38 +64,47 @@ export default function MiniPlayer({
     })
   }
 
+  async function onSwipeableRightOpen() {
+    await clear()
+  }
+
   if (loading) {
     return null
   }
 
   return (
-    <View style={styles.container}>
-      <RectButton
-        onPress={() =>
-          music?.isFavorite
-            ? handleDeleteFavorite(music!)
-            : handleFavorite(music!)
-        }>
-        {music?.isFavorite ? (
-          <Icon name="favorite" style={styles.icon} />
-        ) : (
-          <Icon name="favorite-border" style={styles.icon} />
-        )}
-      </RectButton>
-      <RectButton onPress={navigateToPlayer}>
-        <Text style={styles.text}>
-          {music?.title !== undefined && music?.title?.length > 25
-            ? music?.title?.slice(0, 25).concat('...')
-            : music?.title}
-        </Text>
-      </RectButton>
-      <RectButton onPress={() => (isPlaying ? pause() : play())}>
-        {isPlaying ? (
-          <Icon name="pause" style={styles.icon} />
-        ) : (
-          <Icon name="play-arrow" style={styles.icon} />
-        )}
-      </RectButton>
-    </View>
+    <Swipeable
+      onSwipeableRightOpen={onSwipeableRightOpen}
+      renderRightActions={RightSwipeActions}>
+      <View style={styles.container}>
+        <RectButton
+          onPress={() =>
+            currentMusicInfo?.isFavorite
+              ? handleDeleteFavorite(currentMusicInfo!)
+              : handleFavorite(currentMusicInfo!)
+          }>
+          {currentMusicInfo?.isFavorite ? (
+            <Icon name="favorite" style={styles.icon} />
+          ) : (
+            <Icon name="favorite-border" style={styles.icon} />
+          )}
+        </RectButton>
+        <RectButton onPress={navigateToPlayer}>
+          <Text style={styles.text}>
+            {currentMusicInfo?.title !== undefined &&
+            currentMusicInfo?.title?.length > 25
+              ? currentMusicInfo?.title?.slice(0, 25).concat('...')
+              : currentMusicInfo?.title}
+          </Text>
+        </RectButton>
+        <RectButton onPress={() => (isPlaying ? pause() : play())}>
+          {isPlaying ? (
+            <Icon name="pause" style={styles.icon} />
+          ) : (
+            <Icon name="play-arrow" style={styles.icon} />
+          )}
+        </RectButton>
+      </View>
+    </Swipeable>
   )
 }

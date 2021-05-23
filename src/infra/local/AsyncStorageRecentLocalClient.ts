@@ -15,7 +15,7 @@ export class AsyncStorageRecentLocalClient implements IRecentLocalClient {
       filteredArray = recentMusics.filter(m => m.id !== params.id)
     }
 
-    filteredArray.push(params)
+    filteredArray.unshift(params)
 
     await AsyncStorage.setItem(RECENT, JSON.stringify(filteredArray))
   }

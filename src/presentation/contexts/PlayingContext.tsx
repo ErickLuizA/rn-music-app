@@ -1,23 +1,21 @@
-import React, {
-  createContext,
-  ReactChild,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
+import React, { createContext, ReactChild, useEffect, useState } from 'react'
 import { Audio } from 'expo-av'
+
 import { Sound } from '../../domain/entities/Sound'
 import { Music } from '../../domain/entities/Music'
 
 interface IPlayingContext {
-  isPlaying: boolean
   loading: boolean
+  isPlaying: boolean
+  currentMusicInfo: Music | undefined
+
   play: () => Promise<void>
   pause: () => Promise<void>
-  stopPlaying: () => Promise<void>
+  unload: () => Promise<void>
+
   addSound: (newSound: Sound) => Promise<void>
-  music: Music | undefined
-  setMusic: (item: Music) => void
+  updateFavorite: (item: Music) => void
+  clear: () => Promise<void>
 }
 
 export const PlayingContext = createContext({} as IPlayingContext)
@@ -27,24 +25,31 @@ interface IPlayingProvider {
 }
 
 export function PlayingProvider({ children }: IPlayingProvider) {
-  const [isPlaying, setIsPlaying] = useState(false)
   const [loading, setLoading] = useState(true)
+  const [isPlaying, setIsPlaying] = useState(false)
 
   const [sounds, setSounds] = useState<Sound[]>([])
   const [current, setCurrent] = useState<number | null>(null)
-
-  const [music, setMusic] = useState<Music>()
+  const [currentMusicInfo, setCurrentMusicInfo] = useState<Music>()
 
   const [playingSound, setPlayingSound] = useState<Audio.Sound>()
 
-  const firstRender = useRef(true)
+  const [finished, setFinished] = useState(false)
+
+  useEffect(() => {
+    if (current == null) {
+      return
+    } else {
+      play()
+    }
+  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (playingSound) {
       playingSound.setOnPlaybackStatusUpdate(status => {
         if (status.isLoaded) {
           setLoading(false)
-          setMusic(sounds[current ?? 0].music)
+          setCurrentMusicInfo(sounds[current ?? 0].music)
 
           if (status.isPlaying) {
             setIsPlaying(true)
@@ -52,6 +57,10 @@ export function PlayingProvider({ children }: IPlayingProvider) {
 
           if (!status.isPlaying) {
             setIsPlaying(false)
+          }
+
+          if (status.didJustFinish) {
+            setFinished(true)
           }
         }
 
@@ -64,6 +73,18 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     return () => playingSound?._clearSubscriptions()
   }, [playingSound]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  function updateFavorite(item: Music) {
+    const copiedSounds = sounds
+
+    copiedSounds[current!].music = item
+
+    setSounds(copiedSounds)
+
+    const newMusic = new Music(item.id, item.title, item.image, item.isFavorite)
+
+    setCurrentMusicInfo(newMusic)
+  }
+
   async function addSound(newSound: Sound) {
     const newList = sounds?.filter(sound => sound.id !== newSound.id)
 
@@ -74,26 +95,12 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     setCurrent(newList.length - 1)
   }
 
-  async function stopPlaying() {
-    if (playingSound) {
-      await playingSound?.stopAsync()
-
-      await playingSound?.unloadAsync()
-    }
-  }
-
-  useEffect(() => {
-    if (firstRender.current) {
-      firstRender.current = false
-
-      return
-    } else {
-      play()
-    }
-  }, [current]) // eslint-disable-line react-hooks/exhaustive-deps
-
   async function play() {
     if (playingSound?._loaded) {
+      if (finished) {
+        await playingSound.replayAsync()
+      }
+
       await playingSound.playAsync()
     } else {
       const permission = await Audio.getPermissionsAsync()
@@ -121,17 +128,35 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     await playingSound?.pauseAsync()
   }
 
+  async function unload() {
+    if (playingSound) {
+      await playingSound?.stopAsync()
+
+      await playingSound?.unloadAsync()
+    }
+  }
+
+  async function clear() {
+    await unload()
+
+    setSounds([])
+    setCurrent(null)
+    setCurrentMusicInfo(undefined)
+    setPlayingSound(undefined)
+  }
+
   return (
     <PlayingContext.Provider
       value={{
-        isPlaying,
-        stopPlaying,
-        pause,
         loading,
+        isPlaying,
+        currentMusicInfo,
         play,
+        pause,
+        unload,
         addSound,
-        music,
-        setMusic,
+        updateFavorite,
+        clear,
       }}>
       {children}
     </PlayingContext.Provider>

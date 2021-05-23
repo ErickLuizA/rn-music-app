@@ -4,12 +4,7 @@ export class Music {
   image: string
   isFavorite: boolean
 
-  constructor(
-    id: string,
-    title: string,
-    image: string,
-    isFavorite: boolean = false,
-  ) {
+  constructor(id: string, title: string, image: string, isFavorite: boolean) {
     this.id = id
     this.title = title
     this.image = image
@@ -29,11 +24,11 @@ export class Music {
     return new Music(fav.favoriteId, fav.title, fav.img, true)
   }
 
-  favorite(): Music {
-    return new Music(this.id, this.title, this.image, true)
+  favorite() {
+    this.isFavorite = true
   }
 
-  unFavorite(): Music {
-    return new Music(this.id, this.title, this.image, false)
+  unFavorite() {
+    this.isFavorite = false
   }
 }

@@ -4,8 +4,9 @@ import { StatusBar } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 
 import AuthProvider from '../presentation/contexts/AuthContext'
+import PlayingProvider from '../presentation/contexts/PlayingContext'
+
 import Navigation from './navigation'
-import { PlayingProvider } from '../presentation/contexts/PlayingContext'
 
 export default function App() {
   return (

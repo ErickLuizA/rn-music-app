@@ -10,6 +10,7 @@ import { RectButton } from 'react-native-gesture-handler'
 
 import { User } from '../../../domain/entities/User'
 import { ILoadUserUseCase } from '../../../domain/useCases/ILoadUserUseCase'
+
 import { AuthContext } from '../../contexts/AuthContext'
 
 import styles from './styles'

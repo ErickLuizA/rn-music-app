@@ -1,10 +1,10 @@
 import React from 'react'
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs'
 
-import PlaylistStack from './PlaylistStack'
-
 import { makeFavorites } from '../factories/screens/FavoritesFactory'
 import { makeUser } from '../factories/screens/UserFactory'
+
+import PlaylistStack from './PlaylistStack'
 
 const { Navigator, Screen } = createMaterialTopTabNavigator()
 

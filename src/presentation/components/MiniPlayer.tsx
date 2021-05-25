@@ -1,8 +1,9 @@
-import { useNavigation } from '@react-navigation/core'
 import React, { useContext } from 'react'
 import { View, StyleSheet, Text } from 'react-native'
+import { useNavigation } from '@react-navigation/core'
 import { RectButton, Swipeable } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
 import { Music } from '../../domain/entities/Music'
 
 import { PlayingContext } from '../contexts/PlayingContext'
@@ -47,14 +48,8 @@ export default function MiniPlayer({
   handleFavorite,
   handleDeleteFavorite,
 }: IMiniPlayer) {
-  const {
-    loading,
-    currentMusicInfo,
-    isPlaying,
-    pause,
-    play,
-    clear,
-  } = useContext(PlayingContext)
+  const { loading, currentMusicInfo, isPlaying, pause, play, clear } =
+    useContext(PlayingContext)
 
   const navigation = useNavigation()
 

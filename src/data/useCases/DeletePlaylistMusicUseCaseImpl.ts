@@ -1,10 +1,12 @@
 import { IPlaylistRepository } from '../../domain/repositories/IPlaylistsRepository'
 import {
   DeletePlaylistMusicParams,
-  IDeletePlaylistUseCase,
+  IDeletePlaylistMusicUseCase,
 } from '../../domain/useCases/IDeletePlaylistMusicUseCase'
 
-export class DeletePlaylistMusicUseCaseImpl implements IDeletePlaylistUseCase {
+export class DeletePlaylistMusicUseCaseImpl
+  implements IDeletePlaylistMusicUseCase
+{
   constructor(private readonly playlistRepository: IPlaylistRepository) {}
 
   async execute(params: DeletePlaylistMusicParams): Promise<void> {

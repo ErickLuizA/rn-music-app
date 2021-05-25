@@ -16,9 +16,10 @@ import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavorit
 import { ILoadMusicsUseCase } from '../../../domain/useCases/ILoadMusicsUseCause'
 import { ILoadRecentUseCase } from '../../../domain/useCases/ILoadRecentUseCase'
 
+import { PlayingContext } from '../../contexts/PlayingContext'
+
 import Card from '../../components/Card'
 import MiniPlayer from '../../components/MiniPlayer'
-import { PlayingContext } from '../../contexts/PlayingContext'
 
 import styles from './styles'
 

@@ -3,6 +3,6 @@ export interface DeletePlaylistMusicParams {
   musicId: string
 }
 
-export interface IDeletePlaylistUseCase {
+export interface IDeletePlaylistMusicUseCase {
   execute: (params: DeletePlaylistMusicParams) => Promise<void>
 }

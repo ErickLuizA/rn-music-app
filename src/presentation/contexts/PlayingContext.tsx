@@ -13,6 +13,9 @@ interface IPlayingContext {
   pause: () => Promise<void>
   unload: () => Promise<void>
 
+  next: () => Promise<void>
+  previous: () => Promise<void>
+
   addSound: (newSound: Sound) => Promise<void>
   updateFavorite: (item: Music) => void
   clear: () => Promise<void>
@@ -24,7 +27,7 @@ interface IPlayingProvider {
   children: ReactChild
 }
 
-export function PlayingProvider({ children }: IPlayingProvider) {
+export default function PlayingProvider({ children }: IPlayingProvider) {
   const [loading, setLoading] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
 
@@ -71,7 +74,7 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     }
 
     return () => playingSound?._clearSubscriptions()
-  }, [playingSound]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [playingSound, current]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function updateFavorite(item: Music) {
     const copiedSounds = sounds
@@ -128,6 +131,26 @@ export function PlayingProvider({ children }: IPlayingProvider) {
     await playingSound?.pauseAsync()
   }
 
+  async function next() {
+    if (current === sounds.length - 1) {
+      return
+    }
+
+    await unload()
+
+    setCurrent(current! + 1)
+  }
+
+  async function previous() {
+    if (current === 0) {
+      return
+    }
+
+    await unload()
+
+    setCurrent(current! - 1)
+  }
+
   async function unload() {
     if (playingSound) {
       await playingSound?.stopAsync()
@@ -154,6 +177,8 @@ export function PlayingProvider({ children }: IPlayingProvider) {
         play,
         pause,
         unload,
+        next,
+        previous,
         addSound,
         updateFavorite,
         clear,

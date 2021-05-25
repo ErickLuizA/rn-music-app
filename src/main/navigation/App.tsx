@@ -3,10 +3,11 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import UserTabs from './UserTabs'
 import { makeSearch } from '../factories/screens/SearchFactory'
 import { makeHome } from '../factories/screens/HomeFactory'
 import { makePlayer } from '../factories/screens/PlayerFactory'
+
+import UserTabs from './UserTabs'
 
 const StackNavigator = createStackNavigator()
 

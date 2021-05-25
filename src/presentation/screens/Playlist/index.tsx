@@ -3,20 +3,20 @@ import {
   SafeAreaView,
   FlatList,
   Text,
-  Modal,
-  View,
-  TouchableOpacity,
   ToastAndroid,
   ActivityIndicator,
+  View,
 } from 'react-native'
-import { RectButton, TextInput } from 'react-native-gesture-handler'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import { RectButton } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { Playlist } from '../../../domain/entities/Playlist'
 import { ILoadPlaylistsUseCase } from '../../../domain/useCases/ILoadPlaylistsUseCase'
 import { IDeletePlaylistUseCase } from '../../../domain/useCases/IDeletePlaylistUseCase'
 import { IUpdatePlaylistUseCase } from '../../../domain/useCases/IUpdatePlaylistUseCase'
+
+import { EditModal } from './components/EditModal'
 
 import styles from './styles'
 
@@ -35,10 +35,8 @@ export default function PlaylistScreen({
   const [playlist, setPlaylist] = useState<Playlist>()
   const [loaded, setLoaded] = useState(false)
 
-  const [openUpdateModal, setOpenUpdateModal] = useState(false)
   const [open, setOpen] = useState(false)
-
-  const [newTitle, setNewTitle] = useState('')
+  const [refreshing, setRefreshing] = useState(false)
 
   const navigation = useNavigation()
 
@@ -48,8 +46,6 @@ export default function PlaylistScreen({
 
       setPlaylists(response)
     } catch (error) {
-      console.log(`PLAYLIST ${error}`)
-
       ToastAndroid.show('Erro ao buscar suas playlists', ToastAndroid.SHORT)
     }
 
@@ -60,40 +56,42 @@ export default function PlaylistScreen({
     navigation.navigate('PlaylistDetailScreen', { playlistId: id })
   }
 
-  const handleOpenUpdateModal = () => {
-    setOpenUpdateModal(true)
-    setOpen(false)
-  }
-
   const handleDeletePlaylist = async () => {
     try {
       await deletePlaylist.execute({ playlistId: playlist?.playlistId! })
 
       handleGetPlaylists()
+
+      closeModal()
     } catch (error) {
-      console.log(error)
       ToastAndroid.show('Erro ao deletar playlist', ToastAndroid.SHORT)
     }
   }
 
-  const handleUpdatePlaylist = async () => {
+  const handleUpdatePlaylist = async (newTitle: string) => {
     try {
       await updatePlaylist.execute({
-        playlistId: playlist?.playlistId!,
+        playlistId: playlist?.playlistId ?? '',
         title: newTitle,
       })
 
       handleGetPlaylists()
+
       closeModal()
     } catch (error) {
       ToastAndroid.show('Erro ao atualizar playlist', ToastAndroid.SHORT)
     }
+  }
 
-    setOpenUpdateModal(false)
+  const handleOnRefresh = async () => {
+    setRefreshing(true)
+
+    handleGetPlaylists().then(() => setRefreshing(false))
   }
 
   const openModal = (item: Playlist) => {
     setPlaylist(item)
+
     setOpen(true)
   }
 
@@ -115,75 +113,35 @@ export default function PlaylistScreen({
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
-        data={playlists}
-        keyExtractor={item => item.playlistId.toString()}
-        renderItem={({ item }) => (
-          <RectButton
-            style={styles.playlist}
-            onPress={() => handleNavigateToPlaylistDetail(item.playlistId)}>
-            <Text style={styles.whiteText}> {item.title} </Text>
-            <RectButton onPress={() => openModal(item)}>
-              <Icon name="more-vert" size={24} color="#ddd" />
+      {playlists !== undefined && playlists?.length > 0 ? (
+        <FlatList
+          refreshing={refreshing}
+          onRefresh={handleOnRefresh}
+          data={playlists}
+          keyExtractor={item => item.playlistId.toString()}
+          renderItem={({ item }) => (
+            <RectButton
+              style={styles.playlist}
+              onPress={() => handleNavigateToPlaylistDetail(item.playlistId)}>
+              <Text style={styles.whiteText}> {item.title} </Text>
+              <RectButton onPress={() => openModal(item)}>
+                <Icon name="more-vert" size={24} color="#ddd" />
+              </RectButton>
             </RectButton>
-          </RectButton>
-        )}
+          )}
+        />
+      ) : (
+        <View style={styles.container}>
+          <Text>Não existe nenhuma playlist</Text>
+        </View>
+      )}
+      <EditModal
+        open={open}
+        closeModal={closeModal}
+        playlistTitle={playlist?.title ?? ''}
+        handleDeletePlaylist={handleDeletePlaylist}
+        handleUpdatePlaylist={handleUpdatePlaylist}
       />
-      <Modal
-        visible={open}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={closeModal}>
-        <View style={styles.modal}>
-          <TouchableOpacity
-            style={styles.deleteButton}
-            onPress={handleDeletePlaylist}>
-            <Icon name="delete" size={25} color="#555" />
-            <Text style={styles.whiteText}>Deletar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.editButton}
-            onPress={handleOpenUpdateModal}>
-            <Icon name="edit" size={25} color="#555" />
-            <Text style={styles.whiteText}>Editar</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-            <Text style={styles.whiteText}>Cancelar</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-      <Modal
-        visible={openUpdateModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setOpenUpdateModal(false)}>
-        <View style={styles.updateModal}>
-          <View style={styles.updateModalContainer}>
-            <Text style={styles.whiteText}>Editar playlist</Text>
-            <TextInput
-              style={styles.input}
-              value={newTitle}
-              onChangeText={text => setNewTitle(text)}
-              placeholderTextColor="#fff"
-              placeholder={playlist?.title}
-            />
-
-            <View style={styles.row}>
-              <TouchableOpacity onPress={() => setOpenUpdateModal(false)}>
-                <Text style={styles.whiteText}>Cancelar</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity onPress={handleUpdatePlaylist}>
-                <Text style={[styles.whiteText, styles.marginLeft]}>
-                  Confirmar
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   )
 }

@@ -17,7 +17,6 @@ const WIDTH = Dimensions.get('window').width
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
     width: WIDTH,
     height: 100,
   },

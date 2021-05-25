@@ -1,22 +1,28 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect, useContext } from 'react'
 import { View, FlatList, ToastAndroid, ActivityIndicator } from 'react-native'
 import { useNavigation } from '@react-navigation/core'
 
 import { Music } from '../../../domain/entities/Music'
 import { ILoadFavoritesUseCase } from '../../../domain/useCases/ILoadFavoritesUseCase'
 import { IDeleteFavoritesUseCase } from '../../../domain/useCases/IDeleteFavoriteUseCase'
+import { ICreateFavoritesUseCase } from '../../../domain/useCases/ICreateFavoriteUseCase'
 
-import LongCard from './components/LongCard'
+import { PlayingContext } from '../../contexts/PlayingContext'
+
+import LongCard from '../../components/LongCard'
+import MiniPlayer from '../../components/MiniPlayer'
 
 import styles from './styles'
 
 interface IFavoritesScreen {
   loadFavorites: ILoadFavoritesUseCase
+  createFavorite: ICreateFavoritesUseCase
   deleteFavorite: IDeleteFavoritesUseCase
 }
 
 export default function FavoritesScreen({
   loadFavorites,
+  createFavorite,
   deleteFavorite,
 }: IFavoritesScreen) {
   const [favorites, setFavorites] = useState<Music[]>()
@@ -24,6 +30,8 @@ export default function FavoritesScreen({
   const [refreshing, setRefreshing] = useState(false)
 
   const navigation = useNavigation()
+
+  const { updateFavorite } = useContext(PlayingContext)
 
   const handleLoadFavorites = useCallback(async () => {
     try {
@@ -45,6 +53,10 @@ export default function FavoritesScreen({
 
       setFavorites(newFavs)
 
+      item.unFavorite()
+
+      updateFavorite(item)
+
       ToastAndroid.show('Favorito removido com sucesso', ToastAndroid.SHORT)
     } catch (error) {
       ToastAndroid.show('Erro ao deletar favorito', ToastAndroid.SHORT)
@@ -61,6 +73,24 @@ export default function FavoritesScreen({
     navigation.navigate('Player', {
       item,
     })
+  }
+
+  const handleFavorite = async (item: Music) => {
+    try {
+      await createFavorite.execute({
+        favoriteId: item.id,
+        img: item.image,
+        title: item.title,
+      })
+
+      item.favorite()
+
+      updateFavorite(item)
+
+      ToastAndroid.show('Música adicionada aos favoritos', ToastAndroid.SHORT)
+    } catch (error) {
+      ToastAndroid.show('Erro ao favoritar música', ToastAndroid.SHORT)
+    }
   }
 
   useEffect(() => {
@@ -91,6 +121,10 @@ export default function FavoritesScreen({
             navigate={() => handleNavigateToPlayer(item)}
           />
         )}
+      />
+      <MiniPlayer
+        handleFavorite={handleFavorite}
+        handleDeleteFavorite={handleDeleteFavorite}
       />
     </View>
   )

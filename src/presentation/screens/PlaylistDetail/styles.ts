@@ -7,6 +7,7 @@ export default StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#111',
     paddingTop: StatusBar.currentHeight,
+    paddingHorizontal: 20,
   },
 
   goBack: {

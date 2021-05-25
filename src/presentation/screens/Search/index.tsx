@@ -11,12 +11,12 @@ import {
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
+import { Music } from '../../../domain/entities/Music'
 import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
 
 import Card from '../../components/Card'
 
 import styles from './styles'
-import { Music } from '../../../domain/entities/Music'
 
 interface ISearchScreen {
   searchMusic: ISearchMusicsUseCase

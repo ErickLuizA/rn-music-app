@@ -5,7 +5,7 @@ const WIDTH = Dimensions.get('screen').width
 export default StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     alignItems: 'center',
     backgroundColor: '#111',
     padding: 10,
@@ -52,12 +52,13 @@ export default StyleSheet.create({
 
   topIcon: {
     position: 'absolute',
-    top: 0,
-    left: 0,
+    top: 20,
+    left: 20,
   },
 
   button: {
     width: 50,
+    alignSelf: 'center'
   },
 
   icon: {

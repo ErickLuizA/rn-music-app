@@ -6,7 +6,8 @@ import {
 } from '../../domain/useCases/ILoadPlaylistMusicsUseCase'
 
 export class LoadPlaylistMusicsUseCaseImpl
-  implements ILoadPlaylistMusicUseCase {
+  implements ILoadPlaylistMusicUseCase
+{
   constructor(private readonly playlistRepository: IPlaylistRepository) {}
 
   async execute(params: LoadPlaylistMusicsParams): Promise<Music[]> {

@@ -1,11 +1,8 @@
-import {
-  LoadMusicsParams,
-  MusicResponse,
-} from '../../domain/useCases/ILoadMusicsUseCause'
 import { Music } from '../entities/Music'
+import { LoadMusicsParams } from '../useCases/ILoadMusicsUseCause'
 
 export interface IMusicRepository {
-  load: (music: LoadMusicsParams) => Promise<MusicResponse>
+  load: (music: LoadMusicsParams) => Promise<Music[]>
 
   search: (query: any) => Promise<Music[]>
 }

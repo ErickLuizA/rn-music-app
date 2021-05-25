@@ -1,9 +1,9 @@
 import { RecentRepositoryImpl } from '../../../data/repositories/RecentRepositoryImpl'
 import { CreateRecentUseCaseImpl } from '../../../data/useCases/CreateRecentUseCaseImpl'
-import { RecentLocalClient } from '../../../infra/local/RecentLocalClient'
+import { AsyncStorageRecentLocalClient } from '../../../infra/local/AsyncStorageRecentLocalClient'
 
 export function makeCreateRecent() {
-  const localClient = new RecentLocalClient()
+  const localClient = new AsyncStorageRecentLocalClient()
 
   const recentRepository = new RecentRepositoryImpl(localClient)
 

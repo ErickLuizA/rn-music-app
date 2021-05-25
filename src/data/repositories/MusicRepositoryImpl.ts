@@ -1,9 +1,6 @@
+import { Music } from '../../domain/entities/Music'
 import { IMusicRepository } from '../../domain/repositories/IMusicRepository'
-import {
-  LoadMusicsParams,
-  MusicResponse,
-} from '../../domain/useCases/ILoadMusicsUseCause'
-import { SearchedMusicResponse } from '../../domain/useCases/ISearchMusicsUseCase'
+import { LoadMusicsParams } from '../../domain/useCases/ILoadMusicsUseCause'
 import { IHttpClient } from '../protocols/IHttpClient'
 
 interface searchQuery {
@@ -13,14 +10,30 @@ interface searchQuery {
   key: string
 }
 
+interface YoutubeResponse {
+  items: any[]
+}
+
 export class MusicRepositoryImpl implements IMusicRepository {
   constructor(private readonly httpClient: IHttpClient) {}
 
-  async load(params: LoadMusicsParams): Promise<MusicResponse> {
-    return await this.httpClient.get('/videos', null, params)
+  async load(params: LoadMusicsParams): Promise<Music[]> {
+    const response: YoutubeResponse = await this.httpClient.get(
+      '/videos',
+      null,
+      params,
+    )
+
+    return response.items.map(item => Music.fromJson(item))
   }
 
-  async search(query: searchQuery): Promise<SearchedMusicResponse> {
-    return await this.httpClient.get('/search', null, query)
+  async search(query: searchQuery): Promise<Music[]> {
+    const response: YoutubeResponse = await this.httpClient.get(
+      '/search',
+      null,
+      query,
+    )
+
+    return response.items.map(item => Music.fromJson(item))
   }
 }

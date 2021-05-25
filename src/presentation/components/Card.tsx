@@ -1,5 +1,11 @@
 import React from 'react'
-import { Image, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 
 interface IProps {
   id: string
@@ -23,15 +29,17 @@ function Card({ id, title, img, onPress }: IProps) {
   )
 }
 
+const WIDTH = Dimensions.get('screen').width
+
 const styles = StyleSheet.create({
   container: {
     marginRight: 10,
   },
 
   image: {
-    width: 200,
-    height: 200,
-    borderRadius: 20,
+    width: WIDTH / 1.8,
+    height: WIDTH / 1.8,
+    borderRadius: 4,
   },
 
   title: {

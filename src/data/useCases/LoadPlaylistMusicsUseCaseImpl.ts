@@ -1,4 +1,4 @@
-import { PlaylistMusic } from '../../domain/entities/Music'
+import { Music } from '../../domain/entities/Music'
 import { IPlaylistRepository } from '../../domain/repositories/IPlaylistsRepository'
 import {
   LoadPlaylistMusicsParams,
@@ -6,10 +6,11 @@ import {
 } from '../../domain/useCases/ILoadPlaylistMusicsUseCase'
 
 export class LoadPlaylistMusicsUseCaseImpl
-  implements ILoadPlaylistMusicUseCase {
+  implements ILoadPlaylistMusicUseCase
+{
   constructor(private readonly playlistRepository: IPlaylistRepository) {}
 
-  async execute(params: LoadPlaylistMusicsParams): Promise<PlaylistMusic[]> {
+  async execute(params: LoadPlaylistMusicsParams): Promise<Music[]> {
     return await this.playlistRepository.load(params)
   }
 }

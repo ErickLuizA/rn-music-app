@@ -1,14 +1,15 @@
 import React from 'react'
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
-import { RectButton } from 'react-native-gesture-handler'
+import { RectButton, Swipeable } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 interface IProps {
   id: string
   title: string
-  img: string
+  image: string
+
   navigate: () => void
-  onPress: () => void
+  onSwipe: () => void
 }
 
 const WIDTH = Dimensions.get('window').width
@@ -16,8 +17,6 @@ const WIDTH = Dimensions.get('window').width
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
     width: WIDTH,
     height: 100,
   },
@@ -25,45 +24,52 @@ const styles = StyleSheet.create({
   image: {
     width: WIDTH / 3,
     height: 100,
-    borderRadius: 20,
+    borderRadius: 4,
   },
 
   title: {
+    width: WIDTH / 3,
     color: '#ddd',
     fontSize: 16,
+    marginLeft: 20,
+    alignSelf: 'center',
+  },
+
+  swipeContainer: {
     width: WIDTH / 3,
-    alignSelf: 'center',
-  },
-
-  flex: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-
-  delButton: {
-    alignSelf: 'center',
+    backgroundColor: '#f11',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })
 
-function LongCard({ id, title, img, navigate, onPress }: IProps) {
+function LongCard({ id, title, image, navigate, onSwipe }: IProps) {
   return (
-    <View style={styles.container} key={id}>
-      <View style={styles.flex}>
-        <RectButton onPress={() => navigate()}>
+    <Swipeable
+      renderRightActions={RightSwipeActions}
+      onSwipeableRightOpen={onSwipe}>
+      <View style={styles.container} key={id}>
+        <RectButton onPress={navigate}>
           <Image
             resizeMode="contain"
             style={styles.image}
             source={{
-              uri: img || undefined,
+              uri: image,
             }}
           />
         </RectButton>
-
-        <Text style={styles.title}>{title.slice(0, 30)} ... </Text>
+        <Text style={styles.title}>
+          {title?.length > 25 ? title?.slice(0, 25).concat('...') : title}
+        </Text>
       </View>
-      <RectButton style={styles.delButton} {...{ onPress }}>
-        <Icon name="delete" color="#ddd" size={30} />
-      </RectButton>
+    </Swipeable>
+  )
+}
+
+function RightSwipeActions() {
+  return (
+    <View style={styles.swipeContainer}>
+      <Icon name="delete" color="#ddd" size={30} />
     </View>
   )
 }

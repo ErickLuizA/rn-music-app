@@ -1,37 +1,93 @@
-import React from 'react'
-import { SafeAreaView, FlatList, StatusBar, StyleSheet } from 'react-native'
-import Icon from 'react-native-vector-icons/MaterialIcons'
+import React, { useCallback, useEffect, useState } from 'react'
+import {
+  SafeAreaView,
+  FlatList,
+  ToastAndroid,
+  ActivityIndicator,
+  View,
+} from 'react-native'
 import { useNavigation, useRoute } from '@react-navigation/native'
-import { PlaylistMusic } from '../../../domain/entities/Music'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import Card from '../../components/Card'
+import { Music } from '../../../domain/entities/Music'
+import { IDeletePlaylistMusicUseCase } from '../../../domain/useCases/IDeletePlaylistMusicUseCase'
+import { ILoadPlaylistMusicUseCase } from '../../../domain/useCases/ILoadPlaylistMusicsUseCase'
 
-interface IPlaylistDetail {}
+import LongCard from '../../components/LongCard'
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#111',
-    paddingTop: StatusBar.currentHeight,
-  },
+import styles from './styles'
 
-  goBack: {
-    alignSelf: 'flex-start',
-  },
-})
+interface IPlaylistDetail {
+  deletePlaylistMusic: IDeletePlaylistMusicUseCase
+  loadPlaylistMusic: ILoadPlaylistMusicUseCase
+}
 
-export default function PlaylistDetail({}: IPlaylistDetail) {
-  const { params } = useRoute<{
-    params: { data: PlaylistMusic[] }
-    name: string
-    key: string
-  }>()
+export default function PlaylistDetail({
+  deletePlaylistMusic,
+  loadPlaylistMusic,
+}: IPlaylistDetail) {
+  const { params } =
+    useRoute<{
+      params: { playlistId: string }
+      name: string
+      key: string
+    }>()
 
   const navigation = useNavigation()
 
-  const data = params.data
+  const [loading, setLoading] = useState(true)
+  const [data, setData] = useState<Music[]>([])
+
+  const handleGetPlaylistMusics = useCallback(async () => {
+    try {
+      const response = await loadPlaylistMusic.execute({
+        playlistId: params.playlistId,
+      })
+
+      setData(response)
+    } catch (error) {
+      ToastAndroid.show(
+        'Erro ao buscar músicas da playlist',
+        ToastAndroid.SHORT,
+      )
+    }
+
+    setLoading(false)
+  }, [loadPlaylistMusic, params])
+
+  useEffect(() => {
+    handleGetPlaylistMusics()
+  }, [handleGetPlaylistMusics])
+
+  const handleNavigateToPlayer = (item: Music) => {
+    navigation.navigate('Player', {
+      item,
+    })
+  }
+
+  const handleDeletePlaylistMusic = async (item: Music) => {
+    try {
+      await deletePlaylistMusic.execute({
+        playlistId: params.playlistId,
+        musicId: item.id,
+      })
+
+      await handleGetPlaylistMusics()
+    } catch (error) {
+      ToastAndroid.show(
+        'Erro ao buscar músicas da playlist',
+        ToastAndroid.SHORT,
+      )
+    }
+  }
+
+  if (loading) {
+    return (
+      <View>
+        <ActivityIndicator />
+      </View>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,33 +96,19 @@ export default function PlaylistDetail({}: IPlaylistDetail) {
         size={30}
         color="#ddd"
         style={styles.goBack}
-        onPress={() => navigation.goBack()}
+        onPress={navigation.goBack}
       />
 
       <FlatList
         data={data}
-        keyExtractor={(item) => item.playlistMusicId.toString()}
-        numColumns={2}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <Card
-            id={item.playlistMusicId}
+          <LongCard
+            id={item.id}
             title={item.title}
-            img={item.img}
-            onPress={() =>
-              navigation.navigate('Home', {
-                data: {
-                  id: item.musicId,
-                  snippet: {
-                    title: item.title,
-                    thumbnails: {
-                      high: {
-                        url: item.img,
-                      },
-                    },
-                  },
-                },
-              })
-            }
+            image={item.image}
+            onSwipe={() => handleDeletePlaylistMusic(item)}
+            navigate={() => handleNavigateToPlayer(item)}
           />
         )}
       />

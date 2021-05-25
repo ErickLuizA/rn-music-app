@@ -1,5 +1,3 @@
-import { User } from '../entities/User'
-
 export interface CreateUserParams {
   name: string
   email: string
@@ -8,7 +6,6 @@ export interface CreateUserParams {
 
 export interface CreateUserResponse {
   token: string
-  user: User
 }
 
 export interface ICreateUserUseCase {

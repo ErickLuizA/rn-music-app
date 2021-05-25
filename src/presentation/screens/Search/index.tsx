@@ -2,66 +2,33 @@ import React, { useState, useEffect, useCallback } from 'react'
 import {
   View,
   TextInput,
+  Text,
   FlatList,
   SafeAreaView,
   TouchableOpacity,
-  StyleSheet,
-  StatusBar,
   ToastAndroid,
 } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+
+import { Music } from '../../../domain/entities/Music'
 import { ISearchMusicsUseCase } from '../../../domain/useCases/ISearchMusicsUseCase'
-import { SearchedMusic } from '../../../domain/entities/Music'
 
 import Card from '../../components/Card'
+
+import styles from './styles'
 
 interface ISearchScreen {
   searchMusic: ISearchMusicsUseCase
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#111',
-    paddingTop: StatusBar.currentHeight || 10,
-    paddingHorizontal: 10,
-  },
-
-  searchSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  icon: {
-    fontSize: 32,
-    paddingRight: 20,
-  },
-
-  input: {
-    flex: 1,
-    fontFamily: 'Inter_400Regular',
-    borderBottomColor: '#999',
-    borderBottomWidth: 0.3,
-  },
-
-  white: {
-    color: '#ddd',
-  },
-
-  list: {
-    paddingVertical: 20,
-  },
-})
-
 export default function SearchScreen({ searchMusic }: ISearchScreen) {
-  const [items, setItems] = useState<SearchedMusic[]>()
+  const [items, setItems] = useState<Music[]>([])
+  const [search, setSearch] = useState('')
 
   const navigation = useNavigation()
 
-  const [search, setSearch] = useState('')
-
-  const getSearchMusic = useCallback(async () => {
+  const handleSearchMusic = useCallback(async () => {
     try {
       const response = await searchMusic.execute({
         q: search,
@@ -70,19 +37,25 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
         key: process.env.API_KEY,
       })
 
-      setItems(response.items)
-    } catch (err) {
-      ToastAndroid.show('Erro ao buscar dados', ToastAndroid.SHORT)
+      setItems(response)
+    } catch (error) {
+      ToastAndroid.show('Erro ao pesquisar músicas', ToastAndroid.SHORT)
     }
   }, [search, searchMusic])
+
+  const handleNavigateToPlayer = (item: Music) => {
+    navigation.navigate('Player', {
+      item,
+    })
+  }
 
   useEffect(() => {
     if (!search) {
       return
     } else {
-      getSearchMusic()
+      setTimeout(() => handleSearchMusic(), 1000)
     }
-  }, [searchMusic, search, getSearchMusic])
+  }, [search, handleSearchMusic])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -94,34 +67,34 @@ export default function SearchScreen({ searchMusic }: ISearchScreen) {
           style={[styles.input, styles.white]}
           value={search}
           autoFocus
-          placeholder="Search for music"
+          placeholder="Pesquise uma música"
           placeholderTextColor="#ddd"
-          onChangeText={(text) => setSearch(text)}
+          onChangeText={text => setSearch(text)}
         />
       </View>
-      <View>
-        <FlatList
-          data={items}
-          keyExtractor={(item) => item.id.videoId}
-          style={styles.list}
-          numColumns={2}
-          renderItem={({ item }) => (
-            <Card
-              id={item.id.videoId}
-              title={item.snippet.title}
-              img={item.snippet.thumbnails.high.url}
-              onPress={() =>
-                navigation.navigate('Home', {
-                  data: {
-                    id: item.id.videoId,
-                    snippet: item.snippet,
-                  },
-                })
-              }
-            />
-          )}
-        />
-      </View>
+      {items.length === 0 ? (
+        <SafeAreaView style={styles.centerContainer}>
+          <Text style={styles.white}>Pesquise uma música</Text>
+          <Icon name="search" size={30} color="#fff" />
+        </SafeAreaView>
+      ) : (
+        <View>
+          <FlatList
+            data={items}
+            keyExtractor={item => item.id}
+            style={styles.list}
+            numColumns={2}
+            renderItem={({ item }) => (
+              <Card
+                id={item.id}
+                title={item.title}
+                img={item.image}
+                onPress={() => handleNavigateToPlayer(item)}
+              />
+            )}
+          />
+        </View>
+      )}
     </SafeAreaView>
   )
 }

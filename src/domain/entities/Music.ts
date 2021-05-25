@@ -1,48 +1,34 @@
-export interface Music {
+export class Music {
   id: string
-  snippet: {
-    title: string
-    thumbnails: {
-      high: {
-        url: string
-      }
-    }
-  }
-}
-
-export interface SearchedMusic {
-  id: {
-    videoId: string
-  }
-  snippet: {
-    title: string
-    thumbnails: {
-      high: {
-        url: string
-      }
-    }
-  }
-}
-
-export interface SearchedData {
-  id: {
-    videoId: string
-  }
-  img: string
   title: string
-}
+  image: string
+  isFavorite: boolean
 
-export interface PlayingMusic {
-  id: string
-  img: string
-  title: string
-  url: string
-}
+  constructor(id: string, title: string, image: string, isFavorite: boolean) {
+    this.id = id
+    this.title = title
+    this.image = image
+    this.isFavorite = isFavorite
+  }
 
-export interface PlaylistMusic {
-  playlistId: string
-  musicId: string
-  playlistMusicId: string
-  img: string
-  title: string
+  static fromJson(json: any): Music {
+    return new Music(
+      json.id.videoId ?? json.id,
+      json.snippet.title,
+      json.snippet.thumbnails.default.url,
+      false,
+    )
+  }
+
+  static fromFavorite(fav: any): Music {
+    return new Music(fav.favoriteId, fav.title, fav.img, true)
+  }
+
+  favorite() {
+    this.isFavorite = true
+  }
+
+  unFavorite() {
+    this.isFavorite = false
+  }
 }

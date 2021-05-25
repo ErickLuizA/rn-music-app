@@ -1,5 +1,5 @@
-import { RecentResponse } from '../entities/Recent'
+import { Music } from '../entities/Music'
 
 export interface ILoadRecentUseCase {
-  execute: () => Promise<RecentResponse[]>
+  execute: () => Promise<Music[]>
 }

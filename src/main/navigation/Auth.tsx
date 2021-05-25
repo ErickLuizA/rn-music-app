@@ -1,5 +1,6 @@
 import React from 'react'
 import { createStackNavigator } from '@react-navigation/stack'
+
 import { makeRegister } from '../factories/screens/RegisterFactory'
 import { makeLogin } from '../factories/screens/LoginFactory'
 

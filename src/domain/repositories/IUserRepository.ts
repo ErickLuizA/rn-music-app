@@ -3,12 +3,15 @@ import {
   CreateUserParams,
   CreateUserResponse,
 } from '../useCases/ICreateUserUseCase'
-import { LoginUserParams } from '../useCases/ILoginUserUseCase'
+import {
+  LoginUserParams,
+  LoginUserResponse,
+} from '../useCases/ILoginUserUseCase'
 
 export interface IUserRepository {
   create: (user: CreateUserParams) => Promise<CreateUserResponse>
 
-  login: (user: LoginUserParams) => Promise<User> // This does not return a full user, that's why the load method bellow is necessary
+  login: (user: LoginUserParams) => Promise<LoginUserResponse>
 
   load: () => Promise<User>
 }

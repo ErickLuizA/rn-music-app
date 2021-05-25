@@ -37,22 +37,22 @@ YFMusic is a music app built with React Native
 
 ## :building_construction: Technologies
 
-  -  [@react-native-async-storage/async-storage](npmjs.com/package/@react-native-async-storage/async-storage)
-  -  [@react-navigation/bottom-tabs](npmjs.com/package/@react-navigation/bottom-tabs)
-  -  [@react-navigation/material-top-tabs](npmjs.com/package/@react-navigation/material-top-tabs)
-  -  [@react-navigation/native](npmjs.com/package/@react-navigation/native)
-  -  [@react-navigation/stack](npmjs.com/package/@react-navigation/stack)
-  -  [axios](npmjs.com/package/axios)
-  -  [babel-plugin-inline-dotenv](npmjs.com/package/babel-plugin-inline-dotenv)
-  -  [expo](npmjs.com/package/expo)
-  -  [expo-av](npmjs.com/package/expo-av)
-  -  [expo-status-bar](npmjs.com/package/expo-status-bar)
-  -  [react](npmjs.com/package/react)
-  -  [react-native](npmjs.com/package/react-native)
-  -  [react-native-gesture-handler](npmjs.com/package/react-native-gesture-handler)
-  -  [react-native-reanimated](npmjs.com/package/react-native-reanimated)
-  -  [react-native-safe-area-context](npmjs.com/package/react-native-safe-area-context)
-  -  [react-native-vector-icons](npmjs.com/package/react-native-vector-icons)
+  -  [@react-native-async-storage/async-storage](https://www.npmjs.com/package/@react-native-async-storage/async-storage)
+  -  [@react-navigation/bottom-tabs](https://www.npmjs.com/package/@react-navigation/bottom-tabs)
+  -  [@react-navigation/material-top-tabs](https://www.npmjs.com/package/@react-navigation/material-top-tabs)
+  -  [@react-navigation/native](https://www.npmjs.com/package/@react-navigation/native)
+  -  [@react-navigation/stack](https://www.npmjs.com/package/@react-navigation/stack)
+  -  [axios](https://www.npmjs.com/package/axios)
+  -  [babel-plugin-inline-dotenv](https://www.npmjs.com/package/babel-plugin-inline-dotenv)
+  -  [expo](https://www.npmjs.com/package/expo)
+  -  [expo-av](https://www.npmjs.com/package/expo-av)
+  -  [expo-status-bar](https://www.npmjs.com/package/expo-status-bar)
+  -  [react](https://www.npmjs.com/package/react)
+  -  [react-native](https://www.npmjs.com/package/react-native)
+  -  [react-native-gesture-handler](https://www.npmjs.com/package/react-native-gesture-handler)
+  -  [react-native-reanimated](https://www.npmjs.com/package/react-native-reanimated)
+  -  [react-native-safe-area-context](https://www.npmjs.com/package/react-native-safe-area-context)
+  -  [react-native-vector-icons](https://www.npmjs.com/package/react-native-vector-icons)
 
 ## :rocket: Getting Started
 
